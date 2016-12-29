@@ -1,29 +1,31 @@
-'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+// https://code.visualstudio.com/docs/extensions/overview
+// https://code.visualstudio.com/docs/extensionAPI/overview
+
 export function activate(context: vscode.ExtensionContext) {
+	// Only executed the first time an activationEvent command is triggered
 
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "vscode-javatarijs" is now active!');
+	// We need to add all objects to the list of subscriptions
+	// Once the extension is deactivated, the references cease to exist
+	// And they are garbage-collected
+	let disposable = vscode.commands.registerCommand("vscode-javatarijs.openToTheSide", openToTheSide);
+	context.subscriptions.push(disposable);
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
-        // The code you place here will be executed every time your command is executed
-
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World!');
-    });
-
-    context.subscriptions.push(disposable);
+	console.log("vscode-javatarijs is now active.");
 }
 
-// this method is called when your extension is deactivated
+// Called when the extension is deactivated
 export function deactivate() {
+	console.log("vscode-javatarijs is now inactive.");
+}
+
+function openToTheSide() {
+	vscode.window.showInformationMessage("Open To The Side");
+
+	// TODO:
+	// 1. Open a new tab with the Javatari.js content
+	// 2. Set the new tab with content from the previous tab (compiled)
+	// 3. Watch for changes in the previously focused tab
+	// 4. Update the new tab when changes are detected
 }
