@@ -49,11 +49,13 @@ function openToTheSide(context:ExtensionContext) {
 		}, window.showErrorMessage);
 
 	// TODO:
-	// 2. Set the new tab with content from the previous tab (compiled)
-	// 3. Watch for changes in the previously focused tab
-	// 4. Update the new tab when changes are detected
+	// * Compile the code from the active tab
+	// * Set the new tab with the compile code
+	// * Watch for changes in the previously focused tab
+	// * Update the new tab when changes are detected
 
 	// Future:
+	// * Allow debugging?
 	// * Syntax highlighting and autocompletion?
 	// * Linting and automatic compilation?
 	// * Side panel with compiled byte code?
