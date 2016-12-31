@@ -37,7 +37,16 @@ export function deactivate() {
 }
 
 function openToTheSide(context:ExtensionContext) {
-	createPreviewTab(context);
+	openExampleGame(context)
+		.then(result => {
+			console.log("Document opened!");
+		}, window.showErrorMessage);
+
+	createPreviewTab(context)
+		.then(result => {
+			console.log("Editor shown!");
+			//this.enterExampleGame();
+		}, window.showErrorMessage);
 
 	// TODO:
 	// 2. Set the new tab with content from the previous tab (compiled)
@@ -53,8 +62,14 @@ function openToTheSide(context:ExtensionContext) {
 
 function createPreviewTab(context:ExtensionContext) {
 	let path = Uri.parse("javatari-preview://preview/filename");
-	commands.executeCommand("vscode.previewHtml", path, ViewColumn.Three)
-		.then(result => {
-			console.log("Editor shown");
-		}, window.showErrorMessage);
+	return commands.executeCommand("vscode.previewHtml", path, ViewColumn.Three);
+}
+
+function openExampleGame(context:ExtensionContext) {
+	// Open a game source in the currently active tab
+	// TODO: this is temporary, for testing purposes only
+	const docPath = Uri.file(context.asAbsolutePath("assets/_test.asm"));
+	return workspace.openTextDocument(docPath).then((doc) => {
+		return window.showTextDocument(doc, ViewColumn.One);
+	});
 }
