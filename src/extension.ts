@@ -7,6 +7,7 @@ import {
 	workspace,
 } from "vscode";
 
+import RomAssembler from "./assembler/RomAssembler";
 import JavatariDocumentContentProvider from "./JavatariDocumentContentProvider";
 
 // https://code.visualstudio.com/docs/extensions/overview
@@ -38,14 +39,16 @@ export function deactivate() {
 
 function openToTheSide(context:ExtensionContext) {
 	openExampleGame(context)
-		.then(result => {
+		.then((result) => {
 			console.log("Document opened!");
+			const b = compileGame(context);
+
 		}, window.showErrorMessage);
 
 	createPreviewTab(context)
-		.then(result => {
+		.then((result) => {
 			console.log("Editor shown!");
-			//this.enterExampleGame();
+			// this.enterExampleGame();
 		}, window.showErrorMessage);
 
 	// TODO:
@@ -60,6 +63,14 @@ function openToTheSide(context:ExtensionContext) {
 	// * Linting and automatic compilation?
 	// * Side panel with compiled byte code?
 	// * Code size on status bar?
+}
+
+function compileGame(context:ExtensionContext) {
+	// Compiles the current tab
+	const src = window.activeTextEditor.document.getText();
+	// const src = fs.readFileSync(context.asAbsolutePath("assets/_test.asm"), "utf8");
+	const assembler = new RomAssembler(src);
+	console.log("[compile] Done compiling");
 }
 
 function createPreviewTab(context:ExtensionContext) {

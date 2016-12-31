@@ -5,6 +5,7 @@
         "strictNullChecks": true,
         "target": "es6",
         "outDir": "out",
+        "allowJs": true,
         "lib": [
             "es6"
         ],
@@ -13,6 +14,7 @@
     },
     "exclude": [
         "node_modules",
-        ".vscode-test"
+        ".vscode-test",
+        "out"
     ]
 }
