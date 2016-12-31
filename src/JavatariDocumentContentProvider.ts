@@ -24,7 +24,7 @@ export default class JavatariDocumentContentProvider implements TextDocumentCont
 	public provideTextDocumentContent(uri:Uri, token:CancellationToken): string {
 		const relativeAssetPath = path.join("assets");
 		const assetPath = this._context.asAbsolutePath(relativeAssetPath);
-		const assetPathHTML = "file:///" + assetPath.replace(/\\/g, "/") + "/";
+		const assetPathHTML = Uri.file(assetPath + "/").path;
 
 		const htmlContents = fs
 			.readFileSync(path.join(assetPath, "index.html"), "utf8")
