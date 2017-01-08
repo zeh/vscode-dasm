@@ -24,17 +24,17 @@ export function activate(context:ExtensionContext) {
 	// We need to add all objects to the list of subscriptions
 	// Once the extension is deactivated, the references cease to exist
 	// And they are garbage-collected
-	let disposable = commands.registerCommand("vscode-javatarijs.openToTheSide", () => {
+	let disposable = commands.registerCommand("vscode-dasm.openToTheSide", () => {
 		openToTheSide(context);
 	});
 	context.subscriptions.push(disposable);
 
-	console.log("vscode-javatarijs is now active.");
+	console.log("vscode-dasm is now active.");
 }
 
 // Called when the extension is deactivated
 export function deactivate() {
-	console.log("vscode-javatarijs is now inactive.");
+	console.log("vscode-dasm is now inactive.");
 }
 
 function openToTheSide(context:ExtensionContext) {

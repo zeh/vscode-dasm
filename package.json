@@ -1,6 +1,6 @@
 {
-  "name": "vscode-javatarijs",
-  "displayName": "Javatari.js for VSCode",
+  "name": "vscode-dasm",
+  "displayName": "Dasm macro assembler for VSCode",
   "description": "Develop and run Atari games from inside Visual Studio Code",
   "version": "0.0.1",
   "publisher": "zehfernando",
@@ -11,14 +11,14 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:vscode-javatarijs.openToTheSide"
+    "onCommand:vscode-dasm.openToTheSide"
   ],
   "main": "./out/src/extension",
   "contributes": {
     "commands": [
       {
-        "command": "vscode-javatarijs.openToTheSide",
-        "title": "Javatari: open emulator to the side"
+        "command": "vscode-dasm.openToTheSide",
+        "title": "Open Atari emulator to the side"
       }
     ]
   },

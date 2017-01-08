@@ -1,4 +1,4 @@
-# Javatari.js for VSCode
+# Dasm macro assembler for VSCode
 
 Develop and run Atari games from inside Visual Studio Code.
 
