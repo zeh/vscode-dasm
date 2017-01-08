@@ -2,6 +2,22 @@
 
 Develop and run Atari games from inside Visual Studio Code.
 
+## TODO
+
+* Proper readme/documentation files
+* Load ROM into Javatari preview window after compilation
+* Compile-as-you-type with debouncing
+* Compile dasm from worker thread
+* Language support for editor
+  * Syntax highlight
+  * Error checks: constants, labels
+  * Navigate to labels
+  * Auto-complete symbols, labels
+  * Save/package ROM
+* Debugger support
+  * Start
+  * Pause/Step/Continue
+
 WORK IN PROGRESS. Does not work yet. Content below is assumed to be `TODO`.
 
 ## Features
