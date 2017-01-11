@@ -13,6 +13,13 @@ import JavatariDocumentContentProvider from "./JavatariDocumentContentProvider";
 // https://code.visualstudio.com/docs/extensions/overview
 // https://code.visualstudio.com/docs/extensionAPI/overview
 
+// Language extensions:
+// https://code.visualstudio.com/docs/extensions/language-support
+
+// Language server:
+// https://code.visualstudio.com/docs/extensions/example-language-server
+// https://github.com/Microsoft/vscode-languageserver-node
+
 export function activate(context:ExtensionContext) {
 	// Only executed the first time an activationEvent command is triggered
 
