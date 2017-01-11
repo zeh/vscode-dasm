@@ -15,6 +15,21 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
+    "languages": [
+      {
+        "id": "dasm",
+        "aliases": ["Dasm","Assembly", "6502"],
+        "extensions": [".dasm", ".asm", ".a", ".h"],
+        "configuration": "./syntaxes/language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "dasm",
+        "scopeName": "source.asm.dasm",
+        "path": "./syntaxes/dasm.json"
+      }
+    ],
     "commands": [
       {
         "command": "vscode-dasm.openToTheSide",
