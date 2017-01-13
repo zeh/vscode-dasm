@@ -10,28 +10,24 @@ Notice, however, that this extension is a work-in-progress and that many feature
 
 ## Features
 
-No real features yet.
+So far, the following features are supported:
 
-## More immediate TODO tasks
+### Basic syntax highlighting
 
-The next tasks in the roadmap are:
+![Syntax highlighting](images/syntax-highlight.png)
 
-* [Language support for editor](https://code.visualstudio.com/docs/extensions/language-support)
-  * Syntax highlight
-* Language server
-  * Error checks: constants, labels ([Diagnostics](https://code.visualstudio.com/docs/extensions/language-support#_provide-diagnostics))
-  * Navigate to labels
-* Debugger support
-* Play compiled game on Javatari tab
-* Use [6502.ts](https://github.com/6502ts/6502.ts) instead of Javatari?
+### Real error checking as you type
+
+![Errors](images/errors-symbols.png)
+
 
 <!--
 
 * [TODO] Code editing
+  * [TODO] .byte highlighting for pixels
   * [TODO] Syntax highlighting
   * [TODO] Source code snippets
   * [TODO] Smart bracket matching
-  * [TODO] Language server performing compilation in the background
   * [TODO] Hovers
     * [TODO] Literals (showing values)
   * [TODO] Code completion proposals
@@ -48,6 +44,7 @@ The next tasks in the roadmap are:
   * [TODO] Actions on errors/warnings
   * [TODO] CodeLens/Show actionable context information
   * [TODO] Rename symbols
+  * [TODO] Block folding
   * [TODO] Format source
     * [TODO] Format selected lines
     * dasmlint?
@@ -62,6 +59,27 @@ The next tasks in the roadmap are:
     * [TODO] Reload/hot-reload?
 
 -->
+
+## More immediate TODO tasks
+
+The next tasks in the roadmap are:
+
+* [Language support for editor](https://code.visualstudio.com/docs/extensions/language-support)
+  * More syntax highlight
+* [Language server](https://code.visualstudio.com/docs/extensions/example-language-server)
+  * Error checks: constants, labels ([Diagnostics](https://code.visualstudio.com/docs/extensions/language-support#_provide-diagnostics))
+  * Navigate to labels
+  * Grab the file missing error and use that in the list diagnostics (it does not come in the error list). Example: `Warning: Unable to open \'whatever.h\'', 'Complete.`
+  * Parse unresolved symbol list? It also comes in the output
+  * Support incremental document sync
+  * Resolve the include files problem
+  * Auto completion
+    * Add all registers, instructions
+    * Add symbols
+    * Add labels
+* Debugger support
+* Play compiled game on Javatari tab
+* Use [6502.ts](https://github.com/6502ts/6502.ts) instead of Javatari? Might not work at all (needs TIA, etc)
 
 <!--
 ## Extension Settings
