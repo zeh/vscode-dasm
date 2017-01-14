@@ -1,5 +1,6 @@
 import {
 	commands,
+	Disposable,
 	ExtensionContext,
 	Uri,
 	ViewColumn,
@@ -7,6 +8,15 @@ import {
 	workspace,
 } from "vscode";
 
+import {
+	LanguageClient,
+	LanguageClientOptions,
+	SettingMonitor,
+	ServerOptions,
+	TransportKind
+} from 'vscode-languageclient';
+
+import * as path from "path";
 import RomAssembler from "./assembler/RomAssembler";
 import JavatariDocumentContentProvider from "./JavatariDocumentContentProvider";
 
@@ -23,6 +33,34 @@ import JavatariDocumentContentProvider from "./JavatariDocumentContentProvider";
 export function activate(context:ExtensionContext) {
 	// Only executed the first time an activationEvent command is triggered
 
+	// The server is implemented in node
+	let serverModule = context.asAbsolutePath(path.join('out', 'server', 'server.js'));
+	// The debug options for the server
+	let debugOptions = { execArgv: ["--nolazy", "--debug=6004"] };
+
+	// If the extension is launched in debug mode then the debug server options are used
+	// Otherwise the run options are used
+	let serverOptions: ServerOptions = {
+		run : { module: serverModule, transport: TransportKind.ipc },
+		debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions },
+	};
+
+	// Options to control the language client
+	let clientOptions: LanguageClientOptions = {
+		// Register the server for plain text documents
+		documentSelector: ['dasm'],
+		synchronize: {
+			// Synchronize the setting section 'languageServerExample' to the server
+			configurationSection: 'languageServerExample',
+			// Notify the server about file changes to '.clientrc files contain in the workspace
+			fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
+		}
+	}
+
+	// Create the language client and start the client.
+	let disposableLanguageClient = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions).start();
+	context.subscriptions.push(disposableLanguageClient);
+
 	// Create a content provider for the preview tab
 	const provider = new JavatariDocumentContentProvider(context);
 	context.subscriptions.push(provider);
@@ -31,10 +69,10 @@ export function activate(context:ExtensionContext) {
 	// We need to add all objects to the list of subscriptions
 	// Once the extension is deactivated, the references cease to exist
 	// And they are garbage-collected
-	let disposable = commands.registerCommand("vscode-dasm.openToTheSide", () => {
+	let disposableCommand = commands.registerCommand("vscode-dasm.openToTheSide", () => {
 		openToTheSide(context);
 	});
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(disposableCommand);
 
 	console.log("vscode-dasm is now active.");
 }

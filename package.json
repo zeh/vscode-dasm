@@ -11,10 +11,32 @@
     "Other"
   ],
   "activationEvents": [
+    "onLanguage:dasm",
     "onCommand:vscode-dasm.openToTheSide"
   ],
   "main": "./out/src/extension",
   "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Example configuration",
+      "properties": {
+        "languageServerExample.maxNumberOfProblems": {
+          "type": "number",
+          "default": 100,
+          "description": "Controls the maximum number of problems produced by the server."
+        },
+        "languageServerExample.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VSCode and the languageServerExample service."
+        }
+      }
+    },
     "languages": [
       {
         "id": "dasm",
@@ -47,16 +69,17 @@
     "tslint": "./node_modules/tslint/bin/tslint"
   },
   "devDependencies": {
-    "@types/mocha": "^2.2.32",
+    "@types/mocha": "^2.2.37",
     "@types/node": "^7.0.0",
     "mocha": "^3.2.0",
-    "tslint": "^4.2.0",
-    "typescript": "^2.0.3",
-    "vscode": "^1.0.0"
+    "tslint": "^4.3.1",
+    "typescript": "^2.1.5",
+    "vscode": "^1.0.3"
   },
   "dependencies": {
-    "dasm": "^3.1.1",
+    "dasm": "^3.2.0",
     "fs": "0.0.1-security",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "vscode-languageclient": "^2.6.3"
   }
 }
