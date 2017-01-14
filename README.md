@@ -69,8 +69,6 @@ The next tasks in the roadmap are:
 * [Language server](https://code.visualstudio.com/docs/extensions/example-language-server)
   * Error checks: constants, labels ([Diagnostics](https://code.visualstudio.com/docs/extensions/language-support#_provide-diagnostics))
   * Navigate to labels
-  * Grab the file missing error and use that in the list diagnostics (it does not come in the error list). Example: `Warning: Unable to open \'whatever.h\'', 'Complete.`
-  * Parse unresolved symbol list? It also comes in the output
   * Support incremental document sync
   * Resolve the include files problem
   * Auto completion
