@@ -2,7 +2,7 @@
   "name": "vscode-dasm",
   "displayName": "Dasm macro assembler for VSCode",
   "description": "Develop and run Atari games from inside Visual Studio Code",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": "Zeh Fernando",
   "publisher": "zehfernando",
   "license": "GPL-2.0",
