@@ -9,12 +9,25 @@
   "engines": {
     "vscode": "^1.5.0"
   },
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#293134",
+    "theme": "dark"
+  },
+  "homepage": "https://github.com/zeh/vscode-dasm",
+  "bugs": {
+    "url": "https://github.com/zeh/vscode-dasm/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zeh/vscode-dasm.git"
   },
   "categories": [
-    "Other"
+    "Languages",
+    "Snippets",
+    "Linters",
+    "Debuggers",
+    "Formatters"
   ],
   "activationEvents": [
     "onLanguage:dasm",
