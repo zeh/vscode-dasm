@@ -94,7 +94,7 @@ This extension contributes the following settings:
 
 ## Release Notes
 
-Check the [changelog](CHANGELOD.MD) for a list of all released versions and their notes.
+Check the [changelog](CHANGELOG.md) for a list of all released versions and their notes.
 
 ## Contributing
 
