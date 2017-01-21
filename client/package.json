@@ -14,7 +14,7 @@
     "color": "#293134",
     "theme": "dark"
   },
-  "homepage": "https://github.com/zeh/vscode-dasm",
+  "homepage": "https://github.com/zeh/vscode-dasm/client",
   "bugs": {
     "url": "https://github.com/zeh/vscode-dasm/issues"
   },
