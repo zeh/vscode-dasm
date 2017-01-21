@@ -16,11 +16,11 @@ So far, the following features are supported:
 
 ### Basic syntax highlighting
 
-![Syntax highlighting](images/syntax-highlight.png)
+![Syntax highlighting](https://raw.githubusercontent.com/zeh/vscode-dasm/master/client/images/syntax-highlight.png)
 
 ### Real error checking as you type
 
-![Errors](images/errors-symbols.png)
+![Errors](https://raw.githubusercontent.com/zeh/vscode-dasm/master/client/images/errors-symbols.png)
 
 
 <!--
