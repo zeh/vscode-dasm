@@ -1,0 +1,27 @@
+{
+  "name": "vscode-dasm-server",
+  "description": "Language server implementation for the vscode-dasm extension.",
+  "version": "1.0.0",
+  "author": "Zeh Fernando",
+  "license": "GPL-2.0",
+  "engines": {
+    "node": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zeh/vscode-dasm-server.git"
+  },
+  "dependencies": {
+    "dasm": "^3.2.0",
+    "vscode-languageserver": "^2.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.0",
+    "tslint": "^4.3.1",
+    "typescript": "^2.1.5"
+  },
+  "scripts": {
+    "compile": "installServerIntoExtension ../client/out ./package.json ./tsconfig.json && tsc -p .",
+    "watch": "installServerIntoExtension ../client/out ./package.json ./tsconfig.json && tsc --watch -p ."
+  }
+}

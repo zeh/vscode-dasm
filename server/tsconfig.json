@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "target": "es6",
+		"outDir": "../client/out/server",
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"lib" : [ "es2016" ]
+	},
+	"exclude": [
+		"node_modules"
+	]
+}
