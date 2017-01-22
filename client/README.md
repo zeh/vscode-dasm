@@ -16,15 +16,15 @@ So far, the following features are supported:
 
 ### Basic syntax highlighting
 
-![Syntax highlighting](https://raw.githubusercontent.com/zeh/vscode-dasm/master/client/images/syntax-highlight.png)
+![Syntax highlighting](/client/images/syntax-highlight.png)
 
 ### Basic hover support for more information
 
-![Errors](https://raw.githubusercontent.com/zeh/vscode-dasm/master/client/images/hover.png)
+![Errors](/client/images/hover.png)
 
 ### Real error checking as you type
 
-![Errors](https://raw.githubusercontent.com/zeh/vscode-dasm/master/client/images/errors-symbols.png)
+![Errors](/client/images/errors-symbols.png)
 
 
 <!--
