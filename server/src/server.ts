@@ -24,6 +24,7 @@ const diagnosticsProvider = new DiagnosticsProvider();
 const hoverProvider = new HoverProvider();
 
 let currentResults:IAssemblerResult;
+let currentSource:string;
 
 // Use full document sync only for open, change and close text document events
 const documents:TextDocuments = new TextDocuments();
@@ -87,18 +88,18 @@ function assembleDocument(textDocument:TextDocument):void {
 	console.log("[server] Assembling");
 
 	// Assemble first
-	const src = textDocument.getText();
-	currentResults = assembler.assemble(src);
+	currentSource = textDocument.getText();
+	currentResults = assembler.assemble(currentSource);
 
 	// Provide diagnostics
-	const diagnostics:Diagnostic[] = diagnosticsProvider.process(src, currentResults);
+	const diagnostics:Diagnostic[] = diagnosticsProvider.process(currentSource, currentResults);
 
 	// Send the computed diagnostics to VSCode
 	connection.sendDiagnostics({ uri:textDocument.uri, diagnostics });
 }
 
-connection.onHover((textDocumentPosition:TextDocumentPositionParams) => {
-	return hoverProvider.process(textDocumentPosition);
+connection.onHover((textDocumentPosition, token) => {
+	return hoverProvider.process(textDocumentPosition, currentSource, currentResults);
 });
 
 // This handler provides the initial list of the completion items.
