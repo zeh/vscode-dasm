@@ -2,6 +2,34 @@
 
 All notable changes to the vscode-dasm extension are listed here. For a more complete list, check the [release list in the GitHub repository](https://github.com/zeh/vscode-dasm/releases).
 
+## 1.2.0 - 2017-01-21
+
+### Added
+
+* Basic symbol/label hover support
+
+### Minor
+
+* Marketplace page updates
+
+## 1.1.3 - 2017-01-21
+
+### Minor
+
+* Marketplace page updates
+
+## 1.1.2 - 2017-01-21
+
+### Minor
+
+* Marketplace page updates
+
+## 1.1.1 - 2017-01-21
+
+### Minor
+
+* Marketplace page updates
+
 ## 1.1.0 - 2017-01-21
 
 ### Minor
