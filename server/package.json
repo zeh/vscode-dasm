@@ -12,11 +12,11 @@
     "url": "git+https://github.com/zeh/vscode-dasm-server.git"
   },
   "dependencies": {
-    "dasm": "^3.2.0",
+    "dasm": "^4.0.0",
     "vscode-languageserver": "^2.6.2"
   },
   "devDependencies": {
-    "@types/node": "^7.0.0",
+    "@types/node": "^7.0.1",
     "tslint": "^4.3.1",
     "typescript": "^2.1.5"
   },
