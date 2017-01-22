@@ -76,17 +76,23 @@ So far, the following features are supported:
 
 The next tasks in the roadmap are:
 
-* [Language support for editor](https://code.visualstudio.com/docs/extensions/language-support)
-  * More syntax highlight: symbol, labels
-* [Language server](https://code.visualstudio.com/docs/extensions/example-language-server)
-  * Hover support
-  * Navigate to symbol, labels
-  * Support incremental document sync
-  * Resolve the include files problem
-  * Auto completion
-    * Add all registers, instructions
-    * Add symbols
-    * Add labels
+* More syntax highlight: symbol, labels
+* More hover support
+  * Show line where the hover is defined
+  * Show comments from the same line (or before)
+  * Show with colored support
+  * Show whether it's referenced or not (or use as warnings?)
+  * Don't show when hovering the same line as it's defined
+  * Add range to the returned hover object
+  * Don't return error when not found
+* Navigate to symbol, labels
+* Find usages
+* Support incremental document sync
+* Resolve the include files problem
+* Auto completion
+  * Add all registers, instructions
+  * Add symbols
+  * Add labels
 * Play compiled game on Javatari tab
 * Debugger support
   * Play/pause
@@ -110,7 +116,7 @@ This extension contributes the following settings:
 
 ## Release Notes
 
-Check the [changelog](CHANGELOG.md) for a list of all released versions and their notes.
+Check the [changelog](/client/CHANGELOG.md) for a list of all released versions and their notes.
 
 ## Contributing
 
