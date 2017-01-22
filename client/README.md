@@ -8,7 +8,7 @@ This is a dasm macro assembler [extension for Visual Studio Code](https://market
 
 **Notice, however, that this extension is a work-in-progress and that many features do not work yet.**
 
-See more about the motivation for this extension in the [Why Atari?](WHY.md) document.
+See more about the motivation for this extension in the [Why Atari?](/client/WHY.md) document.
 
 ## Features
 
