@@ -2,6 +2,18 @@
 
 All notable changes to the vscode-dasm extension are listed here. For a more complete list, check the [release list in the GitHub repository](https://github.com/zeh/vscode-dasm/releases).
 
+## 1.3.0 - 2017-01-24
+
+### Added
+
+* Hover feature now shows definitions for all 6502 instructions and dasm pseudo-ops
+* Added ability to navigate/peek definitions (same file only)
+
+### Changed
+
+* Performance improvements: the main server module manages source lines splitting, instead of each individual feature provider
+* Marketplace page updates
+
 ## 1.2.0 - 2017-01-21
 
 ### Added
