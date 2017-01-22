@@ -14,9 +14,10 @@ import {
 	SettingMonitor,
 	ServerOptions,
 	TransportKind
-} from 'vscode-languageclient';
+} from "vscode-languageclient";
 
 import * as path from "path";
+
 import RomAssembler from "./assembler/RomAssembler";
 import JavatariDocumentContentProvider from "./JavatariDocumentContentProvider";
 
