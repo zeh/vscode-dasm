@@ -15,10 +15,9 @@ export default class HoverProvider {
 	/**
 	 * Returns hover information
 	 */
-	public process(textDocumentPosition:TextDocumentPositionParams, source:string, results:IAssemblerResult):Hover|ResponseError<void> {
+	public process(textDocumentPosition:TextDocumentPositionParams, sourceLines:string[], results:IAssemblerResult):Hover|ResponseError<void> {
 		// Find the line this hover refers to
 		const line = textDocumentPosition.position.line;
-		const sourceLines = source.split("\n");
 		const removeCommentsRegex = /^(.*?)(;.*|)$/;
 		if (!isNaN(line) && sourceLines.length > line) {
 			// Find the char and the surrounding symbol it relates to

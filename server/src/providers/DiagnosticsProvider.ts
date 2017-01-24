@@ -13,15 +13,14 @@ export default class DiagnosticsProvider {
 	/**
 	 * Assembles a source and returns diagnostics errors
 	 */
-	public process(src:string, results:IAssemblerResult):Diagnostic[] {
+	public process(sourceLines:string[], results:IAssemblerResult):Diagnostic[] {
 		let diagnostics:Diagnostic[] = [];
-		let lines = src.split(/\r?\n/g);
 
 		if (results.list && results.list.length > 0) {
 			results.list.forEach((line) => {
 				if (line.errorMessage) {
 					const lineIndex = line.number - 1;
-					const range = this.findRangeForError(lines[lineIndex], line.errorMessage);
+					const range = this.findRangeForError(sourceLines[lineIndex], line.errorMessage);
 					diagnostics.push({
 						severity: DiagnosticSeverity.Error,
 						range: {
