@@ -3,15 +3,22 @@
 // https://code.visualstudio.com/docs/extensions/language-support#_programmatic-language-support
 
 import {
-	Hover,
-	IPCMessageReader, IPCMessageWriter,
-	createConnection, IConnection, TextDocumentSyncKind,
-	TextDocuments, TextDocument, Diagnostic,
-	InitializeParams, InitializeResult, TextDocumentPositionParams,
-	CompletionItem, CompletionItemKind,
+	CompletionItem,
+	CompletionItemKind,
+	createConnection,
+	Diagnostic,
+	IConnection,
+	InitializeResult,
+	IPCMessageReader,
+	IPCMessageWriter,
+	Location,
+	TextDocument,
+	TextDocumentPositionParams,
+	TextDocuments,
 } from "vscode-languageserver";
 
 import { Assembler, IAssemblerResult } from "./providers/Assembler";
+import DefinitionProvider from "./providers/DefinitionProvider";
 import DiagnosticsProvider from "./providers/DiagnosticsProvider";
 import HoverProvider from "./providers/HoverProvider";
 
@@ -22,6 +29,7 @@ const connection:IConnection = createConnection(new IPCMessageReader(process), n
 const assembler = new Assembler();
 const diagnosticsProvider = new DiagnosticsProvider();
 const hoverProvider = new HoverProvider();
+const definitionProvider = new DefinitionProvider();
 
 let currentResults:IAssemblerResult;
 let currentSource:string;
@@ -36,21 +44,24 @@ documents.listen(connection);
 let workspaceRoot:string;
 
 connection.onInitialize((params):InitializeResult => {
-	workspaceRoot = params.rootPath;
+	workspaceRoot = params.rootPath || "";
 
 	return {
 		// Tells the client about the server's capabilities
 		capabilities: {
-			// The server works in FULL text document sync mode
+			// Working in FULL text document sync mode
 			textDocumentSync: documents.syncKind,
 
-			// The server supports hover
+			// Hover on symbols/etc
 			hoverProvider: true,
 
-			// The server supports code complete
+			// Code complete
 			completionProvider: {
 				resolveProvider: true,
 			},
+
+			// Go to definition
+			definitionProvider: true,
 		},
 	};
 });
@@ -133,6 +144,9 @@ connection.onDidChangeWatchedFiles((change) => {
 	connection.console.log('We received an file change event');
 });
 
+connection.onDefinition((textDocumentPosition:TextDocumentPositionParams): Location[] => {
+	return definitionProvider.process(textDocumentPosition, currentSourceLines, currentResults);
+});
 /*
 connection.onDidOpenTextDocument((params) => {
 	// A text document got opened in VSCode.
