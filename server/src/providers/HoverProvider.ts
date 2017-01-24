@@ -1,7 +1,5 @@
 import {
 	Hover,
-	Position,
-	Range,
 	ResponseError,
 	TextDocumentPositionParams,
 } from "vscode-languageserver";
@@ -18,22 +16,16 @@ export default class HoverProvider {
 	public process(textDocumentPosition:TextDocumentPositionParams, sourceLines:string[], results:IAssemblerResult):Hover|ResponseError<void> {
 		// Find the line this hover refers to
 		const line = textDocumentPosition.position.line;
-		const removeCommentsRegex = /^(.*?)(;.*|)$/;
 		if (!isNaN(line) && sourceLines.length > line) {
 			// Find the char and the surrounding symbol it relates to
-			const sourceLine = sourceLines[line];
-			const character = textDocumentPosition.position.character;
-			const sourceLineNoCommentsMatch = sourceLine.match(removeCommentsRegex);
-			if (sourceLineNoCommentsMatch && sourceLineNoCommentsMatch[1]) {
-				const lineString = sourceLineNoCommentsMatch[1];
-				const token = LineUtils.getTokenAtPosition(lineString, character);
+			const sourceLine = LineUtils.removeComments(sourceLines[line]);
+			if (sourceLine) {
+				const character = textDocumentPosition.position.character;
+				const token = LineUtils.getTokenAtPosition(sourceLine, character);
 				if (token) {
 					// Will search for valid hover strings based on the target
 					let contents:string[]|undefined;
-					const rangeToken = LineUtils.getTokenRangeInLine(lineString, token, character);
-					const range:Range|undefined = rangeToken ?
-						Range.create(Position.create(line, rangeToken.start), Position.create(line, rangeToken.end)) :
-						undefined;
+					const range = LineUtils.getTokenRange(sourceLine, token, line, character);
 
 					// Check if the target is an instruction
 					if (!contents) contents = this.getInstructionHover(token);
