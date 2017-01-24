@@ -1,11 +1,14 @@
 import {
 	Hover,
+	Position,
+	Range,
 	ResponseError,
 	TextDocumentPositionParams,
 } from "vscode-languageserver";
 
 import LanguageDefinition from "../definitions/LanguageDefinition";
-import { IAssemblerResult, ISymbol } from "./Assembler";
+import LineUtils from "../utils/LineUtils";
+import { IAssemblerResult } from "./Assembler";
 
 export default class HoverProvider {
 
@@ -23,31 +26,30 @@ export default class HoverProvider {
 			const character = textDocumentPosition.position.character;
 			const sourceLineNoCommentsMatch = sourceLine.match(removeCommentsRegex);
 			if (sourceLineNoCommentsMatch && sourceLineNoCommentsMatch[1]) {
-				const sourceLineNoComments = sourceLineNoCommentsMatch[1];
-				if (character < sourceLineNoComments.length) {
-					const targetRegex = new RegExp("^.{0," + character + "}\\b([\\w.]*)\\b.*$");
-					const targetMatch = sourceLine.match(targetRegex);
-					if (targetMatch && targetMatch[1]) {
-						// Will search for valid hover strings based on the target
-						const targetName = targetMatch[1];
-						let contents:string[]|undefined;
-						let range:{start:number, end:number}|undefined;
+				const lineString = sourceLineNoCommentsMatch[1];
+				const token = LineUtils.getTokenAtPosition(lineString, character);
+				if (token) {
+					// Will search for valid hover strings based on the target
+					let contents:string[]|undefined;
+					const rangeToken = LineUtils.getTokenRangeInLine(lineString, token, character);
+					const range:Range|undefined = rangeToken ?
+						Range.create(Position.create(line, rangeToken.start), Position.create(line, rangeToken.end)) :
+						undefined;
 
-						// Check if the target is an instruction
-						if (!contents) contents = this.getInstructionHover(targetName);
+					// Check if the target is an instruction
+					if (!contents) contents = this.getInstructionHover(token);
 
-						// Check if the target is a pseudo-op
-						if (!contents) contents = this.getPseudoOpsHover(targetName);
+					// Check if the target is a pseudo-op
+					if (!contents) contents = this.getPseudoOpsHover(token);
 
-						// Check if the target is a symbol or label
-						if (!contents) contents = this.getSymbolOrLabelHover(results, targetName);
+					// Check if the target is a symbol or label
+					if (!contents) contents = this.getSymbolOrLabelHover(results, token);
 
-						if (contents) {
-							return {
-								contents,
-								//range,
-							};
-						}
+					if (contents) {
+						return {
+							contents,
+							range,
+						};
 					}
 				}
 			}
