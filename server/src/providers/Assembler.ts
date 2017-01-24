@@ -7,10 +7,13 @@ export interface ISymbol {
 	value: number;
 	wasReferenced: boolean;
 	wasPseudoOpCreated: boolean;
+	definitionFilename: string | undefined;
+	definitionLineNumber: number;
 }
 
 export interface ILine {
 	number: number;
+	filename: string | undefined;
 	address: number;
 	bytes: Uint8Array | undefined;
 	raw: string;
