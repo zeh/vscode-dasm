@@ -40,12 +40,12 @@
       "type": "object",
       "title": "Example configuration",
       "properties": {
-        "languageServerExample.maxNumberOfProblems": {
-          "type": "number",
-          "default": 100,
-          "description": "Controls the maximum number of problems produced by the server."
+        "vscode-dasm.preferUppercase": {
+          "type": "array",
+		  "default": ["all"],
+          "description": "Controls which language tokens should be uppercase (instructions|symbols|registers|pseudoops|all)."
         },
-        "languageServerExample.trace.server": {
+        "vscode-dasm.trace.server": {
           "type": "string",
           "enum": [
             "off",
@@ -53,7 +53,7 @@
             "verbose"
           ],
           "default": "off",
-          "description": "Traces the communication between VSCode and the languageServerExample service."
+          "description": "Traces the communication between VSCode and the dasm language server service."
         }
       }
     },

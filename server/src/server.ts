@@ -73,24 +73,24 @@ documents.onDidChangeContent((change) => {
 });
 
 
-// The settings interface DESCRIBE the server relevant settings part
-interface Settings {
-	languageServerExample:ExampleSettings;
+interface ISettings {
+	["vscode-dasm"]:IExtensionSettings;
 }
 
-// These are the example settings we defined in the client's package.json
-// file
-interface ExampleSettings {
-	maxNumberOfProblems:number;
+interface IExtensionSettings {
+	preferUppercase:string[];
 }
 
-// hold the maxNumberOfProblems setting
-let maxNumberOfProblems:number;
+// Hold settings
+let preferUppercase:string[];
+
 // The settings have changed. Is send on server activation
 // as well.
 connection.onDidChangeConfiguration((change) => {
-	let settings = <Settings>change.settings;
-	maxNumberOfProblems = settings.languageServerExample.maxNumberOfProblems || 100;
+	let settings = <ISettings>change.settings;
+	preferUppercase = settings["vscode-dasm"].preferUppercase;
+
+	console.log("[server] Uppercase preference is ", preferUppercase);
 
 	// Revalidate any open text documents
 	documents.all().forEach(assembleDocument);

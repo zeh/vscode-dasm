@@ -11,9 +11,8 @@ import {
 import {
 	LanguageClient,
 	LanguageClientOptions,
-	SettingMonitor,
 	ServerOptions,
-	TransportKind
+	TransportKind,
 } from "vscode-languageclient";
 
 import * as path from "path";
@@ -35,7 +34,7 @@ export function activate(context:ExtensionContext) {
 	// Only executed the first time an activationEvent command is triggered
 
 	// The server is implemented in node
-	let serverModule = context.asAbsolutePath(path.join('out', 'server', 'server.js'));
+	let serverModule = context.asAbsolutePath(path.join("out", "server", "server.js"));
 	// The debug options for the server
 	let debugOptions = { execArgv: ["--nolazy", "--debug=6004"] };
 
@@ -49,17 +48,17 @@ export function activate(context:ExtensionContext) {
 	// Options to control the language client
 	let clientOptions: LanguageClientOptions = {
 		// Register the server for plain text documents
-		documentSelector: ['dasm'],
+		documentSelector: ["dasm"],
 		synchronize: {
 			// Synchronize the setting section 'languageServerExample' to the server
-			configurationSection: 'languageServerExample',
+			configurationSection: "vscode-dasm",
 			// Notify the server about file changes to '.clientrc files contain in the workspace
-			fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
+			fileEvents: workspace.createFileSystemWatcher("**/.clientrc"),
 		}
 	}
 
 	// Create the language client and start the client.
-	let disposableLanguageClient = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions).start();
+	let disposableLanguageClient = new LanguageClient("vscode-dasm", "Language Server for VSCode-dasm", serverOptions, clientOptions).start();
 	context.subscriptions.push(disposableLanguageClient);
 
 	// Create a content provider for the preview tab
