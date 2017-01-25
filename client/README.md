@@ -18,15 +18,21 @@ So far, the following features are supported:
 
 ![Syntax highlighting](/client/images/syntax-highlight.png)
 
-### Basic hover support for more information
+### Auto-completion (instructions, pseudo-ops, symbols, and labels)
 
-![Errors](/client/images/hover.png)
+![Auto completion](/client/images/autocompletion.png)
 
 ### Real error checking as you type
 
 ![Errors](/client/images/errors-symbols.png)
 
+### Hover support for more information
+
+![Errors](/client/images/hover.png)
+
 ### Navigate to/peek at definitions for labels and symbols
+
+![Peek](/client/images/peek.png)
 
 ## TODO
 
@@ -34,43 +40,54 @@ The current task list, more or less in order of priority, is:
 
 * Manage multi-file projects
   * Resolve the include files problem
+  * debounce include checking (ie one per second max)
+  * debounce compilation (eg wait until 200ms or so have passed)
+  * add definition link to included files, so they can be opened directly
+    * Navigate to include files too when ctrl+clicking filename
+  * Support INCDIR
+  * Support INCBIN
+* Auto completion
+  * Add all registers
+  * Add labels
+  * Parameter hints https://code.visualstudio.com/docs/editor/editingevolved#_parameter-hints
+* Respect preferences
+  * Prefer uppercase/lowercase for pseudo-ops
+* Add extension settings keys
+  * Tabbing/spacing preferences?
 * Language definition
   * Add parameters to instructions and pseudo-ops descriptions
   * Add register list
+  * Better descriptions for pseudo-ops
 * More syntax highlight: symbol, labels
   * Differentiate between values (#$99) and addresses ($99)
 * More hover support
   * Show line where the hover is defined
   * Show comments from the same line (or before)
-  * Show with colored support
   * Show whether it's referenced or not (or use as warnings?)
   * Don't show when hovering the same line as it's defined
-  * Don't return error when not found (undefined?)
   * Identify values - e.g.  #$99 is value $99, $3E32 is memory location
   * Add more complex pseudo-ops descriptions
-  * Use parameters in the description
+  * Use parameters for pseudo-ops in the description
 * More navigation to definition support
   * Clean up provider file
-  * Add definition support for multiple files
 * Find usages
 * Support incremental document sync
-* Auto completion
-  * Add all registers, instructions
-  * Add symbols
-  * Add labels
-  * Parameter hints https://code.visualstudio.com/docs/editor/editingevolved#_parameter-hints
 * Auto-format
   * Linting? "dasmlint"
   * Format-as-you-type
 * Source code snippets
 * Smart bracket matching
 * Play compiled game on new tab
+  * Use [6502.ts](https://github.com/6502ts/6502.ts) instead of Javatari?
 * Debugger support
   * Play/pause
   * Step in/out/etc
   * Hot reload (continue on same address)
   * Register/address monitoring
-* Use [6502.ts](https://github.com/6502ts/6502.ts) instead of Javatari? Might not work at all (needs TIA, etc)
+
+<!--
+* Visual chip debug easter egg? http://atariage.com/forums/topic/227569-5-hz-6502/
+-->
 
 <!--
 ## Extension Settings
