@@ -17,62 +17,14 @@ import {
 	TextDocuments,
 } from "vscode-languageserver";
 
-import { Assembler, IAssemblerResult } from "./providers/Assembler";
-import DefinitionProvider from "./providers/DefinitionProvider";
-import DiagnosticsProvider from "./providers/DiagnosticsProvider";
-import HoverProvider from "./providers/HoverProvider";
+import ProjectManager from "./project/ProjectManager";
 
 // Create a connection for the server. The connection uses Node's IPC as a transport
 const connection:IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
+const projectManager = new ProjectManager(connection);
+projectManager.start();
 
 // Create all needed provider instances
-const assembler = new Assembler();
-const diagnosticsProvider = new DiagnosticsProvider();
-const hoverProvider = new HoverProvider();
-const definitionProvider = new DefinitionProvider();
-
-let currentResults:IAssemblerResult;
-let currentSource:string;
-let currentSourceLines:string[];
-
-// Use full document sync only for open, change and close text document events
-const documents:TextDocuments = new TextDocuments();
-documents.listen(connection);
-
-// After the server has started the client sends an initilize request. The server receives
-// in the passed params the rootPath of the workspace plus the client capabilites.
-let workspaceRoot:string;
-
-connection.onInitialize((params):InitializeResult => {
-	workspaceRoot = params.rootPath || "";
-
-	return {
-		// Tells the client about the server's capabilities
-		capabilities: {
-			// Working in FULL text document sync mode
-			textDocumentSync: documents.syncKind,
-
-			// Hover on symbols/etc
-			hoverProvider: true,
-
-			// Code complete
-			completionProvider: {
-				resolveProvider: true,
-			},
-
-			// Go to definition
-			definitionProvider: true,
-		},
-	};
-});
-
-// The content of a text document has changed. This event is emitted
-// when the text document first opened or when its content has changed.
-documents.onDidChangeContent((change) => {
-	assembleDocument(change.document);
-});
-
-
 interface ISettings {
 	["vscode-dasm"]:IExtensionSettings;
 }
@@ -81,6 +33,7 @@ interface IExtensionSettings {
 	preferUppercase:string[];
 }
 
+/*
 // Hold settings
 let preferUppercase:string[];
 
@@ -99,10 +52,6 @@ connection.onDidChangeConfiguration((change) => {
 function assembleDocument(textDocument:TextDocument):void {
 	console.log("[server] Assembling");
 
-	// Assemble first
-	currentSource = textDocument.getText();
-	currentSourceLines = currentSource ? currentSource.split(/\r?\n/g) : [];
-	currentResults = assembler.assemble(currentSource);
 
 	// Provide diagnostics
 	const diagnostics:Diagnostic[] = diagnosticsProvider.process(currentSourceLines, currentResults);
@@ -111,9 +60,6 @@ function assembleDocument(textDocument:TextDocument):void {
 	connection.sendDiagnostics({ uri:textDocument.uri, diagnostics });
 }
 
-connection.onHover((textDocumentPosition, token) => {
-	return hoverProvider.process(textDocumentPosition, currentSourceLines, currentResults);
-});
 
 // This handler provides the initial list of the completion items.
 connection.onCompletion((textDocumentPosition:TextDocumentPositionParams): CompletionItem[] => {
@@ -144,9 +90,8 @@ connection.onDidChangeWatchedFiles((change) => {
 	connection.console.log('We received an file change event');
 });
 
-connection.onDefinition((textDocumentPosition:TextDocumentPositionParams): Location[] => {
-	return definitionProvider.process(textDocumentPosition, currentSourceLines, currentResults);
-});
+*/
+
 /*
 connection.onDidOpenTextDocument((params) => {
 	// A text document got opened in VSCode.
@@ -169,5 +114,3 @@ connection.onDidCloseTextDocument((params) => {
 });
 */
 
-// Finally, listen on the connection
-connection.listen();
