@@ -38,11 +38,10 @@ export class Assembler {
 	constructor() {
 	}
 
-	public assemble(src:string):IAssemblerResult {
-		console.time("[server] Compile");
-		console.log("[server] Source length is " + src.length);
-		const result = dasm(src, { format: 3 });
-		console.timeEnd("[server] Compile");
+	public assemble(src:string, includes?:{[key:string]: string}):IAssemblerResult {
+		console.time("[assembler] Compile");
+		const result = dasm(src, { format: 3, includes });
+		console.timeEnd("[assembler] Compile");
 		console.log("[assembler] ROM length is ", result.data.length);
 
 		return result;
