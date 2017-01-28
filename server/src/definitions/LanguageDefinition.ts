@@ -24,11 +24,23 @@ export interface IPseudoOps {
 export interface ILanguageDefinition {
 	Instructions: IInstruction[];
 	PseudoOps: IPseudoOps[];
+	Extensions: {[key: string]:string[]};
 }
 
 // Collections
 
-const Instructions:IInstruction[] = [
+export const Extensions = {
+	source: [
+		".dasm",
+		".asm",
+		".a",
+	],
+	include: [
+		".h",
+	],
+};
+
+export const Instructions:IInstruction[] = [
 	{
 		name: "ADC",
 		description: "ADd to accumulator with Carry",
@@ -367,7 +379,7 @@ const Instructions:IInstruction[] = [
 	},
 ];
 
-const PseudoOps:IPseudoOps[] = [
+export const PseudoOps:IPseudoOps[] = [
 	{
 		name: "PROCESSOR",
 		otherNames: [],
@@ -653,6 +665,7 @@ const PseudoOps:IPseudoOps[] = [
 export const LanguageDefinition:ILanguageDefinition = {
 	Instructions,
 	PseudoOps,
+	Extensions,
 };
 
 export default LanguageDefinition;
