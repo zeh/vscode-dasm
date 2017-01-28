@@ -42,7 +42,9 @@
       "properties": {
         "vscode-dasm.preferUppercase": {
           "type": "array",
-		  "default": ["all"],
+          "default": [
+            "all"
+          ],
           "description": "Controls which language tokens should be uppercase (instructions|symbols|registers|pseudoops|all)."
         },
         "vscode-dasm.trace.server": {
@@ -106,9 +108,8 @@
     "vscode": "^1.0.3"
   },
   "dependencies": {
-    "dasm": "^3.2.0",
-    "fs": "0.0.1-security",
+    "dasm": "^4.1.0",
     "path": "^0.12.7",
-    "vscode-languageclient": "^2.6.3"
+    "vscode-languageclient": "^3.0.3"
   }
 }
