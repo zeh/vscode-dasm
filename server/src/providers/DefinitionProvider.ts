@@ -1,32 +1,58 @@
 import {
+	IConnection,
 	Location,
 	TextDocumentPositionParams,
 } from "vscode-languageserver";
 
 import LineUtils from "../utils/LineUtils";
-import { IAssemblerResult } from "./Assembler";
+import { IProjectInfoProvider, Provider } from "./Provider";
 
-export default class DefinitionProvider {
+export default class DefinitionProvider extends Provider {
+
+	constructor(connection:IConnection, projectInfoProvider:IProjectInfoProvider) {
+		super(connection, projectInfoProvider);
+
+		connection.onDefinition((textDocumentPosition:TextDocumentPositionParams):Location[] => {
+			return this.process(textDocumentPosition);
+		});
+	}
 
 	/**
 	 * Returns definition information
 	 */
-	public process(textDocumentPosition:TextDocumentPositionParams, sourceLines:string[], results:IAssemblerResult):Location[] {
+	public process(textDocumentPositionParams:TextDocumentPositionParams):Location[] {
 		const locations:Location[] = [];
-		const line = textDocumentPosition.position.line;
-		if (!isNaN(line) && sourceLines.length > line && results.symbols) {
+		const line = textDocumentPositionParams.position.line;
+		const sourceLines = this.getProjectInfo().getSource();
+		const results = this.getProjectInfo().getResults();
+
+		if (sourceLines && results && !isNaN(line) && sourceLines.length > line && results.symbols) {
 			// Find the char and the surrounding symbol it relates to
 			const sourceLine = LineUtils.removeComments(sourceLines[line]);
 			if (sourceLine) {
-				const character = textDocumentPosition.position.character;
+				const character = textDocumentPositionParams.position.character;
 				const token = LineUtils.getTokenAtPosition(sourceLine, character);
 				const symbol = results.symbols.find((tSymbol) => tSymbol.name === token);
-				if (token && symbol && symbol.definitionLineNumber > 0 && !symbol.definitionFilename) {
-					// TODO: only allowing current file definitions! Need to add from included files
+				console.log("[definition] has symbol  for", token, "=", Boolean(symbol), "filename =", symbol ? symbol.definitionFilename : "NULL");
+				if (token && symbol && symbol.definitionLineNumber > 0) {
 					const definitionLine = symbol.definitionLineNumber - 1;
-					const tokenRange = LineUtils.getTokenRange(sourceLines[definitionLine], token, definitionLine);
-					if (tokenRange) {
-						locations.push(Location.create(textDocumentPosition.textDocument.uri, tokenRange));
+					if (symbol.definitionFilename) {
+						// Definition is in another file
+						const otherUri:string|undefined = this.getProjectInfo().getUriForProjectFile(symbol.definitionFilename);
+						const otherSource:string[]|undefined = otherUri ? this.getProjectInfo().getSourceForProjectFile(otherUri) : undefined;
+
+						if (otherUri && otherSource) {
+							const tokenRange = LineUtils.getTokenRange(otherSource[definitionLine], token, definitionLine);
+							if (tokenRange) {
+								locations.push(Location.create(otherUri, tokenRange));
+							}
+						}
+					} else {
+						// Definition is in the same file
+						const tokenRange = LineUtils.getTokenRange(sourceLines[definitionLine], token, definitionLine);
+						if (tokenRange) {
+							locations.push(Location.create(textDocumentPositionParams.textDocument.uri, tokenRange));
+						}
 					}
 				}
 			}

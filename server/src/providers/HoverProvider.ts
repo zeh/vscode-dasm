@@ -1,5 +1,6 @@
 import {
 	Hover,
+	IConnection,
 	ResponseError,
 	TextDocumentPositionParams,
 } from "vscode-languageserver";
@@ -7,20 +8,32 @@ import {
 import LanguageDefinition from "../definitions/LanguageDefinition";
 import LineUtils from "../utils/LineUtils";
 import { IAssemblerResult } from "./Assembler";
+import { IProjectInfoProvider, Provider } from "./Provider";
 
-export default class HoverProvider {
+export default class HoverProvider extends Provider {
+
+	constructor(connection:IConnection, projectInfoProvider:IProjectInfoProvider) {
+		super(connection, projectInfoProvider);
+
+		connection.onHover((textDocumentPosition, token) => {
+			return this.process(textDocumentPosition);
+		});
+	}
 
 	/**
 	 * Returns hover information
 	 */
-	public process(textDocumentPosition:TextDocumentPositionParams, sourceLines:string[], results:IAssemblerResult):Hover|ResponseError<void> {
+	public process(textDocumentPositionParams:TextDocumentPositionParams):Hover|ResponseError<void> {
 		// Find the line this hover refers to
-		const line = textDocumentPosition.position.line;
-		if (!isNaN(line) && sourceLines.length > line) {
+		const line = textDocumentPositionParams.position.line;
+		const sourceLines = this.getProjectInfo().getSource();
+		const results = this.getProjectInfo().getResults();
+
+		if (sourceLines && results && !isNaN(line) && sourceLines.length > line) {
 			// Find the char and the surrounding symbol it relates to
 			const sourceLine = LineUtils.removeComments(sourceLines[line]);
 			if (sourceLine) {
-				const character = textDocumentPosition.position.character;
+				const character = textDocumentPositionParams.position.character;
 				const token = LineUtils.getTokenAtPosition(sourceLine, character);
 				if (token) {
 					// Will search for valid hover strings based on the target
@@ -46,7 +59,7 @@ export default class HoverProvider {
 			}
 		}
 
-		return new ResponseError<void>(0, "Cancelled");
+		return  { contents: [] };
 	}
 
 	private getInstructionHover(target:string):string[]|undefined {

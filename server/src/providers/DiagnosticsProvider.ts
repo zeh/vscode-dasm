@@ -1,22 +1,26 @@
 import {
 	Diagnostic,
 	DiagnosticSeverity,
+	IConnection,
 } from "vscode-languageserver";
 
-import { IAssemblerResult } from "./Assembler";
+import { IPostCompilationProvider, IProjectInfoProvider, Provider } from "./Provider";
 
-export default class DiagnosticsProvider {
+export default class DiagnosticsProvider extends Provider implements IPostCompilationProvider {
 
-	constructor() {
+	constructor(connection:IConnection, projectInfoProvider:IProjectInfoProvider) {
+		super(connection, projectInfoProvider);
 	}
 
 	/**
 	 * Assembles a source and returns diagnostics errors
 	 */
-	public process(sourceLines:string[], results:IAssemblerResult):Diagnostic[] {
-		let diagnostics:Diagnostic[] = [];
+	public process(uri:string):void {
+		const diagnostics:Diagnostic[] = [];
+		const sourceLines = this.getProjectInfo().getSource();
+		const results = this.getProjectInfo().getResults();
 
-		if (results.list && results.list.length > 0) {
+		if (sourceLines && results && results.list && results.list.length > 0) {
 			results.list.forEach((line) => {
 				if (line.errorMessage) {
 					const lineIndex = line.number - 1;
@@ -34,7 +38,7 @@ export default class DiagnosticsProvider {
 			});
 		}
 
-		return diagnostics;
+		this.getConnection().sendDiagnostics({ uri, diagnostics });
 	}
 
 	private findRangeForError(line:string, errorMessage:string):{ start:number, end:number } {
