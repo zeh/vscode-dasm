@@ -1,15 +1,7 @@
 import {
-	CompletionItem,
-	CompletionItemKind,
-	createConnection,
-	Diagnostic,
 	IConnection,
 	InitializeResult,
-	IPCMessageReader,
-	IPCMessageWriter,
-	Location,
 	TextDocument,
-	TextDocumentPositionParams,
 	TextDocuments,
 } from "vscode-languageserver";
 
@@ -156,7 +148,6 @@ export default class ProjectManager {
 				// A new project altogether, set it as default
 				console.log("[pm] ...ALSO SETTING new project");
 				this._currentProject = project;
-				this._currentProject.markFileOpened(document);
 			}
 
 			this._currentDocumentUri = document.uri;
@@ -178,7 +169,6 @@ export default class ProjectManager {
 		this.setCurrentDocument(document);
 
 		if (this._currentProject) {
-			this._currentProject.updateFile(document);
 			this._currentProject.markFileSaved(document);
 			this.updatePostProviders();
 		}
@@ -192,6 +182,7 @@ export default class ProjectManager {
 			this._currentProject.updateFile(document);
 			this._currentProject.markFileClosed(document);
 		}
+		// TODO: close project if all files are closed
 
 		this.unsetCurrentDocument();
 	}
@@ -215,7 +206,7 @@ export default class ProjectManager {
 
 	private getSourceForProjectFile(uri:string):string[]|undefined {
 		if (this._currentProject && uri) {
-			const file = this._currentProject.getFileInfo(uri)
+			const file = this._currentProject.getFileInfo(uri);
 			return file ? file.contentsLines : undefined;
 		}
 	}
@@ -226,9 +217,9 @@ export default class ProjectManager {
 		}
 	}
 
-	private getUriForProjectFile(localUri:string):string|undefined {
+	private getUriForProjectFile(parentRelativeUri:string) {
 		if (this._currentProject) {
-			const file = this._currentProject.getFileInfoLocalUri(localUri)
+			const file = this._currentProject.getFileInfoLocalUri(parentRelativeUri);
 			return file ? file.uri : undefined;
 		}
 	}

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "dasm": "^4.1.0",
+    "simplesignal": "^2.1.6",
     "vscode-languageserver": "^3.0.3"
   },
   "devDependencies": {
