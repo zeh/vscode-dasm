@@ -6,6 +6,7 @@ import {
 } from "vscode-languageserver";
 
 import { IAssemblerResult } from "../providers/Assembler";
+import CompletionProvider from "../providers/CompletionProvider";
 import DefinitionProvider from "../providers/DefinitionProvider";
 import DiagnosticsProvider from "../providers/DiagnosticsProvider";
 import HoverProvider from "../providers/HoverProvider";
@@ -26,6 +27,7 @@ export default class ProjectManager {
 	private _hoverProvider:HoverProvider;
 	private _definitionProvider:DefinitionProvider;
 	private _settingsProvider:SettingsProvider;
+	private _completionProvider:CompletionProvider;
 
 	constructor(connection:IConnection) {
 		this._connection = connection;
@@ -51,9 +53,10 @@ export default class ProjectManager {
 					hoverProvider: true,
 
 					// Code complete
-					//completionProvider: {
-						//resolveProvider: true,
-					//},
+					completionProvider: {
+						resolveProvider: true,
+						triggerCharacters: [ "." ],
+					},
 
 					// Go to definition
 					definitionProvider: true,
@@ -95,6 +98,7 @@ export default class ProjectManager {
 		this._hoverProvider = new HoverProvider(this._connection, projectInfoProvider);
 		this._definitionProvider = new DefinitionProvider(this._connection, projectInfoProvider);
 		this._settingsProvider = new SettingsProvider(this._connection, projectInfoProvider);
+		this._completionProvider = new CompletionProvider(this._connection, projectInfoProvider);
 	}
 
 	public start() {

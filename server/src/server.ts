@@ -3,18 +3,10 @@
 // https://code.visualstudio.com/docs/extensions/language-support#_programmatic-language-support
 
 import {
-	CompletionItem,
-	CompletionItemKind,
 	createConnection,
-	Diagnostic,
 	IConnection,
-	InitializeResult,
 	IPCMessageReader,
 	IPCMessageWriter,
-	Location,
-	TextDocument,
-	TextDocumentPositionParams,
-	TextDocuments,
 } from "vscode-languageserver";
 
 import ProjectManager from "./project/ProjectManager";
@@ -32,32 +24,6 @@ connection.onDidChangeWatchedFiles((change) => {
 	console.log("We received an file change event");
 	connection.console.log("We received an file change event");
 });
-*/
-
-/*
-function assembleDocument(textDocument:TextDocument):void {
-	console.log("[server] Assembling");
-
-
-	// Provide diagnostics
-	const diagnostics:Diagnostic[] = diagnosticsProvider.process(currentSourceLines, currentResults);
-
-	// Send the computed diagnostics to VSCode
-	connection.sendDiagnostics({ uri:textDocument.uri, diagnostics });
-}
-
-
-// This handler resolve additional information for the item selected in
-// the completion list.
-connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
-	if (item.data === 1) {
-		item.detail = "Processor type";
-		item.documentation = "Selects the processor type for the assembly";
-	}
-	return item;
-});
-
-
 */
 
 /*
