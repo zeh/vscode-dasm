@@ -16,6 +16,7 @@ import {
 import * as fs from "fs";
 import * as path from "path";
 
+import PathUtils from "../utils/PathUtils";
 import StringUtils from "../utils/StringUtils";
 import { Extensions } from "./../definitions/LanguageDefinition";
 import { Assembler, IAssemblerResult } from "./../providers/Assembler";
@@ -117,7 +118,7 @@ export default class Project {
 		const fileInfo = this._files[uri];
 		if (fileInfo) {
 			// Needs update
-			fileInfo.contents = fs.readFileSync(this.uriToPlatformPath(uri), {encoding: "utf8"});
+			fileInfo.contents = fs.readFileSync(PathUtils.uriToPlatformPath(uri), {encoding: "utf8"});
 			fileInfo.contentsLines = StringUtils.splitIntoLines(fileInfo.contents);
 			fileInfo.version = -1;
 			fileInfo.isDirty = false;
@@ -212,24 +213,14 @@ export default class Project {
 		// TODO: check if file exists first, before adding
 		// TODO: remove files when their include line is removed
 		// TODO: use a real graph for dependencies
-		const baseFolder = this.uriToPlatformPath(path.dirname(file.uri));
+		const baseFolder = PathUtils.uriToPlatformPath(path.dirname(file.uri));
 		file.includes.forEach((filename) => {
-			const uri = this.platformPathToUri(path.join(baseFolder, filename));
+			const uri = PathUtils.platformPathToUri(path.join(baseFolder, filename));
 			if (!this.hasFile(uri)) {
 				this.addFileByUri(uri, filename);
 				this.updateFileFromFileSystem(uri);
 			}
 		});
-	}
-
-	private platformPathToUri(path:string):string {
-		// D:\blaba\a.x to file://blaba/a.x
-		return "file:///" + path.replace(/\\/g, "/");
-	}
-
-	private uriToPlatformPath(uri:string):string {
-		// file://blaba/a.x to d:\blaba\a.x
-		return uri.replace(/file:[\/\\]+/g, "").replace("%3A", ":")
 	}
 
 	private assemble() {
