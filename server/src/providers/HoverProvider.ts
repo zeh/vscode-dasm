@@ -15,7 +15,7 @@ export default class HoverProvider extends Provider {
 	constructor(connection:IConnection, projectInfoProvider:IProjectInfoProvider) {
 		super(connection, projectInfoProvider);
 
-		connection.onHover((textDocumentPosition, token) => {
+		connection.onHover((textDocumentPosition) => {
 			return this.process(textDocumentPosition);
 		});
 	}
@@ -64,7 +64,7 @@ export default class HoverProvider extends Provider {
 
 	private getInstructionHover(target:string):string[]|undefined {
 		const instructionMatch = LanguageDefinition.Instructions.find((instruction) => {
-			return instruction.name.toLowerCase() === target.toLowerCase()
+			return instruction.name.toLowerCase() === target.toLowerCase();
 		});
 		if (instructionMatch) {
 			return [
