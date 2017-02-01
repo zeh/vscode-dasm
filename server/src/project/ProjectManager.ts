@@ -17,6 +17,7 @@ import { IAssemblerResult } from "../providers/Assembler";
 import DefinitionProvider from "../providers/DefinitionProvider";
 import DiagnosticsProvider from "../providers/DiagnosticsProvider";
 import HoverProvider from "../providers/HoverProvider";
+import SettingsProvider from "../providers/SettingsProvider";
 import Project from "./Project";
 
 export default class ProjectManager {
@@ -31,6 +32,7 @@ export default class ProjectManager {
 	private _diagnosticsProvider:DiagnosticsProvider;
 	private _hoverProvider:HoverProvider;
 	private _definitionProvider:DefinitionProvider;
+	private _settingsProvider:SettingsProvider;
 
 	constructor(connection:IConnection) {
 		this._connection = connection;
@@ -98,6 +100,7 @@ export default class ProjectManager {
 		this._diagnosticsProvider = new DiagnosticsProvider(this._connection, projectInfoProvider);
 		this._hoverProvider = new HoverProvider(this._connection, projectInfoProvider);
 		this._definitionProvider = new DefinitionProvider(this._connection, projectInfoProvider);
+		this._settingsProvider = new SettingsProvider(this._connection, projectInfoProvider);
 	}
 
 	public start() {

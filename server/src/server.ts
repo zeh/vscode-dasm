@@ -25,30 +25,16 @@ const projectManager = new ProjectManager(connection);
 projectManager.start();
 
 // Create all needed provider instances
-interface ISettings {
-	["vscode-dasm"]:IExtensionSettings;
-}
 
-interface IExtensionSettings {
-	preferUppercase:string[];
-}
+/* Never fired?
+connection.onDidChangeWatchedFiles((change) => {
+	// Monitored files have change in VSCode
+	console.log("We received an file change event");
+	connection.console.log("We received an file change event");
+});
+*/
 
 /*
-// Hold settings
-let preferUppercase:string[];
-
-// The settings have changed. Is send on server activation
-// as well.
-connection.onDidChangeConfiguration((change) => {
-	let settings = <ISettings>change.settings;
-	preferUppercase = settings["vscode-dasm"].preferUppercase;
-
-	console.log("[server] Uppercase preference is ", preferUppercase);
-
-	// Revalidate any open text documents
-	documents.all().forEach(assembleDocument);
-});
-
 function assembleDocument(textDocument:TextDocument):void {
 	console.log("[server] Assembling");
 
@@ -61,20 +47,6 @@ function assembleDocument(textDocument:TextDocument):void {
 }
 
 
-// This handler provides the initial list of the completion items.
-connection.onCompletion((textDocumentPosition:TextDocumentPositionParams): CompletionItem[] => {
-	// The pass parameter contains the position of the text document in
-	// which code complete got requested. For the example we ignore this
-	// info and always provide the same completion items.
-	return [
-		{
-			label: "processor",
-			kind: CompletionItemKind.Text,
-			data: 1,
-		}
-	]
-});
-
 // This handler resolve additional information for the item selected in
 // the completion list.
 connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
@@ -85,10 +57,6 @@ connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
 	return item;
 });
 
-connection.onDidChangeWatchedFiles((change) => {
-	// Monitored files have change in VSCode
-	connection.console.log('We received an file change event');
-});
 
 */
 
