@@ -2,7 +2,8 @@
 
 export interface IParameter {
 	name: string;
-	type: "string" | "value" | "enum";
+	type: "string" | "value" | "enum" | "label";
+	values?: string[];
 }
 
 export interface IInstruction {
@@ -18,7 +19,7 @@ export interface IPseudoOps {
 	canHaveLabel: boolean;
 	description: string;
 	parameters: IParameter[];
-		relatedTo: string[];
+	relatedTo: string[];
 }
 
 export interface ILanguageDefinition {
@@ -385,7 +386,13 @@ export const PseudoOps:IPseudoOps[] = [
 		otherNames: [],
 		canHaveLabel: false,
 		description: "Processor model. Determines byte order and integer formats.",
-		parameters: [],
+		parameters: [
+			{
+				name: "type",
+				type: "enum",
+				values: [ "6502", "6803", "HD6303", "68705", "68HC11", "F8" ],
+			},
+		],
 		relatedTo: [],
 	}, {
 		name: "SEG",
@@ -406,7 +413,12 @@ export const PseudoOps:IPseudoOps[] = [
 		otherNames: [],
 		canHaveLabel: false,
 		description: "Include another assembly file.",
-		parameters: [],
+		parameters: [
+			{
+				name: "filename",
+				type: "string",
+			},
+		],
 		relatedTo: [],
 	}, {
 		name: "INCBIN",
