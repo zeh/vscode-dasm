@@ -13,18 +13,19 @@ export interface IInstruction {
 	parameters: IParameter[];
 }
 
-export interface IPseudoOps {
+export interface IPseudoOp {
 	name: string;
 	otherNames: string[];
 	canHaveLabel: boolean;
 	description: string;
+	documentation: string[];
 	parameters: IParameter[];
 	relatedTo: string[];
 }
 
 export interface ILanguageDefinition {
 	Instructions: IInstruction[];
-	PseudoOps: IPseudoOps[];
+	PseudoOps: IPseudoOp[];
 	Extensions: {[key: string]:string[]};
 }
 
@@ -380,12 +381,16 @@ export const Instructions:IInstruction[] = [
 	},
 ];
 
-export const PseudoOps:IPseudoOps[] = [
+export const PseudoOps:IPseudoOp[] = [
 	{
 		name: "PROCESSOR",
 		otherNames: [],
 		canHaveLabel: false,
-		description: "Processor model. Determines byte order and integer formats.",
+		description: "Sets the processor model",
+		documentation: [
+			"Determines byte order and integer formats for the assembled data.",
+			"Can only be executed once, and should be the first thing encountered by the assembler.",
+		],
 		parameters: [
 			{
 				name: "type",
@@ -398,21 +403,30 @@ export const PseudoOps:IPseudoOps[] = [
 		name: "SEG",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Creates or sets the current segment.",
+		description: "Creates or sets the current segment",
+		documentation: [
+			"Sets the current segment, creating it if neccessary."
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "SEG.U",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Creates or sets the current segment, uninitialized.",
+		description: "Creates or sets the current segment",
+		documentation: [
+			"Sets the current segment, creating it (in uninitialized form) if neccessary."
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "INCLUDE",
 		otherNames: [],
 		canHaveLabel: false,
-		description: "Include another assembly file.",
+		description: "Includes a file",
+		documentation: [
+			"Include another assembly file at this location."
+		],
 		parameters: [
 			{
 				name: "filename",
@@ -424,133 +438,201 @@ export const PseudoOps:IPseudoOps[] = [
 		name: "INCBIN",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Include another file literally in the output.",
-		parameters: [],
+		description: "Includes a file literally",
+		documentation: [
+			"Include another file literally in the output."
+		],
+		parameters: [
+			{
+				name: "filename",
+				type: "string",
+			},
+		],
 		relatedTo: [],
 	}, {
 		name: "INCDIR",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Add the given directory name to the list of places where",
-		parameters: [],
+		description: "Add a dir to the list of include folders",
+		documentation: [
+			"Add the given directory name to the list of places where INCLUDE and INCBIN search their files.",
+			"First, the names are tried relative to the current directory, if that fails and the name is not an absolute pathname, the list is tried.",
+		],
+		parameters: [
+			{
+				name: "directory",
+				type: "string",
+			},
+		],
 		relatedTo: [],
 	}, {
-		name: "DC.B",
-		otherNames: ["BYTE"],
+		name: "DC",
+		otherNames: ["DC.B", "BYTE"],
 		canHaveLabel: true,
-		description: "Declare data in the current segment.",
+		description: "Declare data (byte)",
+		documentation: [
+			"Declare data in the current segment. No output is generated if within a .U segment.",
+			"Note that the byte ordering for the selected processor is used for each entry.",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "DC.W",
 		otherNames: ["WORD"],
 		canHaveLabel: true,
-		description: "Declare data in the current segment.",
+		description: "Declare data (word)",
+		documentation: [
+			"Declare data in the current segment. No output is generated if within a .U segment.",
+			"Note that the byte ordering for the selected processor is used for each entry.",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "DC.L",
 		otherNames: ["LONG"],
 		canHaveLabel: true,
-		description: "Declare data in the current segment.",
+		description: "Declare data (long)",
+		documentation: [
+			"Declare data in the current segment. No output is generated if within a .U segment.",
+			"Note that the byte ordering for the selected processor is used for each entry.",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
-		name: "DS.B",
-		otherNames: [],
+		name: "DS",
+		otherNames: ["DS.B"],
 		canHaveLabel: true,
-		description: "Declare space (default filler is 0).",
+		description: "Declare space (byte)",
+		documentation: [
+			"Declare space. Data is not generated if within an uninitialized segment.",
+			"Note that the number of bytes generated is exp * entrysize (1, 2, or 4)",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "DS.W",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Declare space (default filler is 0).",
+		description: "Declare space (word)",
+		documentation: [
+			"Declare space. Data is not generated if within an uninitialized segment.",
+			"Note that the number of bytes generated is exp * entrysize (1, 2, or 4)",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "DS.L",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Declare space (default filler is 0).",
+		description: "Declare space (long)",
+		documentation: [
+			"Declare space. Data is not generated if within an uninitialized segment.",
+			"Note that the number of bytes generated is exp * entrysize (1, 2, or 4)",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
-		name: "DV.B",
-		otherNames: [],
+		name: "DV",
+		otherNames: ["DV.B"],
 		canHaveLabel: true,
-		description: "This is equivalent to DC, but each exp in the list is passed through the symbolic expression specified by the EQM label.",
+		description: "Declare data (byte) with assignment",
+		documentation: [
+			"Declare data in the current segment.",
+			"This is equivalent to DC, but each exp in the list is passed through the symbolic expression specified by the EQM label.",
+			"The expression is held in a special symbol dotdot '..' on each call to the EQM label.",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "DV.W",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "This is equivalent to DC, but each exp in the list is passed through the symbolic expression specified by the EQM label.",
+		description: "Declare data (word) with assignment",
+		documentation: [
+			"Declare data in the current segment.",
+			"This is equivalent to DC, but each exp in the list is passed through the symbolic expression specified by the EQM label.",
+			"The expression is held in a special symbol dotdot '..' on each call to the EQM label.",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "DV.L",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "This is equivalent to DC, but each exp in the list is passed through the symbolic expression specified by the EQM label.",
+		description: "Declare data (long) with assignment",
+		documentation: [
+			"Declare data in the current segment.",
+			"This is equivalent to DC, but each exp in the list is passed through the symbolic expression specified by the EQM label.",
+			"The expression is held in a special symbol dotdot '..' on each call to the EQM label.",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "HEX",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "This sets down raw HEX data.",
+		description: "Sets down raw HEX data",
+		documentation: [],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "ERR",
 		otherNames: [],
 		canHaveLabel: false,
-		description: "Abord assembly.",
+		description: "Abort assembly",
+		documentation: [],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "ORG",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Sets the current origin.",
+		description: "Sets the current origin",
+		documentation: [],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "RORG",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "This activates the relocatable origin.",
+		description: "Activates the relocatable origin",
+		documentation: [],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "ECHO",
 		otherNames: [],
 		canHaveLabel: false,
-		description: "The expressions (which may also be strings), are echoed on the screen and into the list file.",
+		description: "Writes expressions",
+		documentation: [
+			"The expressions (which may also be strings), are echoed on the screen and into the list file.",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "REND",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Deactivate the relocatable origin for the current segment.",
+		description: "Deactivate the relocatable origin for the current segment",
+		documentation: [],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "ALIGN",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Align the current PC to an N byte boundry.",
+		description: "Align the current PC to an N byte boundry",
+		documentation: [],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "SUBROUTINE",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "This isn't really a subroutine, but a boundry between sets of temporary labels (which begin with a dot).",
+		description: "Creates sets of temporary labels",
+		documentation: [
+			"This isn't really a subroutine, but a boundary between sets of temporary labels (which begin with a dot).",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
@@ -587,70 +669,90 @@ export const PseudoOps:IPseudoOps[] = [
 		name: "MAC",
 		otherNames: [],
 		canHaveLabel: false,
-		description: "Declare a macro.  lines between MAC and ENDM are the macro.",
+		description: "Declares a macro",
+		documentation: [],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "ENDM",
 		otherNames: [],
 		canHaveLabel: false,
-		description: "End of macro def.",
+		description: "End of macro definition",
+		documentation: [],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "MEXIT",
 		otherNames: [],
 		canHaveLabel: false,
-		description: "Used in conjuction with conditionals. Exits the current macro level.",
+		description: "Conditionally exits the current macro level with ",
+		documentation: [],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "IFCONST",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Is TRUE if the expression result is defined.",
+		description: "TRUE when the expression result is defined",
+		documentation: [],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "IFNCONST",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Is TRUE if the expression result is undefined.",
+		description: "TRUE when the expression result is undefined",
+		documentation: [],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "IF",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Is TRUE if the expression result is defined AND non-zero. Is FALSE if the expression result is defined AND zero.",
+		description: "Conditional expression",
+		documentation: [
+			"TRUE if the expression result is defined AND non-zero. Is FALSE if the expression result is defined AND zero.",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "ELSE",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "ELSE the current IF.",
+		description: "Conditional expression",
+		documentation: [
+			"ELSE the current IF.",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "ENDIF",
 		otherNames: ["EIF"],
 		canHaveLabel: true,
-		description: "Terminate an IF. ENDIF and EIF are equivalent.",
+		description: "Conditional expression",
+		documentation: [
+			"Terminates an IF. ENDIF and EIF are equivalent.",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "REPEAT",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Repeat code between REPEAT/REPEND 'exp' times.",
+		description: "Looping",
+		documentation: [
+			"Repeat code between REPEAT/REPEND 'exp' times",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
 		name: "REPEND",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Repeat code between REPEAT/REPEND 'exp' times.",
+		description: "Looping",
+		documentation: [
+			"Repeat code between REPEAT/REPEND 'exp' times",
+		],
 		parameters: [],
 		relatedTo: [],
 	}, {
@@ -666,7 +768,10 @@ export const PseudoOps:IPseudoOps[] = [
 		name: "LIST",
 		otherNames: [],
 		canHaveLabel: true,
-		description: "Globally turns listing on or off, starting with the current line.",
+		description: "List control",
+		documentation: [
+			"Globally turns listing on or off, starting with the current line."
+		],
 		parameters: [],
 		relatedTo: [],
 	},
