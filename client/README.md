@@ -36,55 +36,7 @@ So far, the following features are supported:
 
 ## TODO
 
-The current task list, more or less in order of priority, is:
-
-* Manage multi-file projects
-  * Resolve the include files problem
-  * debounce include checking (ie one per second max)
-  * debounce compilation (eg wait until 200ms or so have passed)
-  * add definition link to included files, so they can be opened directly
-    * Navigate to include files too when ctrl+clicking filename
-  * Support INCDIR
-  * Support INCBIN
-* Auto completion
-  * Add all registers
-  * Add labels
-  * Parameter hints https://code.visualstudio.com/docs/editor/editingevolved#_parameter-hints
-* Respect preferences
-  * Prefer uppercase/lowercase for pseudo-ops
-* Add extension settings keys
-  * Tabbing/spacing preferences?
-* Language definition
-  * Add parameters to instructions and pseudo-ops descriptions
-  * Add register list
-  * Better descriptions for pseudo-ops
-* More syntax highlight: symbol, labels
-  * Differentiate between values (#$99) and addresses ($99)
-* More hover support
-  * Show line where the hover is defined
-  * Show comments from the same line (or before)
-  * Show whether it's referenced or not (or use as warnings?)
-  * Don't show when hovering the same line as it's defined
-  * Identify values - e.g.  #$99 is value $99, $3E32 is memory location
-  * Add more complex pseudo-ops descriptions
-  * Use parameters for pseudo-ops in the description
-* More navigation to definition support
-  * Clean up provider file
-* Find usages
-* Support incremental document sync
-* Auto-format
-  * Linting? "dasmlint"
-  * Format-as-you-type
-* Source code snippets
-* Smart bracket matching
-* Play compiled game on new tab
-  * Use [6502.ts](https://github.com/6502ts/6502.ts) instead of Javatari?
-* Debugger support
-  * Play/pause
-  * Step in/out/etc
-  * Hot reload (continue on same address)
-  * Register/address monitoring
-
+For more information on what's left to be done for this extension, please check [the roadmap](/client/ROADMAP.md).
 <!--
 * Visual chip debug easter egg? http://atariage.com/forums/topic/227569-5-hz-6502/
 -->
