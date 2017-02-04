@@ -10,6 +10,7 @@ import DefinitionProvider from "../providers/DefinitionProvider";
 import DiagnosticsProvider from "../providers/DiagnosticsProvider";
 import HoverProvider from "../providers/HoverProvider";
 import SettingsProvider from "../providers/SettingsProvider";
+import { ISettings } from "../providers/SettingsProvider";
 import Project from "./Project";
 
 export default class ProjectManager {
@@ -87,6 +88,7 @@ export default class ProjectManager {
 			getResults: this.getCurrentResults.bind(this),
 			getUriForProjectFile: this.getUriForProjectFile.bind(this),
 			getSourceForProjectFile: this.getSourceForProjectFile.bind(this),
+			getSettings: this.getSettings.bind(this),
 		};
 
 		this._diagnosticsProvider = new DiagnosticsProvider(this._connection, projectInfoProvider);
@@ -237,5 +239,9 @@ export default class ProjectManager {
 			this._projects.push(newProject);
 		}
 		return newProject;
+	}
+
+	private getSettings():ISettings {
+		return this._settingsProvider.getCurrent();
 	}
 }

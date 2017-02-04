@@ -9,11 +9,11 @@ interface IGlobalSettings {
 	["vscode-dasm"]:ISettings;
 }
 
-interface ISettings {
+export interface ISettings {
 	preferUppercase:UppercaseTypes[];
 }
 
-export type UppercaseTypes = "instructions"|"symbols"|"registers"|"pseudoops"|"all";
+export type UppercaseTypes = "instructions"|"pseudoops"|"registers"|"all";
 
 export default class SettingsProvider extends Provider {
 
@@ -28,14 +28,14 @@ export default class SettingsProvider extends Provider {
 		});
 	}
 
+	public getCurrent():ISettings {
+		return this._current;
+	}
+
 	private process(newSettings:ISettings) {
 		this._current = newSettings;
 		console.log("[settings] CHANGED:", this._current);
 		// TODO: Revalidate any open text documents
 		// documents.all().forEach(assembleDocument);
-	}
-
-	public getCurrent():ISettings {
-		return this._current;
 	}
 }

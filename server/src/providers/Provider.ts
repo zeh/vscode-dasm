@@ -1,6 +1,7 @@
 import { IConnection } from "vscode-languageserver";
 
 import { IAssemblerResult } from "./Assembler";
+import { ISettings } from "./SettingsProvider";
 
 export interface IPostCompilationProvider {
 	process(uri:string, sourceLines:string[], results:IAssemblerResult):void;
@@ -14,6 +15,7 @@ export interface IProjectInfoProvider {
 	getResults:() => IAssemblerResult|undefined;
 	getUriForProjectFile:(localUri:string) => string|undefined;
 	getSourceForProjectFile:(uri:string) => string[]|undefined;
+	getSettings:() => ISettings;
 }
 
 export class Provider {
