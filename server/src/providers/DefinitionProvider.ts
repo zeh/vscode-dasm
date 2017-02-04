@@ -33,7 +33,6 @@ export default class DefinitionProvider extends Provider {
 				const character = textDocumentPositionParams.position.character;
 				const token = LineUtils.getTokenAtPosition(sourceLine, character);
 				const symbol = results.symbols.find((tSymbol) => tSymbol.name === token);
-				console.log("[definition] has symbol  for", token, "=", Boolean(symbol), "filename =", symbol ? symbol.definitionFilename : "NULL");
 				if (token && symbol && symbol.definitionLineNumber > 0) {
 					const definitionLine = symbol.definitionLineNumber - 1;
 					if (symbol.definitionFilename) {
