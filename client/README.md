@@ -112,7 +112,7 @@ Bug reports, fixes, and other changes are welcomed. Our repository is [on GitHub
 
 ## Acknowledgements
 
-This extension uses the original [dasm macro assembler](http://dasm-dillon.sourceforge.net/) via [dasmjs](https://github.com/zeh/dasmjs), an [emscripten](https://github.com/kripken/emscripten)-compiled version of the original C code. This is ran on the background, as a language server tracked as [a separate repository](https://github.com/zeh/vscode-dasm-server).
+This extension uses the original [dasm macro assembler](http://dasm-dillon.sourceforge.net/) via [dasmjs](https://github.com/zeh/dasmjs), an [emscripten](https://github.com/kripken/emscripten)-compiled version of the original C code. This is ran on the background, as a language server tracked as [a separate part of this repository](/server/README.md).
 
 It also uses [Javatari](https://github.com/ppeccin/javatari.js) to preview Atari-compatible ROMs.
 
