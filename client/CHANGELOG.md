@@ -2,12 +2,24 @@
 
 All notable changes to the vscode-dasm extension are listed here. For a more complete list, check the [release list in the GitHub repository](https://github.com/zeh/vscode-dasm/releases).
 
+## [Unreleased]
+
+### Added
+
+* Hover shows definitions for 6502 registers ("PC", "AC", etc)
+* Auto-completion for 6502 registers
+* Source update events (for live compilation, file reference checking, etc) is delayed by 250ms to reduce disk usage and energy consumption
+
+### Housekeeping
+
+* Updated all dependencies (including TypeScript, Language client, Language server) to latest versions
+
 ## 2.0.1 - 2017-02-04
 
 ### Added
 
 * Multi-file support: `include` files (e.g. "vcs.h") are properly added to the compilation bundle
-* Navigate/peek definitions now support included files
+* Navigate/peek definitions now supports included files
 * Auto-completion for instructions, pseudo-ops, symbols, and labels
 
 ## 1.3.0 - 2017-01-24
