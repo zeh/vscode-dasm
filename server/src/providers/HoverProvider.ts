@@ -49,6 +49,9 @@ export default class HoverProvider extends Provider {
 					// Check if the target is a symbol or label
 					if (!contents) contents = this.getSymbolOrLabelHover(results, token);
 
+					// Check if the target is a register
+					if (!contents) contents = this.getRegisterHover(token);
+
 					if (contents) {
 						return {
 							contents,
@@ -103,6 +106,19 @@ export default class HoverProvider extends Provider {
 					];
 				}
 			}
+		}
+	}
+
+	private getRegisterHover(target:string):string[]|undefined {
+		const registerMatch = LanguageDefinition.Registers.find((register) => {
+			return register.name.toLowerCase() === target.toLowerCase();
+		});
+		if (registerMatch) {
+			return [
+				`\`${registerMatch.name}\` (register)`,
+				registerMatch.description,
+				...registerMatch.documentation,
+			];
 		}
 	}
 
