@@ -27,6 +27,15 @@ export interface ILanguageDefinition {
 	Instructions: IInstruction[];
 	PseudoOps: IPseudoOp[];
 	Extensions: {[key: string]:string[]};
+	Registers: IRegister[];
+}
+
+export interface IRegister {
+	name: string;
+	address: string;
+	description: string;
+	documentation: string[];
+	bits: number;
 }
 
 // Collections
@@ -777,12 +786,70 @@ export const PseudoOps:IPseudoOp[] = [
 	},
 ];
 
+// Reference: http://www.classic-games.com/atari2600/specs.html
+export const Registers:IRegister[] = [
+	{
+		name: "PC",
+		address: "",
+		description: "Program Counter",
+		documentation: [""],
+		bits: 16,
+	},
+	{
+		name: "AC",
+		address: "",
+		description: "Accumulator",
+		documentation: [""],
+		bits: 8,
+	},
+	{
+		name: "X",
+		address: "",
+		description: "X Index",
+		documentation: [""],
+		bits: 8,
+	},
+	{
+		name: "Y",
+		address: "",
+		description: "Y Index",
+		documentation: [""],
+		bits: 8,
+	},
+	{
+		name: "SR",
+		address: "",
+		description: "Processor Status flags in NV-BDIZC format",
+		documentation: [""],
+		/*
+		SR Flags (bit 7 to bit 0):
+		N - Negative
+		V - Overflow
+		- - ignored
+		B - Break
+		D - Decimal (use BCD for arithmetics)
+		I - Interrupt (IRQ disable)
+		Z - Zero
+		C - Carry
+		*/
+		bits: 8,
+	},
+	{
+		name: "SP",
+		address: "",
+		description: "Stack Pointer",
+		documentation: [""],
+		bits: 8,
+	},
+];
+
 // Final export
 
 export const LanguageDefinition:ILanguageDefinition = {
 	Instructions,
 	PseudoOps,
 	Extensions,
+	Registers,
 };
 
 export default LanguageDefinition;
