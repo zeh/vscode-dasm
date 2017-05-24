@@ -2,9 +2,8 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"noImplicitAny": true,
-		"noUnusedParameters": true,
 		"noUnusedLocals": true,
-		"strictNullChecks": true,
+		"strict": true,
 		"target": "es6",
 		"outDir": "../client/out/server",
 		"moduleResolution": "node",
