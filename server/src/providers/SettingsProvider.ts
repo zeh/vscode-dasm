@@ -23,8 +23,8 @@ export default class SettingsProvider extends Provider {
 		super(connection, projectInfoProvider);
 
 		connection.onDidChangeConfiguration((changeConfigurationParams:DidChangeConfigurationParams) => {
-			const settings = <IGlobalSettings>changeConfigurationParams.settings;
-			this.process(<ISettings>settings["vscode-dasm"]);
+			const settings = changeConfigurationParams.settings as IGlobalSettings;
+			this.process(settings["vscode-dasm"] as ISettings);
 		});
 	}
 

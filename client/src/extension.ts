@@ -34,19 +34,19 @@ export function activate(context:ExtensionContext) {
 	// Only executed the first time an activationEvent command is triggered
 
 	// The server is implemented in node
-	let serverModule = context.asAbsolutePath(path.join("out", "server", "server.js"));
+	const serverModule = context.asAbsolutePath(path.join("out", "server", "server.js"));
 	// The debug options for the server
-	let debugOptions = { execArgv: ["--nolazy", "--debug=6004"] };
+	const debugOptions = { execArgv: ["--nolazy", "--debug=6004"] };
 
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
-	let serverOptions: ServerOptions = {
+	const serverOptions: ServerOptions = {
 		run : { module: serverModule, transport: TransportKind.ipc },
 		debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions },
 	};
 
 	// Options to control the language client
-	let clientOptions: LanguageClientOptions = {
+	const clientOptions: LanguageClientOptions = {
 		// Register the server for plain text documents
 		documentSelector: ["dasm"],
 		synchronize: {
@@ -54,11 +54,12 @@ export function activate(context:ExtensionContext) {
 			configurationSection: "vscode-dasm",
 			// Notify the server about file changes to '.clientrc files contain in the workspace
 			fileEvents: workspace.createFileSystemWatcher("**/.clientrc"),
-		}
-	}
+		},
+	};
 
 	// Create the language client and start the client.
-	let disposableLanguageClient = new LanguageClient("vscode-dasm", "Language Server for VSCode-dasm", serverOptions, clientOptions).start();
+	const languageClient = new LanguageClient("vscode-dasm", "Language Server for VSCode-dasm", serverOptions, clientOptions);
+	const disposableLanguageClient = languageClient.start();
 	context.subscriptions.push(disposableLanguageClient);
 
 	// Create a content provider for the preview tab
@@ -69,7 +70,7 @@ export function activate(context:ExtensionContext) {
 	// We need to add all objects to the list of subscriptions
 	// Once the extension is deactivated, the references cease to exist
 	// And they are garbage-collected
-	let disposableCommand = commands.registerCommand("vscode-dasm.openToTheSide", () => {
+	const disposableCommand = commands.registerCommand("vscode-dasm.openToTheSide", () => {
 		openToTheSide(context);
 	});
 	context.subscriptions.push(disposableCommand);
@@ -119,7 +120,7 @@ function compileGame(context:ExtensionContext) {
 }
 
 function createPreviewTab(context:ExtensionContext) {
-	let path = Uri.parse("javatari-preview://preview/filename");
+	const path = Uri.parse("javatari-preview://preview/filename");
 	return commands.executeCommand("vscode.previewHtml", path, ViewColumn.Three);
 }
 

@@ -87,7 +87,7 @@ export default class HoverProvider extends Provider {
 
 	private getSymbolOrLabelHover(results:IAssemblerResult, target:string):string[]|undefined {
 		if (results.symbols) {
-			let symbolOrLabel = results.symbols.find((symbol) => symbol.name === target);
+			const symbolOrLabel = results.symbols.find((symbol) => symbol.name === target);
 			if (symbolOrLabel) {
 				if (symbolOrLabel.isConstant) {
 					// Symbol

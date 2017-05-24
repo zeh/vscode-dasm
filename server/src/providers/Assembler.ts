@@ -31,7 +31,7 @@ export interface IAssemblerResult {
 	symbolsRaw: string | undefined;
 	exitStatus: number;
 	success: boolean;
-};
+}
 
 export class Assembler {
 

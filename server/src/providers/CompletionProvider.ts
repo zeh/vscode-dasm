@@ -19,7 +19,7 @@ enum LanguageCompletionTypes {
 
 interface ICompletionData {
 	type: LanguageCompletionTypes;
-	payload: Object;
+	payload: any;
 }
 
 export default class CompletionProvider extends Provider {
@@ -51,16 +51,16 @@ export default class CompletionProvider extends Provider {
 		const allUppercase = settings.preferUppercase.indexOf("all") >= 0;
 		const instructionUppercase = allUppercase || settings.preferUppercase.indexOf("instructions") >= 0;
 		const pseudoOpsUppercase = allUppercase || settings.preferUppercase.indexOf("pseudoops") >= 0;
-		//const registersUppercase = allUppercase || settings.preferUppercase.indexOf("registers") >= 0;
+		// const registersUppercase = allUppercase || settings.preferUppercase.indexOf("registers") >= 0;
 
 		// Instructions
-		for (let instruction of LanguageDefinition.Instructions) {
+		for (const instruction of LanguageDefinition.Instructions) {
 			const name = instructionUppercase ? instruction.name.toLocaleUpperCase() : instruction.name.toLocaleUpperCase();
 			items.push(this.createCompletionItem(name, LanguageCompletionTypes.Instruction, instruction));
 		}
 
 		// PseudoOps
-		for (let pseudoOp of LanguageDefinition.PseudoOps) {
+		for (const pseudoOp of LanguageDefinition.PseudoOps) {
 			const name = pseudoOpsUppercase ? pseudoOp.name.toLocaleUpperCase() : pseudoOp.name.toLocaleUpperCase();
 			items.push(this.createCompletionItem(name, LanguageCompletionTypes.PseudoOp, pseudoOp));
 		}
@@ -71,7 +71,7 @@ export default class CompletionProvider extends Provider {
 
 		// Symbols
 		if (results && results.symbols) {
-			for (let symbol of results.symbols) {
+			for (const symbol of results.symbols) {
 				if (symbol.isConstant) {
 					// Values
 					items.push(this.createCompletionItem(symbol.name, LanguageCompletionTypes.Symbol, symbol));
@@ -110,22 +110,22 @@ export default class CompletionProvider extends Provider {
 
 		switch (completionData.type) {
 			case LanguageCompletionTypes.Instruction:
-				const instruction:IInstruction = <IInstruction>completionData.payload;
+				const instruction:IInstruction = completionData.payload as IInstruction;
 				detail = instruction.description;
 				documentation = instruction.description;
 				break;
 			case LanguageCompletionTypes.PseudoOp:
-				const pseudoOp:IPseudoOp = <IPseudoOp>completionData.payload;
+				const pseudoOp:IPseudoOp = completionData.payload as IPseudoOp;
 				detail = pseudoOp.description;
 				documentation = pseudoOp.documentation.join("\n");
 				break;
 			case LanguageCompletionTypes.Symbol:
-				const symbol:ISymbol = <ISymbol>completionData.payload;
+				const symbol:ISymbol = completionData.payload as ISymbol;
 				detail = `Symbol ${symbol.name} with value ${symbol.value}`;
 				documentation = symbol.name + " = " + symbol.value;
 				break;
 			case LanguageCompletionTypes.Label:
-				const label:ISymbol = <ISymbol>completionData.payload;
+				const label:ISymbol = completionData.payload as ISymbol;
 				detail = `Label ${label.name} at position ${label.value}`;
 				documentation = label.name + " = " + label.value;
 				break;

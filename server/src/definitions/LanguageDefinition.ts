@@ -405,7 +405,7 @@ export const PseudoOps:IPseudoOp[] = [
 		canHaveLabel: true,
 		description: "Creates or sets the current segment",
 		documentation: [
-			"Sets the current segment, creating it if neccessary."
+			"Sets the current segment, creating it if neccessary.",
 		],
 		parameters: [],
 		relatedTo: [],
@@ -415,7 +415,7 @@ export const PseudoOps:IPseudoOp[] = [
 		canHaveLabel: true,
 		description: "Creates or sets the current segment",
 		documentation: [
-			"Sets the current segment, creating it (in uninitialized form) if neccessary."
+			"Sets the current segment, creating it (in uninitialized form) if neccessary.",
 		],
 		parameters: [],
 		relatedTo: [],
@@ -425,7 +425,7 @@ export const PseudoOps:IPseudoOp[] = [
 		canHaveLabel: false,
 		description: "Includes a file",
 		documentation: [
-			"Include another assembly file at this location."
+			"Include another assembly file at this location.",
 		],
 		parameters: [
 			{
@@ -440,7 +440,7 @@ export const PseudoOps:IPseudoOp[] = [
 		canHaveLabel: true,
 		description: "Includes a file literally",
 		documentation: [
-			"Include another file literally in the output."
+			"Include another file literally in the output.",
 		],
 		parameters: [
 			{
@@ -770,7 +770,7 @@ export const PseudoOps:IPseudoOp[] = [
 		canHaveLabel: true,
 		description: "List control",
 		documentation: [
-			"Globally turns listing on or off, starting with the current line."
+			"Globally turns listing on or off, starting with the current line.",
 		],
 		parameters: [],
 		relatedTo: [],
