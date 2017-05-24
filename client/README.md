@@ -108,7 +108,7 @@ Check the [changelog](/client/CHANGELOG.md) for a list of all released versions 
 
 ## Contributing
 
-Bug reports, fixes, and other changes are welcomed. Our repository is [on GitHub](https://github.com/zeh/vscode-dasm).
+Bug reports, fixes, and other changes are welcomed. Our repository is [on GitHub](https://github.com/zeh/vscode-dasm), and issues and pull requests are accepted. Check the [contributing](/client/CONTRIBUTING.md) file on information of what the project needs, and how to run the extension locally for development and testing.
 
 ## Acknowledgements
 
