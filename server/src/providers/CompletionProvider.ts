@@ -51,6 +51,7 @@ export default class CompletionProvider extends Provider {
 		const allUppercase = settings.preferUppercase.indexOf("all") >= 0;
 		const instructionUppercase = allUppercase || settings.preferUppercase.indexOf("instructions") >= 0;
 		const pseudoOpsUppercase = allUppercase || settings.preferUppercase.indexOf("pseudoops") >= 0;
+		const registerUppercase = allUppercase || settings.preferUppercase.indexOf("registers") >= 0;
 		// const registersUppercase = allUppercase || settings.preferUppercase.indexOf("registers") >= 0;
 
 		// Instructions
@@ -65,7 +66,12 @@ export default class CompletionProvider extends Provider {
 			items.push(this.createCompletionItem(name, LanguageCompletionTypes.PseudoOp, pseudoOp));
 		}
 
-		// TODO: registers
+		// Registers
+		for (const register of LanguageDefinition.Registers) {
+			const name = registerUppercase ? register.name.toLocaleUpperCase() : register.name.toLocaleUpperCase();
+			items.push(this.createCompletionItem(name, LanguageCompletionTypes.PseudoOp, register));
+		}
+
 		// TODO: filenames for include
 		// TODO: parameters
 
