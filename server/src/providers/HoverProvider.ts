@@ -7,6 +7,7 @@ import {
 
 import LanguageDefinition from "../definitions/LanguageDefinition";
 import LineUtils from "../utils/LineUtils";
+import NumberUtils from "../utils/NumberUtils";
 import { IAssemblerResult } from "./Assembler";
 import { IProjectInfoProvider, Provider } from "./Provider";
 
@@ -123,9 +124,9 @@ export default class HoverProvider extends Provider {
 	}
 
 	private getFormattedValue(value:number):string {
-		return "* Decimal: `" + value + "`\n\n" +
-			"* Binary: `%" + value.toString(2) + "`\n\n" +
-			"* Octal: `0" + value.toString(8) + "`\n\n" +
-			"* Hexa: `$" + value.toString(16) + "`\n\n";
+		return `* Decimal: \`${NumberUtils.asDecimal(value)}\`\n\n` +
+			`* Binary: \`${NumberUtils.asBinaryl(value)}\`\n\n` +
+			`* Octal: \`${NumberUtils.asOctal(value)}\`\n\n` +
+			`* Hexa: \`${NumberUtils.asHexa(value)}\`\n\n`;
 	}
 }
