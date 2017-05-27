@@ -3,7 +3,7 @@ import {
 } from "vscode-languageserver";
 
 import { Assembler, IAssemblerResult } from "./../providers/Assembler";
-import ProjectFiles from "./ProfileFiles";
+import ProjectFiles from "./ProjectFiles";
 
 export default class Project {
 
@@ -15,7 +15,9 @@ export default class Project {
 		this._assembler = new Assembler();
 
 		this._files = new ProjectFiles();
-		this._files.onChanged.add(this.assemble.bind(this));
+		this._files.onChanged.add(() => {
+			this.assemble();
+		});
 
 		this._results = undefined;
 	}

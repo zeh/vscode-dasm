@@ -24,11 +24,21 @@ interface IProjectFile {
 	version: number;
 }
 
+interface IFileUpdateEvent {
+	uri: string;
+	process: () => void;
+}
+
 export default class ProjectFiles {
+
+	private static readonly FILE_UPDATE_DEBOUNCE_MS = 250; // Time to wait until a file change is propagated
 
 	private _files:{[key:string]:IProjectFile};
 	private _entryFile?:IProjectFile;
 	private _onChanged:SimpleSignal<(files:ProjectFiles) => void>;
+
+	private _queuedFileUpdate?:IFileUpdateEvent;
+	private _queuedUpdateProcessId?:NodeJS.Timer;
 
 	constructor() {
 		this._files = {};
@@ -79,18 +89,17 @@ export default class ProjectFiles {
 	public updateFromDocument(document:TextDocument) {
 		const fileInfo = this.get(document.uri);
 		if (fileInfo && fileInfo.version !== document.version) {
-			// Needs update
-			fileInfo.document = document;
-			fileInfo.contents = document.getText();
-			fileInfo.contentsLines = StringUtils.splitIntoLines(fileInfo.contents);
-			fileInfo.version = document.version;
-			fileInfo.isDirty = true;
+			this.queueFileUpdate(document.uri, () => {
+				// Needs update
+				fileInfo.document = document;
+				fileInfo.contents = document.getText();
+				fileInfo.contentsLines = StringUtils.splitIntoLines(fileInfo.contents);
+				fileInfo.version = document.version;
+				fileInfo.isDirty = true;
 
-			// Search for all includes within a file
-			this.updateDependencies(fileInfo);
-
-			// Dispatch change events
-			this.onChanged.dispatch(this);
+				this.updateDependencies(fileInfo);
+				this.onChanged.dispatch(this);
+			});
 		}
 	}
 
@@ -98,18 +107,17 @@ export default class ProjectFiles {
 		console.log("[files] Adding file as uri", uri);
 		const fileInfo = this.get(uri);
 		if (fileInfo) {
-			// Needs update
-			fileInfo.document = undefined;
-			fileInfo.contents = fs.readFileSync(PathUtils.uriToPlatformPath(uri), {encoding: "utf8"});
-			fileInfo.contentsLines = StringUtils.splitIntoLines(fileInfo.contents);
-			fileInfo.version = -1;
-			fileInfo.isDirty = false;
+			this.queueFileUpdate(uri, () => {
+				// Needs update
+				fileInfo.document = undefined;
+				fileInfo.contents = fs.readFileSync(PathUtils.uriToPlatformPath(uri), {encoding: "utf8"});
+				fileInfo.contentsLines = StringUtils.splitIntoLines(fileInfo.contents);
+				fileInfo.version = -1;
+				fileInfo.isDirty = false;
 
-			// Search for all includes within a file
-			this.updateDependencies(fileInfo);
-
-			// Dispatch change events
-			this.onChanged.dispatch(this);
+				this.updateDependencies(fileInfo);
+				this.onChanged.dispatch(this);
+			});
 		}
 	}
 
@@ -136,7 +144,7 @@ export default class ProjectFiles {
 		const files:IProjectFile[] = [];
 		const keys = Object.keys(this._files);
 		keys.forEach((key) => {
-			if (this.has(key)) files.push(<IProjectFile>this.get(key));
+			if (this.has(key)) files.push(this.get(key) as IProjectFile);
 		});
 		return files;
 	}
@@ -154,7 +162,7 @@ export default class ProjectFiles {
 			possibleParents = this.all();
 		}
 
-		for (let parent of possibleParents) {
+		for (const parent of possibleParents) {
 			const dependency = parent.dependencies.find((dependencyInfo) => dependencyInfo.parentRelativeUri === parentRelativeUri);
 			if (dependency) return dependency.file;
 		}
@@ -182,6 +190,35 @@ export default class ProjectFiles {
 	}
 
 	/**
+	 * Trigger an event to update all dependencies,
+	 * with proper debouncing so it doesn't do that too often
+	 */
+	private queueFileUpdate(uri:string, process:() => void) {
+		// Cancel existing update event if existing
+		if (this._queuedUpdateProcessId) {
+			clearTimeout(this._queuedUpdateProcessId);
+			this._queuedUpdateProcessId = undefined;
+		}
+
+		// If an event exists and it's a different file, process it immediately
+		if (this._queuedFileUpdate && this._queuedFileUpdate.uri !== uri) {
+			this._queuedFileUpdate.process();
+		}
+
+		// Finally, add the new one as the next one
+		this._queuedFileUpdate = {
+			uri,
+			process,
+		};
+
+		// And queue it to execute next
+		this._queuedUpdateProcessId = setTimeout(() => {
+			process();
+			this._queuedUpdateProcessId = undefined;
+		}, ProjectFiles.FILE_UPDATE_DEBOUNCE_MS);
+	}
+
+	/**
 	 * Return a string list of all files included within a source, with their include filename
 	 */
 	private getIncludedFilenames(src:string) {
@@ -189,7 +226,7 @@ export default class ProjectFiles {
 		const files:string[] = [];
 		let result = includeFind.exec(src);
 		while (result) {
-			let fileName:string = StringUtils.removeWrappingQuotes(result[1]);
+			const fileName:string = StringUtils.removeWrappingQuotes(result[1]);
 			if (fileName) files.push(fileName);
 			result = includeFind.exec(src);
 		}
