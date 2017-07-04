@@ -29,6 +29,9 @@ A more granular list of tasks, more or less in order of priority, is listed belo
   * Support INCDIR
   * Support INCBIN
   * when opening included files, use [file language type](https://code.visualstudio.com/updates/v1_9#_new-api-to-open-an-untitled-file-with-optional-language)
+* [Auto-indent](https://code.visualstudio.com/updates/v1_14#_auto-indent-on-type-move-lines-and-paste)
+* Documnentation
+  * [Fix images in README to use https and avoid SVGs](https://code.visualstudio.com/updates/v1_14#_constraints-for-rendering-svg-images)
 * Auto completion
   * Better trigger characters (currently on ".") in `server/ProjectManager.ts`
   * Test registers
@@ -42,15 +45,24 @@ A more granular list of tasks, more or less in order of priority, is listed belo
 * More syntax highlight: symbol, labels
   * Differentiate between values (`#$99`) and addresses (`$99`)
   * Show binaries as bitmap (for better sprite definition)
-* [List errors/warnings as problems](https://code.visualstudio.com/docs/editor/editingevolved#_errors-warnings)?
+* [List errors/warnings as problems](https://code.visualstudio.com/docs/editor/editingevolved#_errors-warnings)/[Problem Matchers](https://code.visualstudio.com/docs/extensionAPI/extension-points#_contributesproblemmatchers)
 * Test go-to-type-definition
 * Test go-to-implementation
 * Test go-to-symbol (e.g. labels, symbols)
 * [Reference information](https://code.visualstudio.com/docs/editor/editingevolved#_reference-information) for symbols?
 * Think of [code actions](https://code.visualstudio.com/docs/editor/editingevolved#_code-action)
 * [Custom explorer view](https://code.visualstudio.com/updates/v1_13#_extension-authoring) for projects
+  * List files per project
+    * Add commands to open file
+  * List symbols/labels per file
+    * Add commands to jump to symbol/label
 * [CodeLens](https://code.visualstudio.com/blogs/2017/02/12/code-lens-roundup) for references or graphics
 * More actions for F1: [formatting](https://code.visualstudio.com/blogs/2016/11/15/formatters-best-practices), enforcing case, etc
+* All [language server features](https://code.visualstudio.com/docs/extensions/example-language-server#_additional-language-server-features)
+  * List workspace symbols
+  * List document symbols
+  * Document formatting
+  * Document links
 * More hover support
   * Test registers
   * Revamp description for registers: shows more registers information, etc
@@ -79,3 +91,4 @@ A more granular list of tasks, more or less in order of priority, is listed belo
   * Hot reload (continue on same address)
   * Register/address monitoring
   * Time travel
+  * Use a [custom view](https://code.visualstudio.com/updates/v1_14#_custom-views) for the emulator?
