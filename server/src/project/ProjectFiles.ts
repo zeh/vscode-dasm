@@ -1,4 +1,6 @@
 import {
+	Position,
+	Range,
 	TextDocument,
 } from "vscode-languageserver";
 
@@ -11,6 +13,7 @@ import StringUtils from "../utils/StringUtils";
 
 interface IProjectFileDependency {
 	parentRelativeUri: string;
+	range: Range;
 	file?: IProjectFile;
 }
 
@@ -219,17 +222,25 @@ export default class ProjectFiles {
 	}
 
 	/**
-	 * Return a string list of all files included within a source, with their include filename
+	 * Return a list of all files included within a source, with their include filename and range
 	 */
-	private getIncludedFilenames(src:string) {
+	private getIncludedFileLinks(lines:string[]) {
 		const includeFind = /^[^;\n]+include\s*([^ ;\n]*)/gmi;
-		const files:string[] = [];
-		let result = includeFind.exec(src);
-		while (result) {
-			const fileName:string = StringUtils.removeWrappingQuotes(result[1]);
-			if (fileName) files.push(fileName);
-			result = includeFind.exec(src);
-		}
+		const files:Array<{fileName:string, range:Range}> = [];
+		lines.forEach((line, lineIndex) => {
+			let result = includeFind.exec(line);
+			while (result) {
+				const fileName:string = StringUtils.removeWrappingQuotes(result[1]);
+				if (fileName) files.push({
+					fileName,
+					range: Range.create(
+						Position.create(lineIndex, result.index + result[0].indexOf(result[1])),
+						Position.create(lineIndex, result.index + result[0].length),
+					),
+				});
+				result = includeFind.exec(line);
+			}
+		});
 		return files;
 	}
 
@@ -238,19 +249,24 @@ export default class ProjectFiles {
 	 * the ones that are not there and adding the new ones
 	 */
 	private updateDependencies(file:IProjectFile) {
-		if (file.contents) {
-			const allDependenciesUris = this.getIncludedFilenames(file.contents);
+		if (file.contentsLines) {
+			const allDependencyLinks = this.getIncludedFileLinks(file.contentsLines);
 
 			// Remove dependencies that are not featured anymore
-			file.dependencies = file.dependencies.filter((dependencyInfo) => allDependenciesUris.indexOf(dependencyInfo.parentRelativeUri) >= 0);
+			file.dependencies = file.dependencies.filter(
+				(dependencyInfo) => allDependencyLinks.some(
+					(dependencyLink) => dependencyLink.fileName === dependencyInfo.parentRelativeUri,
+				),
+			);
 
-			// Add new dependencies
-			const newDependenciesUris = allDependenciesUris.filter((dependencyUri) => {
-				return !file.dependencies.some((dependencyInfo) => dependencyInfo.parentRelativeUri === dependencyUri);
+			// Filter down to new dependencies only
+			const newDependencyLinks = allDependencyLinks.filter((dependencyLink) => {
+				return !file.dependencies.some((dependencyInfo) => dependencyInfo.parentRelativeUri === dependencyLink.fileName);
 			});
-			const newDependencies:IProjectFileDependency[] = newDependenciesUris.map((newDependencyUri) => {
+			const newDependencies:IProjectFileDependency[] = newDependencyLinks.map((dependencyLink) => {
 				return {
-					parentRelativeUri: newDependencyUri,
+					parentRelativeUri: dependencyLink.fileName,
+					range: dependencyLink.range,
 				};
 			});
 			file.dependencies = file.dependencies.concat(newDependencies);
