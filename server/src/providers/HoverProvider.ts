@@ -125,7 +125,7 @@ export default class HoverProvider extends Provider {
 
 	private getFormattedValue(value:number):string {
 		return `* Decimal: \`${NumberUtils.asDecimal(value)}\`\n\n` +
-			`* Binary: \`${NumberUtils.asBinaryl(value)}\`\n\n` +
+			`* Binary: \`${NumberUtils.asBinary(value)}\`\n\n` +
 			`* Octal: \`${NumberUtils.asOctal(value)}\`\n\n` +
 			`* Hexa: \`${NumberUtils.asHexa(value)}\`\n\n`;
 	}
