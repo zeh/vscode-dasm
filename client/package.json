@@ -88,7 +88,15 @@
         "command": "vscode-dasm.openToTheSide",
         "title": "Open Atari emulator to the side"
       }
-    ]
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "projectOutline",
+          "name": "Project Outline"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",

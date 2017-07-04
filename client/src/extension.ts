@@ -19,6 +19,7 @@ import * as path from "path";
 
 import RomAssembler from "./assembler/RomAssembler";
 import JavatariDocumentContentProvider from "./JavatariDocumentContentProvider";
+import ProjectOutlineProvider from "./providers/ProjectOutlineProvider";
 
 // https://code.visualstudio.com/docs/extensions/overview
 // https://code.visualstudio.com/docs/extensionAPI/overview
@@ -61,6 +62,19 @@ export function activate(context:ExtensionContext) {
 	const languageClient = new LanguageClient("vscode-dasm", "Language Server for VSCode-dasm", serverOptions, clientOptions);
 	const disposableLanguageClient = languageClient.start();
 	context.subscriptions.push(disposableLanguageClient);
+
+	// Create a local provider for the project outline tree view
+	const projectOutlineProvider = new ProjectOutlineProvider(context, languageClient);
+	context.subscriptions.push(projectOutlineProvider);
+	window.registerTreeDataProvider("projectOutline", projectOutlineProvider);
+	// TODO: add correct commands
+	// vscode.commands.registerCommand('extension.openPackageOnNpm', moduleName => {
+	// 	vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`));
+	// });
+	// const disposableCommand = commands.registerCommand("extension.openPackageOnWhatever", () => {
+	// 	openToTheSide(context);
+	// });
+	// context.subscriptions.push(disposableCommand);
 
 	// Create a content provider for the preview tab
 	const provider = new JavatariDocumentContentProvider(context);
