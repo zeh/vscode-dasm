@@ -1,5 +1,6 @@
 import { IConnection } from "vscode-languageserver";
 
+import { IProjectFile } from "./../project/ProjectFiles";
 import { IAssemblerResult } from "./Assembler";
 import { ISettings } from "./SettingsProvider";
 
@@ -11,10 +12,11 @@ export type SourceProvider = () => string[]|undefined;
 export type ResultsProvider = () => IAssemblerResult|undefined;
 
 export interface IProjectInfoProvider {
-	getSource:() => string[]|undefined;
+	getCurrentFile:() => IProjectFile|undefined;
+	getEntryFile:() => IProjectFile|undefined;
+	getFile:(uri:string) => IProjectFile|undefined;
 	getResults:() => IAssemblerResult|undefined;
 	getUriForProjectFile:(localUri:string) => string|undefined;
-	getSourceForProjectFile:(uri:string) => string[]|undefined;
 	getSettings:() => ISettings;
 }
 

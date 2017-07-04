@@ -50,6 +50,10 @@ export default class Project {
 		return this._results;
 	}
 
+	public getEntryFileInfo() {
+		return this._files.getEntry();
+	}
+
 	public getFileInfo(uri:string) {
 		return this._files.get(uri);
 	}

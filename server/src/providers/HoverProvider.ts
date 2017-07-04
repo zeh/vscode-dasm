@@ -27,7 +27,8 @@ export default class HoverProvider extends Provider {
 	public process(textDocumentPositionParams:TextDocumentPositionParams):Hover|ResponseError<void> {
 		// Find the line this hover refers to
 		const line = textDocumentPositionParams.position.line;
-		const sourceLines = this.getProjectInfo().getSource();
+		const file = this.getProjectInfo().getCurrentFile();
+		const sourceLines = file ? file.contentsLines : undefined;
 		const results = this.getProjectInfo().getResults();
 
 		if (sourceLines && results && !isNaN(line) && sourceLines.length > line) {

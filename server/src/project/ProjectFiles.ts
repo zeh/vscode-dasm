@@ -11,13 +11,13 @@ import SimpleSignal from "simplesignal";
 import PathUtils from "../utils/PathUtils";
 import StringUtils from "../utils/StringUtils";
 
-interface IProjectFileDependency {
+export interface IProjectFileDependency {
 	parentRelativeUri: string;
 	range: Range;
 	file?: IProjectFile;
 }
 
-interface IProjectFile {
+export interface IProjectFile {
 	uri: string;
 	document?: TextDocument;
 	contents?: string;
@@ -62,6 +62,7 @@ export default class ProjectFiles {
 				uri: cleanUri,
 				document: undefined,
 				contents: undefined,
+				contentsLines: undefined,
 				dependencies: [],
 				isDirty: false,
 				version: -1,
@@ -141,6 +142,10 @@ export default class ProjectFiles {
 	public get(uri:string):IProjectFile|undefined {
 		const cleanUri = this.getCleanUri(uri);
 		return this.has(cleanUri) ? this._files[cleanUri] : undefined;
+	}
+
+	public getEntry():IProjectFile|undefined {
+		return this._entryFile;
 	}
 
 	public all():IProjectFile[] {

@@ -14,6 +14,7 @@ import HoverProvider from "../providers/HoverProvider";
 import SettingsProvider from "../providers/SettingsProvider";
 import { ISettings } from "../providers/SettingsProvider";
 import Project from "./Project";
+import { IProjectFile } from "./ProjectFiles";
 
 export default class ProjectManager {
 
@@ -93,10 +94,11 @@ export default class ProjectManager {
 
 		// Create providers
 		const projectInfoProvider = {
-			getSource: this.getCurrentSource.bind(this),
+			getCurrentFile: this.getCurrentFile.bind(this),
+			getEntryFile: this.getEntryFile.bind(this),
+			getFile: this.getFile.bind(this),
 			getResults: this.getCurrentResults.bind(this),
 			getUriForProjectFile: this.getUriForProjectFile.bind(this),
-			getSourceForProjectFile: this.getSourceForProjectFile.bind(this),
 			getSettings: this.getSettings.bind(this),
 		};
 
@@ -211,16 +213,21 @@ export default class ProjectManager {
 		}
 	}
 
-	private getCurrentSource():string[]|undefined {
+	private getCurrentFile():IProjectFile|undefined {
 		if (this._currentDocumentUri) {
-			return this.getSourceForProjectFile(this._currentDocumentUri);
+			return this.getFile(this._currentDocumentUri);
 		}
 	}
 
-	private getSourceForProjectFile(uri:string):string[]|undefined {
+	private getEntryFile():IProjectFile|undefined {
+		if (this._currentProject) {
+			return this._currentProject.getEntryFileInfo();
+		}
+	}
+
+	private getFile(uri:string):IProjectFile|undefined {
 		if (this._currentProject && uri) {
-			const file = this._currentProject.getFileInfo(uri);
-			return file ? file.contentsLines : undefined;
+			return this._currentProject.getFileInfo(uri);
 		}
 	}
 

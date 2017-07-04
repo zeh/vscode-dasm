@@ -4,6 +4,7 @@ import {
 	TextDocumentPositionParams,
 } from "vscode-languageserver";
 
+import { IProjectFile } from "../project/ProjectFiles";
 import LineUtils from "../utils/LineUtils";
 import { IProjectInfoProvider, Provider } from "./Provider";
 
@@ -23,7 +24,8 @@ export default class DefinitionProvider extends Provider {
 	public process(textDocumentPositionParams:TextDocumentPositionParams):Location[] {
 		const locations:Location[] = [];
 		const line = textDocumentPositionParams.position.line;
-		const sourceLines = this.getProjectInfo().getSource();
+		const file = this.getProjectInfo().getCurrentFile();
+		const sourceLines = file ? file.contentsLines : undefined;
 		const results = this.getProjectInfo().getResults();
 
 		if (sourceLines && results && !isNaN(line) && sourceLines.length > line && results.symbols) {
@@ -38,7 +40,8 @@ export default class DefinitionProvider extends Provider {
 					if (symbol.definitionFilename) {
 						// Definition is in another file
 						const otherUri:string|undefined = this.getProjectInfo().getUriForProjectFile(symbol.definitionFilename);
-						const otherSource:string[]|undefined = otherUri ? this.getProjectInfo().getSourceForProjectFile(otherUri) : undefined;
+						const otherFile:IProjectFile|undefined = otherUri ? this.getProjectInfo().getFile(otherUri) : undefined;
+						const otherSource:string[]|undefined = otherFile ? otherFile.contentsLines : undefined;
 
 						if (otherUri && otherSource) {
 							const tokenRange = LineUtils.getTokenRange(otherSource[definitionLine], token, definitionLine);
