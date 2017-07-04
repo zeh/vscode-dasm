@@ -57,7 +57,7 @@ export function activate(context:ExtensionContext) {
 		},
 	};
 
-	// Create the language client and start the client.
+	// Create the language client and start the client
 	const languageClient = new LanguageClient("vscode-dasm", "Language Server for VSCode-dasm", serverOptions, clientOptions);
 	const disposableLanguageClient = languageClient.start();
 	context.subscriptions.push(disposableLanguageClient);
@@ -113,10 +113,12 @@ function openToTheSide(context:ExtensionContext) {
 
 function compileGame(context:ExtensionContext) {
 	// Compiles the current tab
-	const src = window.activeTextEditor.document.getText();
-	// const src = fs.readFileSync(context.asAbsolutePath("assets/_test.asm"), "utf8");
-	const assembler = new RomAssembler(src);
-	console.log("[compile] Done compiling");
+	if (window.activeTextEditor) {
+		const src = window.activeTextEditor.document.getText();
+		// const src = fs.readFileSync(context.asAbsolutePath("assets/_test.asm"), "utf8");
+		const assembler = new RomAssembler(src);
+		console.log("[compile] Done compiling");
+	}
 }
 
 function createPreviewTab(context:ExtensionContext) {
