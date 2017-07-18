@@ -13,6 +13,7 @@ All notable changes to the vscode-dasm extension are listed here. For a more com
 ### Housekeeping
 
 * Updated all dependencies (including TypeScript, Language client, Language server) to latest versions
+* The language server now provides document links (will be used by outline panel)
 
 ## 2.0.1 - 2017-02-04
 
