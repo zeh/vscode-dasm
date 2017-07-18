@@ -10,6 +10,7 @@ import CompletionProvider from "../providers/CompletionProvider";
 import DefinitionProvider from "../providers/DefinitionProvider";
 import DiagnosticsProvider from "../providers/DiagnosticsProvider";
 import DocumentLinkProvider from "../providers/DocumentLinkProvider";
+import DocumentSymbolProvider from "../providers/DocumentSymbolProvider";
 import HoverProvider from "../providers/HoverProvider";
 import SettingsProvider from "../providers/SettingsProvider";
 import { ISettings } from "../providers/SettingsProvider";
@@ -31,6 +32,7 @@ export default class ProjectManager {
 	private _settingsProvider:SettingsProvider;
 	private _completionProvider:CompletionProvider;
 	private _documentLinkProvider:DocumentLinkProvider;
+	private _documentSymbolProvider:DocumentSymbolProvider;
 
 	constructor(connection:IConnection) {
 		this._connection = connection;
@@ -64,9 +66,13 @@ export default class ProjectManager {
 					// Go to definition
 					definitionProvider: true,
 
+					// Links (dependencies)
 					documentLinkProvider: {
 						resolveProvider: true,
 					},
+
+					// Symbols per document
+					documentSymbolProvider: true,
 				},
 			};
 		});
@@ -108,6 +114,7 @@ export default class ProjectManager {
 		this._settingsProvider = new SettingsProvider(this._connection, projectInfoProvider);
 		this._completionProvider = new CompletionProvider(this._connection, projectInfoProvider);
 		this._documentLinkProvider = new DocumentLinkProvider(this._connection, projectInfoProvider);
+		this._documentSymbolProvider = new DocumentSymbolProvider(this._connection, projectInfoProvider);
 	}
 
 	public start() {
