@@ -30,6 +30,10 @@ So far, the following features are supported:
 
 ![Errors](/client/images/hover.png)
 
+### Quick navigate to document labels and symbols
+
+![Peek](/client/images/symbols-navigate.png)
+
 ### Navigate to/peek at definitions for labels and symbols
 
 ![Peek](/client/images/peek.png)
@@ -37,10 +41,6 @@ So far, the following features are supported:
 ## TODO
 
 For more information on what's left to be done for this extension, please check [the roadmap](/client/ROADMAP.md).
-<!--
-* Visual chip debug easter egg? http://atariage.com/forums/topic/227569-5-hz-6502/
--->
-
 <!--
 ## Extension Settings
 
