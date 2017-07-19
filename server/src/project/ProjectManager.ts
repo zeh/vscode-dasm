@@ -225,10 +225,12 @@ export default class ProjectManager {
 		}
 	}
 
+	/**
+	 * Based on an URI, find a file in any of the current projects
+	 */
 	private getFile(uri:string):IProjectFile|undefined {
-		if (this._currentProject && uri) {
-			return this._currentProject.getFileInfo(uri);
-		}
+		const project = this._projects.find((projectInfo) => projectInfo.hasFile(uri));
+		if (project) return project.getFileInfo(uri);
 	}
 
 	private getCurrentResults():IAssemblerResult|undefined {
