@@ -15,7 +15,7 @@ import HoverProvider from "../providers/HoverProvider";
 import SettingsProvider from "../providers/SettingsProvider";
 import { ISettings } from "../providers/SettingsProvider";
 import Project from "./Project";
-import { IProjectFile } from "./ProjectFiles";
+import { IProjectFile } from './ProjectFiles';
 
 export default class ProjectManager {
 
@@ -100,7 +100,7 @@ export default class ProjectManager {
 
 		// Create providers
 		const projectInfoProvider = {
-			getEntryFile: this.getEntryFile.bind(this),
+			getEntryFiles: this.getEntryFiles.bind(this),
 			getFile: this.getFile.bind(this),
 			getResults: this.getCurrentResults.bind(this),
 			getUriForProjectFile: this.getUriForProjectFile.bind(this),
@@ -219,10 +219,12 @@ export default class ProjectManager {
 		}
 	}
 
-	private getEntryFile():IProjectFile|undefined {
-		if (this._currentProject) {
-			return this._currentProject.getEntryFileInfo();
-		}
+	/**
+	 * Get a list of what is considered the "entry" file for all currently known projects
+	 */
+	private getEntryFiles():IProjectFile[] {
+		const allEntryFiles = this._projects.map((projectInfo) => projectInfo.getEntryFileInfo());
+		return allEntryFiles.filter((file) => Boolean(file)) as IProjectFile[];
 	}
 
 	/**
