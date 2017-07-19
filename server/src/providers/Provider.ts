@@ -12,7 +12,6 @@ export type SourceProvider = () => string[]|undefined;
 export type ResultsProvider = () => IAssemblerResult|undefined;
 
 export interface IProjectInfoProvider {
-	getCurrentFile:() => IProjectFile|undefined;
 	getEntryFile:() => IProjectFile|undefined;
 	getFile:(uri:string) => IProjectFile|undefined;
 	getResults:() => IAssemblerResult|undefined;

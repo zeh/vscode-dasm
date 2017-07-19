@@ -24,7 +24,8 @@ export default class DefinitionProvider extends Provider {
 	public process(textDocumentPositionParams:TextDocumentPositionParams):Location[] {
 		const locations:Location[] = [];
 		const line = textDocumentPositionParams.position.line;
-		const file = this.getProjectInfo().getCurrentFile();
+		const fileUri = textDocumentPositionParams.textDocument.uri;
+		const file = this.getProjectInfo().getFile(fileUri);
 		const sourceLines = file ? file.contentsLines : undefined;
 		const results = this.getProjectInfo().getResults();
 

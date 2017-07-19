@@ -100,7 +100,6 @@ export default class ProjectManager {
 
 		// Create providers
 		const projectInfoProvider = {
-			getCurrentFile: this.getCurrentFile.bind(this),
 			getEntryFile: this.getEntryFile.bind(this),
 			getFile: this.getFile.bind(this),
 			getResults: this.getCurrentResults.bind(this),
@@ -217,12 +216,6 @@ export default class ProjectManager {
 		if (fileUri) {
 			// Diagnostics
 			this._diagnosticsProvider.process(fileUri);
-		}
-	}
-
-	private getCurrentFile():IProjectFile|undefined {
-		if (this._currentDocumentUri) {
-			return this.getFile(this._currentDocumentUri);
 		}
 	}
 

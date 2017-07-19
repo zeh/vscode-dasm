@@ -17,7 +17,7 @@ export default class DiagnosticsProvider extends Provider implements IPostCompil
 	 */
 	public process(uri:string):void {
 		const diagnostics:Diagnostic[] = [];
-		const file = this.getProjectInfo().getCurrentFile();
+		const file = this.getProjectInfo().getFile(uri);
 		const sourceLines = file ? file.contentsLines : undefined;
 		const results = this.getProjectInfo().getResults();
 
