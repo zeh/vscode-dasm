@@ -22,17 +22,16 @@ export default class DocumentSymbolProvider extends Provider {
 	/**
 	 * Returns symbol information
 	 */
-	public process(symbolParams:DocumentSymbolParams):SymbolInformation[] {
-		const fileUriRequested = symbolParams.textDocument.uri;
+	public process(documentSymbolParams:DocumentSymbolParams):SymbolInformation[] {
+		const fileUri = documentSymbolParams.textDocument.uri;
 		const results = this.getProjectInfo().getResults();
-		console.log("[symbols] Symbols requested for ", fileUriRequested);
 
-		if (fileUriRequested && results && results.symbols) {
+		if (fileUri && results && results.symbols) {
 			// Requested symbols for a specific file
-			const file = this.getProjectInfo().getFile(fileUriRequested);
+			const file = this.getProjectInfo().getFile(fileUri);
 			return results.symbols
 				.filter((symbol) => {
-					return !symbol.definitionFilename || fileUriRequested.endsWith(symbol.definitionFilename);
+					return !symbol.definitionFilename || fileUri.endsWith(symbol.definitionFilename);
 				})
 				.map((symbol) => {
 					return SymbolInformation.create(
@@ -40,7 +39,7 @@ export default class DocumentSymbolProvider extends Provider {
 						symbol.isLabel ? SymbolKind.Function : SymbolKind.Constant,
 						// TODO: use correct range for symbol definition!
 						Range.create(Position.create(symbol.definitionLineNumber - 1, 0), Position.create(symbol.definitionLineNumber - 1, 1)),
-						file ? file.uri : fileUriRequested,
+						file ? file.uri : fileUri,
 					);
 				});
 		} else {
