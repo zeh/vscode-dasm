@@ -46,7 +46,7 @@ export default class Project {
 		return this._files.has(uri);
 	}
 
-	public getResults():IAssemblerResult|undefined {
+	public getAssemblerResults():IAssemblerResult|undefined {
 		return this._results;
 	}
 

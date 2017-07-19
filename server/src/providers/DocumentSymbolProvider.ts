@@ -24,7 +24,7 @@ export default class DocumentSymbolProvider extends Provider {
 	 */
 	public process(documentSymbolParams:DocumentSymbolParams):SymbolInformation[] {
 		const fileUri = documentSymbolParams.textDocument.uri;
-		const results = this.getProjectInfo().getResults();
+		const results = this.getProjectInfo().getAssemblerResults(fileUri);
 
 		if (fileUri && results && results.symbols) {
 			// Requested symbols for a specific file

@@ -28,8 +28,8 @@ export default class CompletionProvider extends Provider {
 		super(connection, projectInfoProvider);
 
 		// Provides the initial list of the completion items
-		connection.onCompletion((textDocumentPosition:TextDocumentPositionParams): CompletionItem[] => {
-			return this.createCompletionItems(textDocumentPosition);
+		connection.onCompletion((textDocumentPositionParams:TextDocumentPositionParams): CompletionItem[] => {
+			return this.createCompletionItems(textDocumentPositionParams);
 		});
 
 		connection.onCompletionResolve((item:CompletionItem):CompletionItem => {
@@ -40,13 +40,14 @@ export default class CompletionProvider extends Provider {
 	/**
 	 * Based on the existing language definition, returns all possible auto-completion items
 	 */
-	private createCompletionItems(textDocumentPosition:TextDocumentPositionParams):CompletionItem[] {
+	private createCompletionItems(textDocumentPositionParams:TextDocumentPositionParams):CompletionItem[] {
 		// TODO: provide proper items based on the position (right now it's everything)
 
 		const items:CompletionItem[] = [];
 
+		const fileUri = textDocumentPositionParams.textDocument.uri;
 		const settings = this.getProjectInfo().getSettings();
-		const results = this.getProjectInfo().getResults();
+		const results = this.getProjectInfo().getAssemblerResults(fileUri);
 
 		const allUppercase = settings.preferUppercase.indexOf("all") >= 0;
 		const instructionUppercase = allUppercase || settings.preferUppercase.indexOf("instructions") >= 0;

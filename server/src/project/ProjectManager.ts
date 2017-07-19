@@ -102,7 +102,7 @@ export default class ProjectManager {
 		const projectInfoProvider = {
 			getEntryFiles: this.getEntryFiles.bind(this),
 			getFile: this.getFile.bind(this),
-			getResults: this.getCurrentResults.bind(this),
+			getAssemblerResults: this.getAssemblerResults.bind(this),
 			getFileByLocalUri: this.getFileByLocalUri.bind(this),
 			getSettings: this.getSettings.bind(this),
 		};
@@ -245,10 +245,12 @@ export default class ProjectManager {
 		}
 	}
 
-	private getCurrentResults():IAssemblerResult|undefined {
-		if (this._currentProject) {
-			return this._currentProject.getResults();
-		}
+	/**
+	 * Based on the URI of any file in a project, returns its assemblying results (errors, symbols, rom, etc)
+	 */
+	private getAssemblerResults(uri:string):IAssemblerResult|undefined {
+		const project = this._projects.find((projectInfo) => projectInfo.hasFile(uri));
+		if (project) return project.getAssemblerResults();
 	}
 
 	/**

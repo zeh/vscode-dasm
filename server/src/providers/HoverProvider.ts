@@ -30,7 +30,7 @@ export default class HoverProvider extends Provider {
 		const fileUri = textDocumentPositionParams.textDocument.uri;
 		const file = this.getProjectInfo().getFile(fileUri);
 		const sourceLines = file ? file.contentsLines : undefined;
-		const results = this.getProjectInfo().getResults();
+		const results = this.getProjectInfo().getAssemblerResults(fileUri);
 
 		if (sourceLines && results && !isNaN(line) && sourceLines.length > line) {
 			// Find the char and the surrounding symbol it relates to
