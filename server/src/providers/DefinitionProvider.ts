@@ -40,7 +40,7 @@ export default class DefinitionProvider extends Provider {
 					const definitionLine = symbol.definitionLineNumber - 1;
 					if (symbol.definitionFilename) {
 						// Definition is in another file
-						const otherUri:string|undefined = this.getProjectInfo().getUriForProjectFile(symbol.definitionFilename);
+						const otherUri:string|undefined = this.getProjectInfo().getFileByLocalUri(symbol.definitionFilename);
 						const otherFile:IProjectFile|undefined = otherUri ? this.getProjectInfo().getFile(otherUri) : undefined;
 						const otherSource:string[]|undefined = otherFile ? otherFile.contentsLines : undefined;
 

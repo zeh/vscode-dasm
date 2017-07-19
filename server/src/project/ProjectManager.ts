@@ -103,7 +103,7 @@ export default class ProjectManager {
 			getEntryFiles: this.getEntryFiles.bind(this),
 			getFile: this.getFile.bind(this),
 			getResults: this.getCurrentResults.bind(this),
-			getUriForProjectFile: this.getUriForProjectFile.bind(this),
+			getFileByLocalUri: this.getFileByLocalUri.bind(this),
 			getSettings: this.getSettings.bind(this),
 		};
 
@@ -235,16 +235,19 @@ export default class ProjectManager {
 		if (project) return project.getFileInfo(uri);
 	}
 
-	private getCurrentResults():IAssemblerResult|undefined {
-		if (this._currentProject) {
-			return this._currentProject.getResults();
+	/**
+	 * Based on a local URI (i.e. a file relative to another file), find a file in any of the current projects
+	 */
+	private getFileByLocalUri(parentRelativeUri:string) {
+		for (const project of this._projects) {
+			const file = project.getFileInfoLocalUri(parentRelativeUri);
+			if (file) return file;
 		}
 	}
 
-	private getUriForProjectFile(parentRelativeUri:string) {
+	private getCurrentResults():IAssemblerResult|undefined {
 		if (this._currentProject) {
-			const file = this._currentProject.getFileInfoLocalUri(parentRelativeUri);
-			return file ? file.uri : undefined;
+			return this._currentProject.getResults();
 		}
 	}
 

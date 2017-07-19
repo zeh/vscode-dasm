@@ -15,7 +15,7 @@ export interface IProjectInfoProvider {
 	getEntryFiles:() => IProjectFile[];
 	getFile:(uri:string) => IProjectFile|undefined;
 	getResults:() => IAssemblerResult|undefined;
-	getUriForProjectFile:(localUri:string) => string|undefined;
+	getFileByLocalUri:(localUri:string) => string|undefined;
 	getSettings:() => ISettings;
 }
 
