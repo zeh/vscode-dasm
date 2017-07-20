@@ -14,6 +14,7 @@ import DocumentSymbolProvider from "../providers/DocumentSymbolProvider";
 import HoverProvider from "../providers/HoverProvider";
 import SettingsProvider from "../providers/SettingsProvider";
 import { ISettings } from "../providers/SettingsProvider";
+import WorkspaceSymbolProvider from "../providers/WorkspaceSymbolProvider";
 import { IProjectInfoProvider } from "./../providers/Provider";
 import Project from "./Project";
 import { IProjectFile } from "./ProjectFiles";
@@ -34,6 +35,7 @@ export default class ProjectManager {
 	private _completionProvider:CompletionProvider;
 	private _documentLinkProvider:DocumentLinkProvider;
 	private _documentSymbolProvider:DocumentSymbolProvider;
+	private _workspaceSymbolProvider:WorkspaceSymbolProvider;
 
 	constructor(connection:IConnection) {
 		this._connection = connection;
@@ -74,6 +76,9 @@ export default class ProjectManager {
 
 					// Symbols per document
 					documentSymbolProvider: true,
+
+					// Symbols per workspace
+					workspaceSymbolProvider: true,
 				},
 			};
 		});
@@ -115,6 +120,7 @@ export default class ProjectManager {
 		this._completionProvider = new CompletionProvider(this._connection, projectInfoProvider);
 		this._documentLinkProvider = new DocumentLinkProvider(this._connection, projectInfoProvider);
 		this._documentSymbolProvider = new DocumentSymbolProvider(this._connection, projectInfoProvider);
+		this._workspaceSymbolProvider = new WorkspaceSymbolProvider(this._connection, projectInfoProvider);
 	}
 
 	public start() {
