@@ -14,8 +14,8 @@ export default class DocumentSymbolProvider extends Provider {
 	constructor(connection:IConnection, projectInfoProvider:IProjectInfoProvider) {
 		super(connection, projectInfoProvider);
 
-		connection.onDocumentSymbol((symbolParams:DocumentSymbolParams):SymbolInformation[] => {
-			return this.process(symbolParams);
+		connection.onDocumentSymbol((documentSymbolParams:DocumentSymbolParams):SymbolInformation[] => {
+			return this.process(documentSymbolParams);
 		});
 	}
 
@@ -25,26 +25,33 @@ export default class DocumentSymbolProvider extends Provider {
 	public process(documentSymbolParams:DocumentSymbolParams):SymbolInformation[] {
 		const fileUri = documentSymbolParams.textDocument.uri;
 		const project = this.getProjectInfo().getProjectForFile(fileUri);
-		const results = project ? project.getAssemblerResults() : undefined;
+		if (fileUri && project) {
+			const projectEntryFile = project.getEntryFileInfo();
+			const results = project.getAssemblerResults();
+			const file = project.getFileInfo(fileUri);
 
-		if (fileUri && results && results.symbols) {
-			// Requested symbols for a specific file
-			const file = this.getProjectInfo().getFile(fileUri);
-			return results.symbols
-				.filter((symbol) => {
-					return !symbol.definitionFilename || fileUri.endsWith(symbol.definitionFilename);
-				})
-				.map((symbol) => {
-					return SymbolInformation.create(
-						symbol.name,
-						symbol.isLabel ? SymbolKind.Function : SymbolKind.Constant,
-						// TODO: use correct range for symbol definition!
-						Range.create(Position.create(symbol.definitionLineNumber - 1, 0), Position.create(symbol.definitionLineNumber - 1, 1)),
-						file ? file.uri : fileUri,
-					);
-				});
-		} else {
-			return [];
+			if (results && results.symbols && file) {
+				// Requested symbols for a specific file
+				const isFileEntry = projectEntryFile && file.uri === projectEntryFile.uri;
+				return results.symbols
+					.filter((symbol) => {
+						const defFilename = symbol.definitionFilename;
+						return (!defFilename && isFileEntry) || (defFilename && fileUri.endsWith(defFilename));
+					})
+					.map((symbol) => {
+						return SymbolInformation.create(
+							symbol.name,
+							symbol.isLabel ? SymbolKind.Function : SymbolKind.Constant,
+							Range.create(
+								Position.create(symbol.definitionLineNumber - 1, symbol.definitionColumnStart),
+								Position.create(symbol.definitionLineNumber - 1, symbol.definitionColumnEnd),
+							),
+							file.uri,
+						);
+					});
+			}
 		}
+
+		return [];
 	}
 }
