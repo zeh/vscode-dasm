@@ -4,12 +4,14 @@ All notable changes to the vscode-dasm extension are listed here. For a more com
 
 ## [Unreleased]
 
+## 3.0.0 - 2017-07-19
+
 ### Added
 
 * Hover shows definitions for 6502 registers ("PC", "AC", etc)
 * Auto-completion for 6502 registers
 * Source update events (for live compilation, file reference checking, etc) is delayed by 250ms to reduce disk usage and energy consumption
-* Quick navigate to symbols (Cmd+Shift+O)
+* Quick navigate to symbols (Cmd+Shift+O/Ctrl+Shift+O)
 
 ### Housekeeping
 
