@@ -4,6 +4,8 @@ import {
 	IConnection,
 } from "vscode-languageserver";
 
+import { IProjectFile } from "../project/ProjectFiles";
+import { IAssemblerResult } from "./Assembler";
 import { IPostCompilationProvider, IProjectInfoProvider, Provider } from "./Provider";
 
 export default class DiagnosticsProvider extends Provider implements IPostCompilationProvider {
@@ -15,31 +17,31 @@ export default class DiagnosticsProvider extends Provider implements IPostCompil
 	/**
 	 * Assembles a source and returns diagnostics errors
 	 */
-	public process(uri:string):void {
-		const diagnostics:Diagnostic[] = [];
-		const file = this.getProjectInfo().getFile(uri);
-		const sourceLines = file ? file.contentsLines : undefined;
-		const results = this.getProjectInfo().getAssemblerResults(uri);
+	public process(files:IProjectFile[], results?:IAssemblerResult):void {
+		for (const file of files) {
+			const uri = file.uri;
+			const sourceLines = file ? file.contentsLines : undefined;
+			const diagnostics:Diagnostic[] = [];
+			if (sourceLines && results && results.list && results.list.length > 0) {
+				results.list.forEach((line) => {
+					if (line.errorMessage && (!line.filename || uri.endsWith(line.filename))) {
+						const lineIndex = line.number - 1;
+						const range = this.findRangeForError(sourceLines[lineIndex], line.errorMessage);
+						diagnostics.push({
+							severity: DiagnosticSeverity.Error,
+							range: {
+								start: { line: lineIndex, character: range.start },
+								end: { line: lineIndex, character: range.end },
+							},
+							message: line.errorMessage,
+							source: "dasm",
+						});
+					}
+				});
+			}
 
-		if (sourceLines && results && results.list && results.list.length > 0) {
-			results.list.forEach((line) => {
-				if (line.errorMessage) {
-					const lineIndex = line.number - 1;
-					const range = this.findRangeForError(sourceLines[lineIndex], line.errorMessage);
-					diagnostics.push({
-						severity: DiagnosticSeverity.Error,
-						range: {
-							start: { line: lineIndex, character: range.start },
-							end: { line: lineIndex, character: range.end },
-						},
-						message: line.errorMessage,
-						source: "dasm",
-					});
-				}
-			});
+			this.getConnection().sendDiagnostics({ uri, diagnostics });
 		}
-
-		this.getConnection().sendDiagnostics({ uri, diagnostics });
 	}
 
 	private findRangeForError(line:string, errorMessage:string):{ start:number, end:number } {

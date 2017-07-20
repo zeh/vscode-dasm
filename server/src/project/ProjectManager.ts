@@ -15,7 +15,7 @@ import HoverProvider from "../providers/HoverProvider";
 import SettingsProvider from "../providers/SettingsProvider";
 import { ISettings } from "../providers/SettingsProvider";
 import Project from "./Project";
-import { IProjectFile } from './ProjectFiles';
+import { IProjectFile } from "./ProjectFiles";
 
 export default class ProjectManager {
 
@@ -152,7 +152,6 @@ export default class ProjectManager {
 		// Re-assemble the current project
 		if (this._currentProject) {
 			this._currentProject.updateFile(document);
-			this.updatePostProviders();
 		}
 	}
 
@@ -191,7 +190,6 @@ export default class ProjectManager {
 
 		if (this._currentProject) {
 			this._currentProject.markFileSaved(document);
-			this.updatePostProviders();
 		}
 	}
 
@@ -209,14 +207,11 @@ export default class ProjectManager {
 	}
 
 	/**
-	 * Updates existing providers with the latest info from the current tab
+	 * Updates existing providers with the latest info from an assembled project
 	 */
-	private updatePostProviders() {
-		const fileUri = this._currentDocumentUri;
-		if (fileUri) {
-			// Diagnostics
-			this._diagnosticsProvider.process(fileUri);
-		}
+	private updatePostAssemblyProviders(project:Project) {
+		// Diagnostics
+		this._diagnosticsProvider.process(project.getFiles(), project.getAssemblerResults());
 	}
 
 	/**
@@ -262,6 +257,7 @@ export default class ProjectManager {
 		if (!newProject && !avoidCreating) {
 			// A new file, create a project for it
 			newProject = new Project();
+			newProject.onAssembled.add((project) => { this.updatePostAssemblyProviders(project); });
 			newProject.addFile(document);
 			this._projects.push(newProject);
 		}

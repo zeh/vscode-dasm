@@ -5,11 +5,8 @@ import { IAssemblerResult } from "./Assembler";
 import { ISettings } from "./SettingsProvider";
 
 export interface IPostCompilationProvider {
-	process(uri:string, sourceLines:string[], results:IAssemblerResult):void;
+	process(files:IProjectFile[], results?:IAssemblerResult):void;
 }
-
-export type SourceProvider = () => string[]|undefined;
-export type ResultsProvider = () => IAssemblerResult|undefined;
 
 export interface IProjectInfoProvider {
 	getEntryFiles:() => IProjectFile[];
