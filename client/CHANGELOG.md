@@ -4,6 +4,12 @@ All notable changes to the vscode-dasm extension are listed here. For a more com
 
 ## [Unreleased]
 
+## 3.0.1 - 2017-07-19
+
+### Minor
+
+* Marketplace page updates
+
 ## 3.0.0 - 2017-07-19
 
 ### Added

@@ -41,18 +41,6 @@ So far, the following features are supported:
 ## TODO
 
 For more information on what's left to be done for this extension, please check [the roadmap](/client/ROADMAP.md).
-<!--
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
--->
 
 ## Release Notes
 
@@ -65,8 +53,6 @@ Bug reports, fixes, and other changes are welcomed. Our repository is [on GitHub
 ## Acknowledgements
 
 This extension uses the original [dasm macro assembler](http://dasm-dillon.sourceforge.net/) via [dasmjs](https://github.com/zeh/dasmjs), an [emscripten](https://github.com/kripken/emscripten)-compiled version of the original C code. This is ran on the background, as a language server tracked as [a separate part of this repository](/server/README.md).
-
-It also uses [Javatari](https://github.com/ppeccin/javatari.js) to preview Atari-compatible ROMs.
 
 And finally, this extension was heavily inspired by the [8bitworkshop](http://8bitworkshop.com/?platform=vcs&file=examples%2Fhello) web-based Atari development IDE (but shares no code with it except for its reliance on Javatari). One could say this extension is an attempt to create a similar Atari development experience, but within a dedicated standalone desktop application. [Buy their book](https://www.amazon.com/gp/product/1541021304/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=pzp-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B01N4DSRIZ&linkId=04d39e274c06e6c93b93d20a9a977111) to show your support.
 
