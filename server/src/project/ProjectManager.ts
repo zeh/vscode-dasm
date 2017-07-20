@@ -14,6 +14,7 @@ import DocumentSymbolProvider from "../providers/DocumentSymbolProvider";
 import HoverProvider from "../providers/HoverProvider";
 import SettingsProvider from "../providers/SettingsProvider";
 import { ISettings } from "../providers/SettingsProvider";
+import { IProjectInfoProvider } from "./../providers/Provider";
 import Project from "./Project";
 import { IProjectFile } from "./ProjectFiles";
 
@@ -99,10 +100,10 @@ export default class ProjectManager {
 		});
 
 		// Create providers
-		const projectInfoProvider = {
-			getEntryFiles: this.getEntryFiles.bind(this),
+		const projectInfoProvider:IProjectInfoProvider = {
+			getAllProjects: this.getAllProjects.bind(this),
+			getProjectForFile: this.getProjectForFile.bind(this),
 			getFile: this.getFile.bind(this),
-			getAssemblerResults: this.getAssemblerResults.bind(this),
 			getFileByLocalUri: this.getFileByLocalUri.bind(this),
 			getSettings: this.getSettings.bind(this),
 		};
@@ -162,7 +163,7 @@ export default class ProjectManager {
 		if (document.uri !== this._currentDocumentUri) {
 			// Tab changed: change context, changing (and creating) a new project if needed
 			console.log("[pm] NEW CURRENT URI is ", document.uri);
-			const project = this.getProjectForFile(document);
+			const project = this.getProjectForDocument(document);
 
 			if (project && project !== this._currentProject) {
 				// A new project altogether, set it as default
@@ -215,19 +216,25 @@ export default class ProjectManager {
 	}
 
 	/**
-	 * Get a list of what is considered the "entry" file for all currently known projects
+	 * Get a list of all projects
 	 */
-	private getEntryFiles():IProjectFile[] {
-		const allEntryFiles = this._projects.map((projectInfo) => projectInfo.getEntryFileInfo());
-		return allEntryFiles.filter((file) => Boolean(file)) as IProjectFile[];
+	private getAllProjects():Project[] {
+		return this._projects.concat();
+	}
+
+	/**
+	 * Based on an URI, find the project that contains that file
+	 */
+	private getProjectForFile(uri:string):Project|undefined {
+		return this._projects.find((projectInfo) => projectInfo.hasFile(uri));
 	}
 
 	/**
 	 * Based on an URI, find a file in any of the current projects
 	 */
 	private getFile(uri:string):IProjectFile|undefined {
-		const project = this._projects.find((projectInfo) => projectInfo.hasFile(uri));
-		if (project) return project.getFileInfo(uri);
+		const project = this.getProjectForFile(uri);
+		return project ? project.getFileInfo(uri) : undefined;
 	}
 
 	/**
@@ -241,21 +248,13 @@ export default class ProjectManager {
 	}
 
 	/**
-	 * Based on the URI of any file in a project, returns its assemblying results (errors, symbols, rom, etc)
-	 */
-	private getAssemblerResults(uri:string):IAssemblerResult|undefined {
-		const project = this._projects.find((projectInfo) => projectInfo.hasFile(uri));
-		if (project) return project.getAssemblerResults();
-	}
-
-	/**
-	 * Returns the project a file belongs to
+	 * Returns the project a document belongs to
 	 * TODO: Some files (e.g. include files) can belong to more than one project!
 	 */
-	private getProjectForFile(document:TextDocument, avoidCreating:boolean = false):Project|undefined {
-		let newProject = this._projects.find((project) => project.hasFile(document.uri));
+	private getProjectForDocument(document:TextDocument, avoidCreating:boolean = false):Project|undefined {
+		let newProject = this.getProjectForFile(document.uri);
 		if (!newProject && !avoidCreating) {
-			// A new file, create a project for it
+			// A new document, create a project for it
 			newProject = new Project();
 			newProject.onAssembled.add((project) => { this.updatePostAssemblyProviders(project); });
 			newProject.addFile(document);

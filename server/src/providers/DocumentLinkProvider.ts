@@ -31,12 +31,14 @@ export default class DocumentLinkProvider extends Provider {
 		console.log("[link] Document link for ", fileUriRequested);
 		if (!fileUriRequested) {
 			// No file requested: return the project roots
-			return this.getProjectInfo().getEntryFiles().map((file) => {
-				return DocumentLink.create(
-					Range.create(Position.create(0, 0), Position.create(0, 0)),
-					file.uri,
-				);
-			});
+			return this.getProjectInfo().getAllProjects()
+				.filter((project) => Boolean(project.getEntryFileInfo()))
+				.map((project) => {
+					return DocumentLink.create(
+						Range.create(Position.create(0, 0), Position.create(0, 0)),
+						(project.getEntryFileInfo() as IProjectFile).uri,
+					);
+				});
 		} else {
 			// Requested links for a specific file: return it
 			const file = this.getProjectInfo().getFile(fileUriRequested);

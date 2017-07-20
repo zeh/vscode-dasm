@@ -47,7 +47,8 @@ export default class CompletionProvider extends Provider {
 
 		const fileUri = textDocumentPositionParams.textDocument.uri;
 		const settings = this.getProjectInfo().getSettings();
-		const results = this.getProjectInfo().getAssemblerResults(fileUri);
+		const project = this.getProjectInfo().getProjectForFile(fileUri);
+		const results = project ? project.getAssemblerResults() : undefined;
 
 		const allUppercase = settings.preferUppercase.indexOf("all") >= 0;
 		const instructionUppercase = allUppercase || settings.preferUppercase.indexOf("instructions") >= 0;
