@@ -1,6 +1,7 @@
 {
 	"extends": ["tslint:recommended"],
 	"rules": {
+		"arrow-parens": true,
 		"class-name": true,
 		"comment-format": [
 			true,
@@ -13,6 +14,7 @@
 			true,
 			"tabs"
 		],
+		"interface-name": [true, "always-prefix"],
 		"ordered-imports": [
 			true,
 			{
@@ -29,9 +31,25 @@
 		"member-access": true,
 		"member-ordering": [
 			true,
-			"public-before-private",
-			"static-before-instance",
-			"variables-before-functions"
+			{
+				"order": [
+					"public-static-field",
+					"protected-static-field",
+					"private-static-field",
+					"public-instance-field",
+					"protected-instance-field",
+					"private-instance-field",
+					"public-static-method",
+					"protected-static-method",
+					"private-static-method",
+					"public-constructor",
+					"public-instance-method",
+					"protected-constructor",
+					"protected-instance-method",
+					"private-constructor",
+					"private-instance-method"
+				]
+			}
 		],
 		"no-arg": true,
 		"no-bitwise": false,
@@ -60,7 +78,6 @@
 		"no-switch-case-fall-through": true,
 		"no-trailing-whitespace": true,
 		"no-unused-expression": true,
-		"no-unused-variable": true,
 		"no-use-before-declare": true,
 		"no-var-keyword": true,
 		"object-literal-sort-keys": false,
@@ -73,6 +90,7 @@
 			"check-whitespace"
 		],
 		"only-arrow-functions": [true, "allow-declarations"],
+		"prefer-object-spread": true,
 		"quotemark": [
 			true,
 			"double",
@@ -81,6 +99,7 @@
 		],
 		"radix": true,
 		"semicolon": [true, "always"],
+		"space-before-function-paren": [true, "never"],
 		"switch-default": true,
 		"trailing-comma": [
 			true,

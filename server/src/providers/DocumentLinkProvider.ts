@@ -30,19 +30,13 @@ export default class DocumentLinkProvider extends Provider {
 		const fileUriRequested = documentLink.textDocument.uri;
 		console.log("[link] Document link for ", fileUriRequested);
 		if (!fileUriRequested) {
-			// No file requested: return the project root
-			const projectEntryFile = this.getProjectInfo().getEntryFile();
-			if (projectEntryFile) {
-				return [
-					DocumentLink.create(
-						Range.create(Position.create(0, 0), Position.create(0, 0)),
-						projectEntryFile.uri,
-					),
-				];
-			} else {
-				console.warn("[link] No project entry file to return for linkage");
-				return [];
-			}
+			// No file requested: return the project roots
+			return this.getProjectInfo().getEntryFiles().map((file) => {
+				return DocumentLink.create(
+					Range.create(Position.create(0, 0), Position.create(0, 0)),
+					file.uri,
+				);
+			});
 		} else {
 			// Requested links for a specific file: return it
 			const file = this.getProjectInfo().getFile(fileUriRequested);

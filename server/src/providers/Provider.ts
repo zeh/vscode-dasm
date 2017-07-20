@@ -5,18 +5,14 @@ import { IAssemblerResult } from "./Assembler";
 import { ISettings } from "./SettingsProvider";
 
 export interface IPostCompilationProvider {
-	process(uri:string, sourceLines:string[], results:IAssemblerResult):void;
+	process(files:IProjectFile[], results?:IAssemblerResult):void;
 }
 
-export type SourceProvider = () => string[]|undefined;
-export type ResultsProvider = () => IAssemblerResult|undefined;
-
 export interface IProjectInfoProvider {
-	getCurrentFile:() => IProjectFile|undefined;
-	getEntryFile:() => IProjectFile|undefined;
+	getEntryFiles:() => IProjectFile[];
 	getFile:(uri:string) => IProjectFile|undefined;
-	getResults:() => IAssemblerResult|undefined;
-	getUriForProjectFile:(localUri:string) => string|undefined;
+	getAssemblerResults:(uri:string) => IAssemblerResult|undefined;
+	getFileByLocalUri:(localUri:string) => string|undefined;
 	getSettings:() => ISettings;
 }
 

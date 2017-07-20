@@ -2,17 +2,22 @@ import {
 	TextDocument,
 } from "vscode-languageserver";
 
+import SimpleSignal from "simplesignal";
+
 import { Assembler, IAssemblerResult } from "./../providers/Assembler";
 import ProjectFiles from "./ProjectFiles";
+import { IProjectFile } from "./ProjectFiles";
 
 export default class Project {
 
 	private _files:ProjectFiles;
 	private _results?:IAssemblerResult;
 	private _assembler:Assembler;
+	private _onAssembled:SimpleSignal<(project:Project) => void>;
 
 	constructor() {
 		this._assembler = new Assembler();
+		this._onAssembled = new SimpleSignal<(project:Project) => void>();
 
 		this._files = new ProjectFiles();
 		this._files.onChanged.add(() => {
@@ -46,7 +51,7 @@ export default class Project {
 		return this._files.has(uri);
 	}
 
-	public getResults():IAssemblerResult|undefined {
+	public getAssemblerResults():IAssemblerResult|undefined {
 		return this._results;
 	}
 
@@ -62,6 +67,14 @@ export default class Project {
 		return this._files.getByDependencyUri(undefined, parentRelativeUri);
 	}
 
+	public getFiles():IProjectFile[] {
+		return this._files.all();
+	}
+
+	public get onAssembled() {
+		return this._onAssembled;
+	}
+
 	private assemble() {
 		// Gather all files and compile
 		const source = this._files.getSource();
@@ -69,6 +82,7 @@ export default class Project {
 		if (source && includes) {
 			console.time("[project] Assembling");
 			this._results = this._assembler.assemble(source, includes);
+			this._onAssembled.dispatch(this);
 			console.timeEnd("[project] Assembling");
 		} else {
 			console.warn("[project] No entry file to compile");

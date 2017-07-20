@@ -100,11 +100,10 @@ export default class ProjectManager {
 
 		// Create providers
 		const projectInfoProvider = {
-			getCurrentFile: this.getCurrentFile.bind(this),
-			getEntryFile: this.getEntryFile.bind(this),
+			getEntryFiles: this.getEntryFiles.bind(this),
 			getFile: this.getFile.bind(this),
-			getResults: this.getCurrentResults.bind(this),
-			getUriForProjectFile: this.getUriForProjectFile.bind(this),
+			getAssemblerResults: this.getAssemblerResults.bind(this),
+			getFileByLocalUri: this.getFileByLocalUri.bind(this),
 			getSettings: this.getSettings.bind(this),
 		};
 
@@ -153,7 +152,6 @@ export default class ProjectManager {
 		// Re-assemble the current project
 		if (this._currentProject) {
 			this._currentProject.updateFile(document);
-			this.updatePostProviders();
 		}
 	}
 
@@ -192,7 +190,6 @@ export default class ProjectManager {
 
 		if (this._currentProject) {
 			this._currentProject.markFileSaved(document);
-			this.updatePostProviders();
 		}
 	}
 
@@ -210,45 +207,45 @@ export default class ProjectManager {
 	}
 
 	/**
-	 * Updates existing providers with the latest info from the current tab
+	 * Updates existing providers with the latest info from an assembled project
 	 */
-	private updatePostProviders() {
-		const fileUri = this._currentDocumentUri;
-		if (fileUri) {
-			// Diagnostics
-			this._diagnosticsProvider.process(fileUri);
-		}
+	private updatePostAssemblyProviders(project:Project) {
+		// Diagnostics
+		this._diagnosticsProvider.process(project.getFiles(), project.getAssemblerResults());
 	}
 
-	private getCurrentFile():IProjectFile|undefined {
-		if (this._currentDocumentUri) {
-			return this.getFile(this._currentDocumentUri);
-		}
+	/**
+	 * Get a list of what is considered the "entry" file for all currently known projects
+	 */
+	private getEntryFiles():IProjectFile[] {
+		const allEntryFiles = this._projects.map((projectInfo) => projectInfo.getEntryFileInfo());
+		return allEntryFiles.filter((file) => Boolean(file)) as IProjectFile[];
 	}
 
-	private getEntryFile():IProjectFile|undefined {
-		if (this._currentProject) {
-			return this._currentProject.getEntryFileInfo();
-		}
-	}
-
+	/**
+	 * Based on an URI, find a file in any of the current projects
+	 */
 	private getFile(uri:string):IProjectFile|undefined {
-		if (this._currentProject && uri) {
-			return this._currentProject.getFileInfo(uri);
+		const project = this._projects.find((projectInfo) => projectInfo.hasFile(uri));
+		if (project) return project.getFileInfo(uri);
+	}
+
+	/**
+	 * Based on a local URI (i.e. a file relative to another file), find a file in any of the current projects
+	 */
+	private getFileByLocalUri(parentRelativeUri:string) {
+		for (const project of this._projects) {
+			const file = project.getFileInfoLocalUri(parentRelativeUri);
+			if (file) return file;
 		}
 	}
 
-	private getCurrentResults():IAssemblerResult|undefined {
-		if (this._currentProject) {
-			return this._currentProject.getResults();
-		}
-	}
-
-	private getUriForProjectFile(parentRelativeUri:string) {
-		if (this._currentProject) {
-			const file = this._currentProject.getFileInfoLocalUri(parentRelativeUri);
-			return file ? file.uri : undefined;
-		}
+	/**
+	 * Based on the URI of any file in a project, returns its assemblying results (errors, symbols, rom, etc)
+	 */
+	private getAssemblerResults(uri:string):IAssemblerResult|undefined {
+		const project = this._projects.find((projectInfo) => projectInfo.hasFile(uri));
+		if (project) return project.getAssemblerResults();
 	}
 
 	/**
@@ -260,6 +257,7 @@ export default class ProjectManager {
 		if (!newProject && !avoidCreating) {
 			// A new file, create a project for it
 			newProject = new Project();
+			newProject.onAssembled.add((project) => { this.updatePostAssemblyProviders(project); });
 			newProject.addFile(document);
 			this._projects.push(newProject);
 		}
