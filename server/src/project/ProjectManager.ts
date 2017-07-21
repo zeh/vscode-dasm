@@ -13,6 +13,7 @@ import DocumentLinkProvider from "../providers/DocumentLinkProvider";
 import DocumentSymbolProvider from "../providers/DocumentSymbolProvider";
 import HoverProvider from "../providers/HoverProvider";
 import { IPostAssemblyProvider, Provider } from "../providers/Provider";
+import ReferencesProvider from "../providers/ReferencesProvider";
 import SettingsProvider from "../providers/SettingsProvider";
 import { ISettings } from "../providers/SettingsProvider";
 import WorkspaceSymbolProvider from "../providers/WorkspaceSymbolProvider";
@@ -86,6 +87,9 @@ export default class ProjectManager {
 					// Symbols per document
 					documentSymbolProvider: true,
 
+					// Symbol references
+					referencesProvider: true,
+
 					// Symbols per workspace
 					workspaceSymbolProvider: true,
 				},
@@ -133,6 +137,7 @@ export default class ProjectManager {
 			{ provider: new DocumentSymbolProvider(this._connection, projectInfoProvider) },
 			{ provider: new WorkspaceSymbolProvider(this._connection, projectInfoProvider) },
 			{ provider: new DocumentHighlightProvider(this._connection, projectInfoProvider) },
+			{ provider: new ReferencesProvider(this._connection, projectInfoProvider) },
 		];
 	}
 
