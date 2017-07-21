@@ -14,6 +14,7 @@ import DocumentSymbolProvider from "../providers/DocumentSymbolProvider";
 import HoverProvider from "../providers/HoverProvider";
 import { IPostAssemblyProvider, Provider } from "../providers/Provider";
 import ReferencesProvider from "../providers/ReferencesProvider";
+import RenameProvider from "../providers/RenameProvider";
 import SettingsProvider from "../providers/SettingsProvider";
 import { ISettings } from "../providers/SettingsProvider";
 import WorkspaceSymbolProvider from "../providers/WorkspaceSymbolProvider";
@@ -90,6 +91,9 @@ export default class ProjectManager {
 					// Symbol references
 					referencesProvider: true,
 
+					// Symbol renaming capabilities
+					renameProvider: true,
+
 					// Symbols per workspace
 					workspaceSymbolProvider: true,
 				},
@@ -138,6 +142,7 @@ export default class ProjectManager {
 			{ provider: new WorkspaceSymbolProvider(this._connection, projectInfoProvider) },
 			{ provider: new DocumentHighlightProvider(this._connection, projectInfoProvider) },
 			{ provider: new ReferencesProvider(this._connection, projectInfoProvider) },
+			{ provider: new RenameProvider(this._connection, projectInfoProvider) },
 		];
 	}
 
