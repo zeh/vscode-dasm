@@ -28,9 +28,16 @@ export default class LineUtils {
 	 * Given a line, returns what is the assumed symbol/label/value at a specific position
 	 */
 	public static getTokenAtLinePosition(sourceLine:string|undefined, column:number):string|undefined {
-		if (sourceLine && column < sourceLine.length) {
-			const targetRegex = new RegExp("^.{0," + column + "}\\b([\\w.]*)\\b.*$");
-			const targetMatch = sourceLine.match(targetRegex);
+		if (sourceLine && column <= sourceLine.length) {
+			let targetRegex = new RegExp("^.{0," + Math.max(column, 0) + "}\\b([\\w.]*)\\b.*$");
+			let targetMatch = sourceLine.match(targetRegex);
+			if (!targetMatch || !targetMatch[1]) {
+				// Fallback: this regex is more lenient, so we can have rename working from the end of the string...
+				// but it may give false positives
+				targetRegex = new RegExp("^.{0," + Math.max(column - 1, 0) + "}\\b([\\w.]*)\\b.*$");
+				targetMatch = sourceLine.match(targetRegex);
+			}
+
 			if (targetMatch && targetMatch[1]) {
 				return targetMatch[1];
 			}
