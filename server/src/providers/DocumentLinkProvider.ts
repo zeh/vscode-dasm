@@ -28,7 +28,6 @@ export default class DocumentLinkProvider extends Provider {
 	 */
 	public process(documentLink:DocumentLinkParams):DocumentLink[] {
 		const fileUriRequested = documentLink.textDocument.uri;
-		console.log("[link] Document link for ", fileUriRequested);
 		if (!fileUriRequested) {
 			// No file requested: return the project roots
 			return this.getProjectInfo().getAllProjects()
@@ -45,7 +44,6 @@ export default class DocumentLinkProvider extends Provider {
 			if (file) {
 				return this.buildLinksForFile(file);
 			} else {
-				console.warn("[link] No project file [" + fileUriRequested + " to return for linkage");
 				return [];
 			}
 		}
