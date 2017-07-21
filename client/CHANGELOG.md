@@ -4,6 +4,10 @@ All notable changes to the vscode-dasm extension are listed here. For a more com
 
 ## [Unreleased]
 
+### Added
+
+* Quick navigate to workspace symbols (Cmd+T/Ctrl+T)
+
 ## 3.0.1 - 2017-07-19
 
 ### Minor
@@ -17,7 +21,7 @@ All notable changes to the vscode-dasm extension are listed here. For a more com
 * Hover shows definitions for 6502 registers ("PC", "AC", etc)
 * Auto-completion for 6502 registers
 * Source update events (for live compilation, file reference checking, etc) is delayed by 250ms to reduce disk usage and energy consumption
-* Quick navigate to symbols (Cmd+Shift+O/Ctrl+Shift+O)
+* Quick navigate to document symbols (Cmd+Shift+O/Ctrl+Shift+O)
 
 ### Housekeeping
 

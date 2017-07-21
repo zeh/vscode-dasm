@@ -34,6 +34,10 @@ So far, the following features are supported:
 
 ![Peek](/client/images/symbols-navigate.png)
 
+### Quick navigate to workspace labels and symbols
+
+![Peek](/client/images/symbols-navigate-workspace.png)
+
 ### Navigate to/peek at definitions for labels and symbols
 
 ![Peek](/client/images/peek.png)
