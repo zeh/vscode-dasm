@@ -46,9 +46,13 @@ So far, the following features are supported:
 
 ![Highlight symbols](/client/images/symbols-highlight-all.png)
 
-### Find all uses of a symbol or label
+### Find all uses of a symbol or label across files
 
 ![Symbols references](/client/images/symbols-references.png)
+
+### Rename/refactor symbols or labels across files
+
+![Rename symbols](/client/images/symbols-rename.png)
 
 ## TODO
 
