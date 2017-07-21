@@ -3,15 +3,34 @@ import {
 	Range,
 } from "vscode-languageserver";
 
+interface ITokenPosition {
+	start: number;
+	end: number;
+	length: number;
+}
+
 export default class LineUtils {
 
 	/**
-	 * Given a line, returns what is the assume symbol/label/value at a specific position
+	 * Given a list of lines, returns what is the assumed symbol/label/value at a specific position
 	 */
-	public static getTokenAtPosition(line:string, character:number):string|undefined {
-		if (character < line.length) {
-			const targetRegex = new RegExp("^.{0," + character + "}\\b([\\w.]*)\\b.*$");
-			const targetMatch = line.match(targetRegex);
+	public static getTokenAtSourcePosition(sourceLines:string[]|undefined, line:number, column:number):string|undefined {
+		if (sourceLines && sourceLines.length > line) {
+			// Find the char and the surrounding symbol it relates to
+			const sourceLine = LineUtils.removeComments(sourceLines[line]);
+			return LineUtils.getTokenAtLinePosition(sourceLine, column);
+		}
+
+		return undefined;
+	}
+
+	/**
+	 * Given a line, returns what is the assumed symbol/label/value at a specific position
+	 */
+	public static getTokenAtLinePosition(sourceLine:string|undefined, column:number):string|undefined {
+		if (sourceLine && column < sourceLine.length) {
+			const targetRegex = new RegExp("^.{0," + column + "}\\b([\\w.]*)\\b.*$");
+			const targetMatch = sourceLine.match(targetRegex);
 			if (targetMatch && targetMatch[1]) {
 				return targetMatch[1];
 			}
@@ -24,7 +43,7 @@ export default class LineUtils {
 	 * Given a line and a token, returns the location in that line (start and end) that the token is in
 	 * A `character` parameter can be used when the token needs to be in that position
 	 */
-	public static getTokenPosition(line:string, token:string, character:number = -1):{start:number, end:number, length:number}|undefined {
+	public static getTokenPosition(line:string, token:string, character:number = -1):ITokenPosition|undefined {
 		const len = token.length;
 		let pos = line.indexOf(token);
 		while (pos > -1) {
@@ -33,6 +52,20 @@ export default class LineUtils {
 			}
 			pos = line.indexOf(token, pos + len);
 		}
+	}
+
+	/**
+	 * Given a line and a token, returns all the location in that line (start and end) that the token is in
+	 */
+	public static getTokenPositions(line:string, token:string):ITokenPosition[] {
+		const len = token.length;
+		let pos = line.indexOf(token);
+		const positions = [];
+		while (pos > -1) {
+			positions.push({ start: pos, end: pos + len, length: len });
+			pos = line.indexOf(token, pos + len);
+		}
+		return positions;
 	}
 
 	/**

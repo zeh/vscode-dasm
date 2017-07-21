@@ -35,7 +35,7 @@ export default class DefinitionProvider extends Provider {
 			const sourceLine = LineUtils.removeComments(sourceLines[line]);
 			if (sourceLine) {
 				const character = textDocumentPositionParams.position.character;
-				const token = LineUtils.getTokenAtPosition(sourceLine, character);
+				const token = LineUtils.getTokenAtLinePosition(sourceLine, character);
 				const symbol = results.symbols.find((tSymbol) => tSymbol.name === token);
 				if (token && symbol && symbol.definitionLineNumber > 0) {
 					const definitionLine = symbol.definitionLineNumber - 1;
