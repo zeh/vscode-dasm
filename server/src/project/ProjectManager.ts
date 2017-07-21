@@ -8,6 +8,7 @@ import {
 import CompletionProvider from "../providers/CompletionProvider";
 import DefinitionProvider from "../providers/DefinitionProvider";
 import DiagnosticsProvider from "../providers/DiagnosticsProvider";
+import DocumentHighlightProvider from "../providers/DocumentHighlightProvider";
 import DocumentLinkProvider from "../providers/DocumentLinkProvider";
 import DocumentSymbolProvider from "../providers/DocumentSymbolProvider";
 import HoverProvider from "../providers/HoverProvider";
@@ -79,6 +80,9 @@ export default class ProjectManager {
 						resolveProvider: true,
 					},
 
+					// Symbol highlights in the document
+					documentHighlightProvider: true,
+
 					// Symbols per document
 					documentSymbolProvider: true,
 
@@ -128,6 +132,7 @@ export default class ProjectManager {
 			{ provider: new DocumentLinkProvider(this._connection, projectInfoProvider) },
 			{ provider: new DocumentSymbolProvider(this._connection, projectInfoProvider) },
 			{ provider: new WorkspaceSymbolProvider(this._connection, projectInfoProvider) },
+			{ provider: new DocumentHighlightProvider(this._connection, projectInfoProvider) },
 		];
 	}
 
