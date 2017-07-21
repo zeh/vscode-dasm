@@ -6,9 +6,9 @@ import {
 
 import { IProjectFile } from "../project/ProjectFiles";
 import { IAssemblerResult } from "./Assembler";
-import { IPostCompilationProvider, IProjectInfoProvider, Provider } from "./Provider";
+import { IPostAssemblyProvider, IProjectInfoProvider, Provider } from "./Provider";
 
-export default class DiagnosticsProvider extends Provider implements IPostCompilationProvider {
+export default class DiagnosticsProvider extends Provider implements IPostAssemblyProvider {
 
 	constructor(connection:IConnection, projectInfoProvider:IProjectInfoProvider) {
 		super(connection, projectInfoProvider);

@@ -5,13 +5,13 @@ import {
 	TextDocuments,
 } from "vscode-languageserver";
 
-import { IAssemblerResult } from "../providers/Assembler";
 import CompletionProvider from "../providers/CompletionProvider";
 import DefinitionProvider from "../providers/DefinitionProvider";
 import DiagnosticsProvider from "../providers/DiagnosticsProvider";
 import DocumentLinkProvider from "../providers/DocumentLinkProvider";
 import DocumentSymbolProvider from "../providers/DocumentSymbolProvider";
 import HoverProvider from "../providers/HoverProvider";
+import { IPostAssemblyProvider, Provider } from "../providers/Provider";
 import SettingsProvider from "../providers/SettingsProvider";
 import { ISettings } from "../providers/SettingsProvider";
 import WorkspaceSymbolProvider from "../providers/WorkspaceSymbolProvider";
@@ -19,27 +19,32 @@ import { IProjectInfoProvider } from "./../providers/Provider";
 import Project from "./Project";
 import { IProjectFile } from "./ProjectFiles";
 
+interface IProviderInfo {
+	provider: Provider;
+	needsPostAssemblyProcessing?: false;
+}
+
+interface IPostAssemblyProviderInfo {
+	provider: IPostAssemblyProvider;
+	needsPostAssemblyProcessing: true;
+}
+
 export default class ProjectManager {
 
-	private _connection:IConnection;
+	private readonly _connection:IConnection;
+	private readonly _providers:Array<IProviderInfo|IPostAssemblyProviderInfo>;
+	private readonly _settingsProvider:SettingsProvider;
+
 	private _projects:Project[];
 	private _currentProject?:Project;
 	private _currentDocumentUri?:string;
 	private _workspaceRoot:string;
 	private _documents:TextDocuments;
 
-	private _diagnosticsProvider:DiagnosticsProvider;
-	private _hoverProvider:HoverProvider;
-	private _definitionProvider:DefinitionProvider;
-	private _settingsProvider:SettingsProvider;
-	private _completionProvider:CompletionProvider;
-	private _documentLinkProvider:DocumentLinkProvider;
-	private _documentSymbolProvider:DocumentSymbolProvider;
-	private _workspaceSymbolProvider:WorkspaceSymbolProvider;
-
 	constructor(connection:IConnection) {
 		this._connection = connection;
 		this._projects = [];
+
 		this._currentProject = undefined;
 		this._currentDocumentUri = undefined;
 
@@ -113,14 +118,17 @@ export default class ProjectManager {
 			getSettings: this.getSettings.bind(this),
 		};
 
-		this._diagnosticsProvider = new DiagnosticsProvider(this._connection, projectInfoProvider);
-		this._hoverProvider = new HoverProvider(this._connection, projectInfoProvider);
-		this._definitionProvider = new DefinitionProvider(this._connection, projectInfoProvider);
 		this._settingsProvider = new SettingsProvider(this._connection, projectInfoProvider);
-		this._completionProvider = new CompletionProvider(this._connection, projectInfoProvider);
-		this._documentLinkProvider = new DocumentLinkProvider(this._connection, projectInfoProvider);
-		this._documentSymbolProvider = new DocumentSymbolProvider(this._connection, projectInfoProvider);
-		this._workspaceSymbolProvider = new WorkspaceSymbolProvider(this._connection, projectInfoProvider);
+
+		this._providers = [
+			{ provider: new DiagnosticsProvider(this._connection, projectInfoProvider), needsPostAssemblyProcessing: true },
+			{ provider: new HoverProvider(this._connection, projectInfoProvider) },
+			{ provider: new DefinitionProvider(this._connection, projectInfoProvider) },
+			{ provider: new CompletionProvider(this._connection, projectInfoProvider) },
+			{ provider: new DocumentLinkProvider(this._connection, projectInfoProvider) },
+			{ provider: new DocumentSymbolProvider(this._connection, projectInfoProvider) },
+			{ provider: new WorkspaceSymbolProvider(this._connection, projectInfoProvider) },
+		];
 	}
 
 	public start() {
@@ -217,8 +225,11 @@ export default class ProjectManager {
 	 * Updates existing providers with the latest info from an assembled project
 	 */
 	private updatePostAssemblyProviders(project:Project) {
-		// Diagnostics
-		this._diagnosticsProvider.process(project.getFiles(), project.getAssemblerResults());
+		for (const providerInfo of this._providers) {
+			if (providerInfo.needsPostAssemblyProcessing) {
+				providerInfo.provider.process(project.getFiles(), project.getAssemblerResults());
+			}
+		}
 	}
 
 	/**

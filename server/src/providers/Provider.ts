@@ -5,7 +5,7 @@ import { IProjectFile } from "./../project/ProjectFiles";
 import { IAssemblerResult } from "./Assembler";
 import { ISettings } from "./SettingsProvider";
 
-export interface IPostCompilationProvider {
+export interface IPostAssemblyProvider {
 	process(files:IProjectFile[], results?:IAssemblerResult):void;
 }
 
