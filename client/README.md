@@ -46,6 +46,10 @@ So far, the following features are supported:
 
 ![Highlight symbols](/client/images/symbols-highlight-all.png)
 
+### Find all uses of a symbol or label
+
+![Symbols references](/client/images/symbols-references.png)
+
 ## TODO
 
 For more information on what's left to be done for this extension, please check [the roadmap](/client/ROADMAP.md).

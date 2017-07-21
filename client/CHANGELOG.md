@@ -8,6 +8,7 @@ All notable changes to the vscode-dasm extension are listed here. For a more com
 
 * Quick navigate to workspace symbols (Cmd+T/Ctrl+T)
 * Highlight all occurrences of a symbol on selection
+* List all uses of a symbol or label (Shift+F12)
 
 ## 3.0.1 - 2017-07-19
 
