@@ -79,6 +79,10 @@ export default class ProjectFiles {
 		}
 	}
 
+	public remove(uri:string) {
+		delete this._files[uri];
+	}
+
 	public debug_logProject() {
 		const keys = Object.keys(this._files);
 		console.log("  " + keys.length + " files: ");
@@ -280,12 +284,18 @@ export default class ProjectFiles {
 		if (file.contentsLines) {
 			const allDependencyLinks = this.getIncludedFileLinks(file.contentsLines);
 
+			const dependenciesToRemove = file.dependencies.filter((dependencyInfo) => {
+				return !allDependencyLinks.some((dependencyLink) => {
+					return dependencyLink.fileName === dependencyInfo.parentRelativeUri;
+				});
+			});
+
 			// Remove dependencies that are not featured anymore
-			file.dependencies = file.dependencies.filter(
-				(dependencyInfo) => allDependencyLinks.some(
-					(dependencyLink) => dependencyLink.fileName === dependencyInfo.parentRelativeUri,
-				),
-			);
+			file.dependencies = file.dependencies.filter((dependencyInfo) => {
+				return !dependenciesToRemove.some((fileToRemove) => {
+					return fileToRemove.parentRelativeUri === dependencyInfo.parentRelativeUri;
+				});
+			});
 
 			// Filter down to new dependencies only
 			const newDependencyLinks = allDependencyLinks.filter((dependencyLink) => {
@@ -298,6 +308,32 @@ export default class ProjectFiles {
 				};
 			});
 			file.dependencies = file.dependencies.concat(newDependencies);
+
+			// Remove files from project if they're not dependencies anymore
+			const allFiles = this.all();
+			const filesToRemove = allFiles.filter((pFile) => {
+				// Check if the file is a dependency of any other file
+				if (pFile === this._entryFile) {
+					// Don't remove if it's the entry file
+					return false;
+				} else {
+					// Don't remove if it's used as a dependency in any other file
+					const fileWithThisAsADependency = allFiles.find((aFile) => {
+						return Boolean(aFile.dependencies.find((fDependency) => {
+							if (fDependency.file) {
+								// File exists, check if the uri is the same
+								return fDependency.file.uri === pFile.uri;
+							} else {
+								// File doesn't exist, do a optimistic check
+								return pFile.uri.endsWith(fDependency.parentRelativeUri);
+							}
+						}));
+					});
+					return !Boolean(fileWithThisAsADependency);
+				}
+			});
+
+			for (const rFile of filesToRemove) this.remove(rFile.uri);
 
 			// TODO: this is a bit messy, to get an uri like a real file uri. need to check on osx, or make it more platform agnostic
 
