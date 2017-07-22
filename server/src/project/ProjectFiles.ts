@@ -247,7 +247,7 @@ export default class ProjectFiles {
 	 * Return a list of all files included within a source, with their include filename and range
 	 */
 	private getIncludedFileLinks(lines:string[]) {
-		const includeFind = /^[^;\n]+include\s*([^ ;\n]*)/gmi;
+		const includeFind = /^[^;"\n]+include\s+([^ ;\n]*)/gmi;
 		const files:Array<{fileName:string, range:Range}> = [];
 		lines.forEach((line, lineIndex) => {
 			let result = includeFind.exec(line);
