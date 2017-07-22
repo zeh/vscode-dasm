@@ -39,6 +39,7 @@ export default class ProjectFiles {
 	private _files:{[key:string]:IProjectFile};
 	private _entryFile?:IProjectFile;
 	private _onChanged:SimpleSignal<(files:ProjectFiles) => void>;
+	private _onAdded:SimpleSignal<(files:ProjectFiles) => void>;
 
 	private _queuedFileUpdate?:IFileUpdateEvent;
 	private _queuedUpdateProcessId?:NodeJS.Timer;
@@ -47,6 +48,7 @@ export default class ProjectFiles {
 		this._files = {};
 		this._entryFile = undefined;
 		this._onChanged = new SimpleSignal<(files:ProjectFiles) => void>();
+		this._onAdded = new SimpleSignal<(files:ProjectFiles) => void>();
 	}
 
 	public addFromDocument(document:TextDocument) {
@@ -73,6 +75,7 @@ export default class ProjectFiles {
 			}
 
 			this._files[cleanUri] = newFile;
+			this._onAdded.dispatch(this);
 		}
 	}
 
@@ -102,7 +105,7 @@ export default class ProjectFiles {
 				fileInfo.isDirty = true;
 
 				this.updateDependencies(fileInfo);
-				this.onChanged.dispatch(this);
+				this._onChanged.dispatch(this);
 			});
 		}
 	}
@@ -120,7 +123,7 @@ export default class ProjectFiles {
 				fileInfo.isDirty = false;
 
 				this.updateDependencies(fileInfo);
-				this.onChanged.dispatch(this);
+				this._onChanged.dispatch(this);
 			});
 		}
 	}
@@ -178,6 +181,10 @@ export default class ProjectFiles {
 		return undefined;
 	}
 
+	public get onAdded() {
+		return this._onAdded;
+	}
+
 	public get onChanged() {
 		return this._onChanged;
 	}
@@ -195,6 +202,7 @@ export default class ProjectFiles {
 
 	public dispose() {
 		this.clearQueuedFileUpdate();
+		this._onAdded.removeAll();
 		this._onChanged.removeAll();
 	}
 
