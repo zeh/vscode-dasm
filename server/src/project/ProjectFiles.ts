@@ -293,8 +293,6 @@ export default class ProjectFiles {
 			});
 			file.dependencies = file.dependencies.concat(newDependencies);
 
-			// TODO: resolve issue when a .h file is opened first, before its project
-			// TODO: a file should be set later, and added if it was a dependency (e.g. vcs.h opened after it already exists in a project)
 			// TODO: this is a bit messy, to get an uri like a real file uri. need to check on osx, or make it more platform agnostic
 
 			// Add dependency files to the main file list where needed

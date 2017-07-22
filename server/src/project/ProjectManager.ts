@@ -290,14 +290,41 @@ export default class ProjectManager {
 			newProject = this.createProject();
 			newProject.addFile(document);
 		}
+
 		return newProject;
 	}
 
+	/**
+	 * Performs a final consolidation, removing single-file projects if the file is a dependency of another project
+	 * (This would happen when opening the dependency file first, and only later its dependent parent)
+	 */
+	private consolidateProjects() {
+		if (this._projects.length > 1) {
+			const projectsToRemove = this._projects.filter((project) => {
+				const files = project.getFiles();
+				if (files.length === 0) {
+					return true;
+				} else if (files.length === 1) {
+					const otherProject = this._projects.find((projectInfo) => {
+						return files[0] && projectInfo !== project && projectInfo.hasFile(files[0].uri);
+					});
+					return Boolean(otherProject);
+				} else {
+					return false;
+				}
+			});
+
+			for (const project of projectsToRemove) this.destroyProject(project);
+
+			console.log("[pm] CONSOLIDATED, new project length is", this._projects.length);
+		}
+	}
 
 	private createProject() {
 		const project = new Project();
 		this._projects.push(project);
 		project.onAssembled.add(this.updatePostAssemblyProviders.bind(this));
+		project.onChangedFiles.add(() => this.consolidateProjects());
 		return project;
 	}
 
