@@ -4,6 +4,17 @@ All notable changes to the vscode-dasm extension are listed here. For a more com
 
 ## [Unreleased]
 
+### Added
+
+* The INCDIR pseudo-op is supported now to add new folders to the list of possible INCLUDE locations
+
+### Fixed
+
+* Internal project manager consolidates files into a single assembly group when needed
+* Extension doesn't crash when attempting to include a missing file or files from sub-folders
+* Include files with the word "include" in their path don't make the editor confused anymore
+* Properly remove dangling file dependency info when file is not included in the source anymore
+
 ## 3.1.0 - 2017-07-21
 
 ### Added
