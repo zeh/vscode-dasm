@@ -37,9 +37,6 @@ export interface IAssemblerResult {
 
 export class Assembler {
 
-	constructor() {
-	}
-
 	public assemble(src:string, includes?:{[key:string]: string}):IAssemblerResult {
 		console.time("[assembler] Compile");
 		const result = dasm(src, { format: 3, includes });
