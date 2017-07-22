@@ -193,6 +193,11 @@ export default class ProjectFiles {
 		return this._entryFile ? this._entryFile.contents : undefined;
 	}
 
+	public dispose() {
+		this.clearQueuedFileUpdate();
+		this._onChanged.removeAll();
+	}
+
 	private getCleanUri(uri:string):string {
 		return decodeURIComponent(uri);
 	}
@@ -203,10 +208,7 @@ export default class ProjectFiles {
 	 */
 	private queueFileUpdate(uri:string, process:() => void) {
 		// Cancel existing update event if existing
-		if (this._queuedUpdateProcessId) {
-			clearTimeout(this._queuedUpdateProcessId);
-			this._queuedUpdateProcessId = undefined;
-		}
+		this.clearQueuedFileUpdate();
 
 		// If an event exists and it's a different file, process it immediately
 		if (this._queuedFileUpdate && this._queuedFileUpdate.uri !== uri) {
@@ -224,6 +226,13 @@ export default class ProjectFiles {
 			process();
 			this._queuedUpdateProcessId = undefined;
 		}, ProjectFiles.FILE_UPDATE_DEBOUNCE_MS);
+	}
+
+	private clearQueuedFileUpdate() {
+		if (this._queuedUpdateProcessId) {
+			clearTimeout(this._queuedUpdateProcessId);
+			this._queuedUpdateProcessId = undefined;
+		}
 	}
 
 	/**

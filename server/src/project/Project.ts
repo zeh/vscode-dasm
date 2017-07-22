@@ -75,6 +75,12 @@ export default class Project {
 		return this._onAssembled;
 	}
 
+	public dispose() {
+		this._onAssembled.removeAll();
+		this._results = undefined;
+		this._files.dispose();
+	}
+
 	private assemble() {
 		// Gather all files and compile
 		const source = this._files.getSource();
