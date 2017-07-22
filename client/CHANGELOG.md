@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the vscode-dasm extension are listed here. For a more complete list, check the [release list in the GitHub repository](https://github.com/zeh/vscode-dasm/releases).
+All notable changes to the vscode-dasm extension are listed here. For a more complete list of commits, check the [tag list in the GitHub repository](https://github.com/zeh/vscode-dasm/releases).
 
 ## [Unreleased]
 
