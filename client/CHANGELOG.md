@@ -4,6 +4,8 @@ All notable changes to the vscode-dasm extension are listed here. For a more com
 
 ## [Unreleased]
 
+## 3.1.0 - 2017-07-21
+
 ### Added
 
 * Quick navigate to workspace symbols (Cmd+T/Ctrl+T)
