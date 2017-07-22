@@ -287,12 +287,23 @@ export default class ProjectManager {
 		let newProject = this.getProjectForFile(document.uri);
 		if (!newProject && !avoidCreating) {
 			// A new document, create a project for it
-			newProject = new Project();
-			newProject.onAssembled.add((project) => { this.updatePostAssemblyProviders(project); });
+			newProject = this.createProject();
 			newProject.addFile(document);
-			this._projects.push(newProject);
 		}
 		return newProject;
+	}
+
+
+	private createProject() {
+		const project = new Project();
+		this._projects.push(project);
+		project.onAssembled.add(this.updatePostAssemblyProviders.bind(this));
+		return project;
+	}
+
+	private destroyProject(project:Project) {
+		this._projects = this._projects.filter((listProject) => listProject !== project);
+		project.dispose();
 	}
 
 	private getSettings():ISettings {
