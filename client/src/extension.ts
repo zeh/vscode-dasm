@@ -122,8 +122,8 @@ function compileGame(context:ExtensionContext) {
 }
 
 function createPreviewTab(context:ExtensionContext) {
-	const path = Uri.parse("javatari-preview://preview/filename");
-	return commands.executeCommand("vscode.previewHtml", path, ViewColumn.Three);
+	const tabPath = Uri.parse("javatari-preview://preview/filename");
+	return commands.executeCommand("vscode.previewHtml", tabPath, ViewColumn.Three);
 }
 
 function openExampleGame(context:ExtensionContext) {

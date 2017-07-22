@@ -32,11 +32,27 @@ So far, the following features are supported:
 
 ### Quick navigate to document labels and symbols
 
-![Peek](/client/images/symbols-navigate.png)
+![Navigate to document symbols](/client/images/symbols-navigate.png)
+
+### Quick navigate to workspace labels and symbols
+
+![Navigate to workspace symbols](/client/images/symbols-navigate-workspace.png)
 
 ### Navigate to/peek at definitions for labels and symbols
 
-![Peek](/client/images/peek.png)
+![Peek at definitions](/client/images/peek.png)
+
+### Highlight all occurrences of a symbol on selection
+
+![Highlight symbols](/client/images/symbols-highlight-all.png)
+
+### Find all uses of a symbol or label across files
+
+![Symbols references](/client/images/symbols-references.png)
+
+### Rename/refactor symbols or labels across files
+
+![Rename symbols](/client/images/symbols-rename.png)
 
 ## TODO
 

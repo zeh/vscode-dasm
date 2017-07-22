@@ -6,9 +6,9 @@ import {
 
 import { IProjectFile } from "../project/ProjectFiles";
 import { IAssemblerResult } from "./Assembler";
-import { IPostCompilationProvider, IProjectInfoProvider, Provider } from "./Provider";
+import { IPostAssemblyProvider, IProjectInfoProvider, Provider } from "./Provider";
 
-export default class DiagnosticsProvider extends Provider implements IPostCompilationProvider {
+export default class DiagnosticsProvider extends Provider implements IPostAssemblyProvider {
 
 	constructor(connection:IConnection, projectInfoProvider:IProjectInfoProvider) {
 		super(connection, projectInfoProvider);
@@ -48,8 +48,8 @@ export default class DiagnosticsProvider extends Provider implements IPostCompil
 		// Based on a raw line and an error message, find the starting and end position for the error
 		// E.g. "Processor 'xx' not supported"
 		let start = 0;
-		let end = line.length;
-		if (errorMessage) {
+		let end = line ? line.length : 0;
+		if (line && errorMessage) {
 			const errorMatch = /'(.*)'/;
 			const matches = errorMessage.match(errorMatch);
 			if (matches) {
