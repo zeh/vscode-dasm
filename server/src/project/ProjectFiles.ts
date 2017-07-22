@@ -117,10 +117,16 @@ export default class ProjectFiles {
 			this.queueFileUpdate(uri, () => {
 				// Needs update
 				fileInfo.document = undefined;
-				fileInfo.contents = fs.readFileSync(PathUtils.uriToPlatformPath(uri), {encoding: "utf8"});
-				fileInfo.contentsLines = StringUtils.splitIntoLines(fileInfo.contents);
+				try {
+					fileInfo.contents = fs.readFileSync(PathUtils.uriToPlatformPath(uri), {encoding: "utf8"});
+					fileInfo.contentsLines = StringUtils.splitIntoLines(fileInfo.contents);
+					fileInfo.isDirty = false;
+				} catch (e) {
+					fileInfo.contents = undefined;
+					console.error("[ProjectFiles] Could not open file at ", uri);
+					fileInfo.isDirty = true;
+				}
 				fileInfo.version = -1;
-				fileInfo.isDirty = false;
 
 				this.updateDependencies(fileInfo);
 				this._onChanged.dispatch(this);
