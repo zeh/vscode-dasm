@@ -51,6 +51,30 @@ export default class ProjectManager {
 		this._currentProject = undefined;
 		this._currentDocumentUri = undefined;
 
+		// Create providers
+		const projectInfoProvider:IProjectInfoProvider = {
+			getAllProjects: this.getAllProjects.bind(this),
+			getProjectForFile: this.getProjectForFile.bind(this),
+			getFile: this.getFile.bind(this),
+			getFileByLocalUri: this.getFileByLocalUri.bind(this),
+			getSettings: this.getSettings.bind(this),
+		};
+
+		this._settingsProvider = new SettingsProvider(this._connection, projectInfoProvider);
+
+		this._providers = [
+			{ provider: new DiagnosticsProvider(this._connection, projectInfoProvider), needsPostAssemblyProcessing: true },
+			{ provider: new HoverProvider(this._connection, projectInfoProvider) },
+			{ provider: new DefinitionProvider(this._connection, projectInfoProvider) },
+			{ provider: new CompletionProvider(this._connection, projectInfoProvider) },
+			{ provider: new DocumentLinkProvider(this._connection, projectInfoProvider) },
+			{ provider: new DocumentSymbolProvider(this._connection, projectInfoProvider) },
+			{ provider: new WorkspaceSymbolProvider(this._connection, projectInfoProvider) },
+			{ provider: new DocumentHighlightProvider(this._connection, projectInfoProvider) },
+			{ provider: new ReferencesProvider(this._connection, projectInfoProvider) },
+			{ provider: new RenameProvider(this._connection, projectInfoProvider) },
+		];
+
 		// Initialize hooks; full document sync (open, change and close document events)
 		this._documents = new TextDocuments();
 		this._documents.listen(this._connection);
@@ -120,30 +144,6 @@ export default class ProjectManager {
 			this.debug_logProjects();
 			this.onDocumentClosed(change.document);
 		});
-
-		// Create providers
-		const projectInfoProvider:IProjectInfoProvider = {
-			getAllProjects: this.getAllProjects.bind(this),
-			getProjectForFile: this.getProjectForFile.bind(this),
-			getFile: this.getFile.bind(this),
-			getFileByLocalUri: this.getFileByLocalUri.bind(this),
-			getSettings: this.getSettings.bind(this),
-		};
-
-		this._settingsProvider = new SettingsProvider(this._connection, projectInfoProvider);
-
-		this._providers = [
-			{ provider: new DiagnosticsProvider(this._connection, projectInfoProvider), needsPostAssemblyProcessing: true },
-			{ provider: new HoverProvider(this._connection, projectInfoProvider) },
-			{ provider: new DefinitionProvider(this._connection, projectInfoProvider) },
-			{ provider: new CompletionProvider(this._connection, projectInfoProvider) },
-			{ provider: new DocumentLinkProvider(this._connection, projectInfoProvider) },
-			{ provider: new DocumentSymbolProvider(this._connection, projectInfoProvider) },
-			{ provider: new WorkspaceSymbolProvider(this._connection, projectInfoProvider) },
-			{ provider: new DocumentHighlightProvider(this._connection, projectInfoProvider) },
-			{ provider: new ReferencesProvider(this._connection, projectInfoProvider) },
-			{ provider: new RenameProvider(this._connection, projectInfoProvider) },
-		];
 	}
 
 	public start() {
