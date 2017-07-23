@@ -4,6 +4,8 @@ All notable changes to the vscode-dasm extension are listed here. For a more com
 
 ## [Unreleased]
 
+## 3.2.0 - 2017-07-23
+
 ### Added
 
 * The INCDIR pseudo-op is supported now to add new folders to the list of possible INCLUDE locations
