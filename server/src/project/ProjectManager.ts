@@ -51,6 +51,30 @@ export default class ProjectManager {
 		this._currentProject = undefined;
 		this._currentDocumentUri = undefined;
 
+		// Create providers
+		const projectInfoProvider:IProjectInfoProvider = {
+			getAllProjects: this.getAllProjects.bind(this),
+			getProjectForFile: this.getProjectForFile.bind(this),
+			getFile: this.getFile.bind(this),
+			getFileByLocalUri: this.getFileByLocalUri.bind(this),
+			getSettings: this.getSettings.bind(this),
+		};
+
+		this._settingsProvider = new SettingsProvider(this._connection, projectInfoProvider);
+
+		this._providers = [
+			{ provider: new DiagnosticsProvider(this._connection, projectInfoProvider), needsPostAssemblyProcessing: true },
+			{ provider: new HoverProvider(this._connection, projectInfoProvider) },
+			{ provider: new DefinitionProvider(this._connection, projectInfoProvider) },
+			{ provider: new CompletionProvider(this._connection, projectInfoProvider) },
+			{ provider: new DocumentLinkProvider(this._connection, projectInfoProvider) },
+			{ provider: new DocumentSymbolProvider(this._connection, projectInfoProvider) },
+			{ provider: new WorkspaceSymbolProvider(this._connection, projectInfoProvider) },
+			{ provider: new DocumentHighlightProvider(this._connection, projectInfoProvider) },
+			{ provider: new ReferencesProvider(this._connection, projectInfoProvider) },
+			{ provider: new RenameProvider(this._connection, projectInfoProvider) },
+		];
+
 		// Initialize hooks; full document sync (open, change and close document events)
 		this._documents = new TextDocuments();
 		this._documents.listen(this._connection);
@@ -120,30 +144,6 @@ export default class ProjectManager {
 			this.debug_logProjects();
 			this.onDocumentClosed(change.document);
 		});
-
-		// Create providers
-		const projectInfoProvider:IProjectInfoProvider = {
-			getAllProjects: this.getAllProjects.bind(this),
-			getProjectForFile: this.getProjectForFile.bind(this),
-			getFile: this.getFile.bind(this),
-			getFileByLocalUri: this.getFileByLocalUri.bind(this),
-			getSettings: this.getSettings.bind(this),
-		};
-
-		this._settingsProvider = new SettingsProvider(this._connection, projectInfoProvider);
-
-		this._providers = [
-			{ provider: new DiagnosticsProvider(this._connection, projectInfoProvider), needsPostAssemblyProcessing: true },
-			{ provider: new HoverProvider(this._connection, projectInfoProvider) },
-			{ provider: new DefinitionProvider(this._connection, projectInfoProvider) },
-			{ provider: new CompletionProvider(this._connection, projectInfoProvider) },
-			{ provider: new DocumentLinkProvider(this._connection, projectInfoProvider) },
-			{ provider: new DocumentSymbolProvider(this._connection, projectInfoProvider) },
-			{ provider: new WorkspaceSymbolProvider(this._connection, projectInfoProvider) },
-			{ provider: new DocumentHighlightProvider(this._connection, projectInfoProvider) },
-			{ provider: new ReferencesProvider(this._connection, projectInfoProvider) },
-			{ provider: new RenameProvider(this._connection, projectInfoProvider) },
-		];
 	}
 
 	public start() {
@@ -287,12 +287,50 @@ export default class ProjectManager {
 		let newProject = this.getProjectForFile(document.uri);
 		if (!newProject && !avoidCreating) {
 			// A new document, create a project for it
-			newProject = new Project();
-			newProject.onAssembled.add((project) => { this.updatePostAssemblyProviders(project); });
+			newProject = this.createProject();
 			newProject.addFile(document);
-			this._projects.push(newProject);
 		}
+
 		return newProject;
+	}
+
+	/**
+	 * Performs a final consolidation, removing single-file projects if the file is a dependency of another project
+	 * (This would happen when opening the dependency file first, and only later its dependent parent)
+	 */
+	private consolidateProjects() {
+		if (this._projects.length > 1) {
+			const projectsToRemove = this._projects.filter((project) => {
+				const files = project.getFiles();
+				if (files.length === 0) {
+					return true;
+				} else if (files.length === 1) {
+					const otherProject = this._projects.find((projectInfo) => {
+						return files[0] && projectInfo !== project && projectInfo.hasFile(files[0].uri);
+					});
+					return Boolean(otherProject);
+				} else {
+					return false;
+				}
+			});
+
+			for (const project of projectsToRemove) this.destroyProject(project);
+
+			console.log("[pm] CONSOLIDATED, new project length is", this._projects.length);
+		}
+	}
+
+	private createProject() {
+		const project = new Project();
+		this._projects.push(project);
+		project.onAssembled.add(this.updatePostAssemblyProviders.bind(this));
+		project.onChangedFiles.add(() => this.consolidateProjects());
+		return project;
+	}
+
+	private destroyProject(project:Project) {
+		this._projects = this._projects.filter((listProject) => listProject !== project);
+		project.dispose();
 	}
 
 	private getSettings():ISettings {

@@ -14,9 +14,9 @@ export default class RomAssembler {
 		console.log("[assembler] File has " + this._source.length + " chars");
 		console.log("[assembler] DASM is ", dasm);
 
-		// console.time("[assembler] Compile");
+		console.time("[assembler] Compile");
 		const result = dasm(this._source, { format: 3, quick: true });
-		// console.timeEnd("[assembler] Compile");
+		console.timeEnd("[assembler] Compile");
 		console.log("[assembler] ROM length is ", result.data.length);
 		console.log("[assembler] LOG: ", result.output);
 	}

@@ -58,8 +58,6 @@
 			true,
 			"debug",
 			"info",
-			"time",
-			"timeEnd",
 			"trace"
 		],
 		"no-consecutive-blank-lines": [true, 2],

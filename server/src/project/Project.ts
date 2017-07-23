@@ -14,14 +14,19 @@ export default class Project {
 	private _results?:IAssemblerResult;
 	private _assembler:Assembler;
 	private _onAssembled:SimpleSignal<(project:Project) => void>;
+	private _onChangedFiles:SimpleSignal<(project:Project) => void>;
 
 	constructor() {
 		this._assembler = new Assembler();
 		this._onAssembled = new SimpleSignal<(project:Project) => void>();
+		this._onChangedFiles = new SimpleSignal<(project:Project) => void>();
 
 		this._files = new ProjectFiles();
 		this._files.onChanged.add(() => {
 			this.assemble();
+		});
+		this._files.onAdded.add(() => {
+			this._onChangedFiles.dispatch(this);
 		});
 
 		this._results = undefined;
@@ -73,6 +78,17 @@ export default class Project {
 
 	public get onAssembled() {
 		return this._onAssembled;
+	}
+
+	public get onChangedFiles() {
+		return this._onChangedFiles;
+	}
+
+	public dispose() {
+		this._onAssembled.removeAll();
+		this._onChangedFiles.removeAll();
+		this._results = undefined;
+		this._files.dispose();
 	}
 
 	private assemble() {

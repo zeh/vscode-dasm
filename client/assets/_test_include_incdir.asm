@@ -15,7 +15,10 @@
 ;	that includes all the "convenience names"
 ;	for all the special atari memory locations...
 ;
-	include "vcs.h"
+	incdir "include_wrong"
+	incdir "include/other"
+	incdir "includes"
+	include "includes_vcs.h"
 
 ;
 ;	now tell DASM where in the memory to place
