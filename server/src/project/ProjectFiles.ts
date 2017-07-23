@@ -13,8 +13,15 @@ import StringUtils from "../utils/StringUtils";
 
 export interface IProjectFileDependency {
 	parentRelativeUri: string;
+	uri: string;
 	range: Range;
 	file?: IProjectFile;
+}
+
+export interface IDependencyLink {
+	parentRelativeUri: string;
+	uri: string;
+	range: Range;
 }
 
 export interface IProjectFile {
@@ -203,7 +210,7 @@ export default class ProjectFiles {
 	 * Creates a list of all includes, with the entry-relative uri as the key and the contents as the value
 	 */
 	public getIncludes():{[key:string]:string} {
-		return this._entryFile ? this.buildIncludes(this._entryFile) : {};
+		return this._entryFile ? this.buildIncludesForAssembly(this._entryFile) : {};
 	}
 
 	public getSource():string|undefined {
@@ -256,15 +263,21 @@ export default class ProjectFiles {
 	/**
 	 * Return a list of all files included within a source, with their include filename and range
 	 */
-	private getIncludedFileLinks(lines:string[]) {
+	private getIncludedFileLinks(parentUri:string, lines:string[]):IDependencyLink[] {
+		const baseFolder = PathUtils.uriToPlatformPath(path.dirname(parentUri));
+		const includeFolders = this.getIncludeDirs(lines);
+
 		const includeFind = /^[^;"\n]+include\s+([^ ;\n]*)/gmi;
-		const files:Array<{fileName:string, range:Range}> = [];
+		const files:IDependencyLink[] = [];
+
 		lines.forEach((line, lineIndex) => {
 			let result = includeFind.exec(line);
 			while (result) {
-				const fileName:string = StringUtils.removeWrappingQuotes(result[1]);
-				if (fileName) files.push({
-					fileName,
+				const fileName = StringUtils.removeWrappingQuotes(result[1]);
+				const uri = this.findPossibleFileLocations(baseFolder, includeFolders, fileName);
+				if (fileName && uri) files.push({
+					parentRelativeUri: fileName,
+					uri,
 					range: Range.create(
 						Position.create(lineIndex, result.index + result[0].indexOf(result[1])),
 						Position.create(lineIndex, result.index + result[0].length),
@@ -276,71 +289,56 @@ export default class ProjectFiles {
 		return files;
 	}
 
+	// Return all the base folders a file can have for included files
+	private getIncludeDirs(lines:string[]) {
+		const folders:string[] = [ "." ];
+		const includeDirFind = /^[^;"\n]+incdir\s+([^ ;\n]*)/gmi;
+		lines.forEach((line, lineIndex) => {
+			let result = includeDirFind.exec(line);
+			while (result) {
+				const folder = StringUtils.removeWrappingQuotes(result[1]);
+				if (!folders.includes(folder)) folders.push(folder);
+				result = includeDirFind.exec(line);
+			}
+		});
+		return folders;
+	}
+
 	/**
 	 * Given a file info, update its existing dependencies, removing
 	 * the ones that are not there and adding the new ones
 	 */
 	private updateDependencies(file:IProjectFile) {
 		if (file.contentsLines) {
-			const allDependencyLinks = this.getIncludedFileLinks(file.contentsLines);
-
-			const dependenciesToRemove = file.dependencies.filter((dependencyInfo) => {
-				return !allDependencyLinks.some((dependencyLink) => {
-					return dependencyLink.fileName === dependencyInfo.parentRelativeUri;
-				});
-			});
+			// Parse all dependencies in a file's source
+			const newFileDependencyLinks = this.getIncludedFileLinks(file.uri, file.contentsLines);
+			const newFileDependencyUris = newFileDependencyLinks.map((dependencyLink) => dependencyLink.uri);
+			const currentFileDependenciesUris = file.dependencies.map((dependency) => dependency.uri);
 
 			// Remove dependencies that are not featured anymore
-			file.dependencies = file.dependencies.filter((dependencyInfo) => {
-				return !dependenciesToRemove.some((fileToRemove) => {
-					return fileToRemove.parentRelativeUri === dependencyInfo.parentRelativeUri;
-				});
+			file.dependencies = file.dependencies.filter((dependency) => {
+				return newFileDependencyUris.includes(dependency.uri);
 			});
 
-			// Filter down to new dependencies only
-			const newDependencyLinks = allDependencyLinks.filter((dependencyLink) => {
-				return !file.dependencies.some((dependencyInfo) => dependencyInfo.parentRelativeUri === dependencyLink.fileName);
+			// Filter down to new dependency links only
+			const fileDependencyLinksToAdd = newFileDependencyLinks.filter((dependencyLink) => {
+				return !currentFileDependenciesUris.includes(dependencyLink.uri);
 			});
-			const newDependencies:IProjectFileDependency[] = newDependencyLinks.map((dependencyLink) => {
+
+			// Create the new dependency entries
+			// TODO: check if this uri to get a real URI works universally
+			const fileDependenciesToAdd = fileDependencyLinksToAdd.map((dependencyLink) => {
 				return {
-					parentRelativeUri: dependencyLink.fileName,
+					uri: dependencyLink.uri,
+					parentRelativeUri: dependencyLink.parentRelativeUri,
 					range: dependencyLink.range,
 				};
 			});
-			file.dependencies = file.dependencies.concat(newDependencies);
-
-			// Remove files from project if they're not dependencies anymore
-			const allFiles = this.all();
-			const filesToRemove = allFiles.filter((pFile) => {
-				// Check if the file is a dependency of any other file
-				if (pFile === this._entryFile) {
-					// Don't remove if it's the entry file
-					return false;
-				} else {
-					// Don't remove if it's used as a dependency in any other file
-					const fileWithThisAsADependency = allFiles.find((aFile) => {
-						return Boolean(aFile.dependencies.find((fDependency) => {
-							if (fDependency.file) {
-								// File exists, check if the uri is the same
-								return fDependency.file.uri === pFile.uri;
-							} else {
-								// File doesn't exist, do a optimistic check
-								return pFile.uri.endsWith(fDependency.parentRelativeUri);
-							}
-						}));
-					});
-					return !Boolean(fileWithThisAsADependency);
-				}
-			});
-
-			for (const rFile of filesToRemove) this.remove(rFile.uri);
-
-			// TODO: this is a bit messy, to get an uri like a real file uri. need to check on osx, or make it more platform agnostic
+			file.dependencies = file.dependencies.concat(fileDependenciesToAdd);
 
 			// Add dependency files to the main file list where needed
-			const baseFolder = PathUtils.uriToPlatformPath(path.dirname(file.uri));
 			file.dependencies.forEach((dependencyInfo) => {
-				const uri = PathUtils.platformPathToUri(path.join(baseFolder, dependencyInfo.parentRelativeUri));
+				const uri = dependencyInfo.uri;
 				if (!this.has(uri)) {
 					// Doesn't exist: a new file, add to the project
 					this.addByUri(uri);
@@ -350,10 +348,48 @@ export default class ProjectFiles {
 				// Update its contents
 				dependencyInfo.file = this.get(uri);
 			});
+
+			this.cleanProjectFiles();
 		}
 	}
 
-	private buildIncludes(file:IProjectFile, previousRelativeUri?:string) {
+	/**
+	 * Based on all possible file locations (as added by INCDIR), find a dependency location if it exists
+	 */
+	private findPossibleFileLocations(baseFolder:string, includeFolders:string[], fileName:string) {
+		for (const includeFolder of includeFolders) {
+			const uri = path.join(baseFolder, includeFolder, fileName);
+			if (fs.existsSync(uri)) return PathUtils.platformPathToUri(uri);
+		}
+		return undefined;
+	}
+
+	/**
+	 * Remove files from project if they're not dependencies of any other file anymore
+	 */
+	private cleanProjectFiles() {
+		const allFiles = this.all();
+
+		const filesToRemove = allFiles.filter((file) => {
+			// Check if the file is a dependency of any other file
+			if (file === this._entryFile) {
+				// Don't remove if it's the entry file
+				return false;
+			} else {
+				// Don't remove if it's used as a dependency in any other file
+				const fileWithThisAsADependency = allFiles.find((aFile) => {
+					return Boolean(aFile.dependencies.find((dependency) => {
+						return dependency.uri === file.uri;
+					}));
+				});
+				return !Boolean(fileWithThisAsADependency);
+			}
+		});
+
+		for (const rFile of filesToRemove) this.remove(rFile.uri);
+	}
+
+	private buildIncludesForAssembly(file:IProjectFile, previousRelativeUri?:string) {
 		const includes:{[key:string]:string} = {};
 		file.dependencies.forEach((dependency) => {
 			// Includes the file itself
@@ -361,7 +397,7 @@ export default class ProjectFiles {
 			if (dependency.file && dependency.file.contents) {
 				includes[includeUri] = dependency.file.contents;
 				// Includes its own dependencies
-				Object.assign(includes, this.buildIncludes(dependency.file, includeUri));
+				Object.assign(includes, this.buildIncludesForAssembly(dependency.file, includeUri));
 			} else {
 				console.error(`Error! Trying to include "${previousRelativeUri}" as a file dependency without contents!`);
 			}
