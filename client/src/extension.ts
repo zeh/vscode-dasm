@@ -18,7 +18,6 @@ import {
 import * as path from "path";
 
 import RomAssembler from "./assembler/RomAssembler";
-import JavatariDocumentContentProvider from "./JavatariDocumentContentProvider";
 
 // https://code.visualstudio.com/docs/extensions/overview
 // https://code.visualstudio.com/docs/extensionAPI/overview
@@ -61,11 +60,6 @@ export function activate(context:ExtensionContext) {
 	const languageClient = new LanguageClient("vscode-dasm", "Language Server for VSCode-dasm", serverOptions, clientOptions);
 	const disposableLanguageClient = languageClient.start();
 	context.subscriptions.push(disposableLanguageClient);
-
-	// Create a content provider for the preview tab
-	const provider = new JavatariDocumentContentProvider(context);
-	context.subscriptions.push(provider);
-	workspace.registerTextDocumentContentProvider("javatari-preview", provider);
 
 	console.log("vscode-dasm is now active.");
 }
