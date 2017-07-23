@@ -32,7 +32,6 @@
   ],
   "activationEvents": [
     "onLanguage:dasm",
-    "onCommand:vscode-dasm.openToTheSide"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -81,12 +80,6 @@
         "language": "dasm",
         "scopeName": "source.asm.dasm",
         "path": "./syntaxes/dasm.json"
-      }
-    ],
-    "commands": [
-      {
-        "command": "vscode-dasm.openToTheSide",
-        "title": "Open Atari emulator to the side"
       }
     ]
   },
