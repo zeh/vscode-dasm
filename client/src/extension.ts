@@ -1,10 +1,5 @@
 import {
-	commands,
-	Disposable,
 	ExtensionContext,
-	Uri,
-	ViewColumn,
-	window,
 	workspace,
 } from "vscode";
 
@@ -17,7 +12,7 @@ import {
 
 import * as path from "path";
 
-import RomAssembler from "./assembler/RomAssembler";
+// import RomAssembler from "./assembler/RomAssembler";
 
 // https://code.visualstudio.com/docs/extensions/overview
 // https://code.visualstudio.com/docs/extensionAPI/overview
