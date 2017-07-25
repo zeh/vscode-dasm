@@ -54,7 +54,41 @@ export function activate(context:ExtensionContext) {
 	const disposableLanguageClient = languageClient.start();
 	context.subscriptions.push(disposableLanguageClient);
 
+	context.subscriptions.push(commands.registerCommand("extension.vscode-dasm.provideInitialConfigurations", () => {
+		return [
+			"// Use IntelliSense to learn about possible dasm debug attributes.",
+			"// Hover to view descriptions of existing attributes.",
+			JSON.stringify(getInitialConfigurations(), null, "\t"),
+		].join("\n");
+	}));
+
 	console.log("vscode-dasm is now active.");
+}
+
+function getCurrentFile() {
+	return window.activeTextEditor ? window.activeTextEditor.document.uri : null;
+}
+
+function getInitialConfigurations() {
+	const workspaceUri = workspace.rootPath;
+	const currentFile = getCurrentFile();
+	let entryUri;
+	if (workspaceUri && currentFile) {
+		entryUri = path.relative(workspaceUri, currentFile.fsPath);
+	}
+
+	return {
+		version: "0.0.0",
+		configurations: [
+			{
+				type: "atari",
+				request: "launch",
+				name: "dasm Debug",
+				program: entryUri ? ("${workspaceRoot}/" + entryUri) : "${workspaceRoot}/entry.asm",
+				stopOnEntry: true,
+			},
+		],
+	};
 }
 
 // Called when the extension is deactivated

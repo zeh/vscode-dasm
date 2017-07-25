@@ -31,10 +31,63 @@
     "Formatters"
   ],
   "activationEvents": [
-    "onLanguage:dasm"
+    "onLanguage:dasm",
+    "onCommand:extension.vscode-dasm.provideInitialConfigurations"
   ],
   "main": "./out/src/extension",
   "contributes": {
+    "breakpoints": [
+      {
+        "language": "dasm"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "atari",
+        "label": "dasm Debug",
+        "program": "./out/src/debugger.js",
+        "runtime": "node",
+        "variables": {},
+        "languages": [
+          "dasm"
+        ],
+        "configurationSnippets": [
+          {
+            "label": "dasm Debug: Launch",
+            "description": "A new configuration for launching a dasm debug program",
+            "body": {
+              "type": "atari",
+              "request": "launch",
+              "name": "${2:Launch Program}",
+              "program": "^\"\\${workspaceRoot}/${1:Program}\""
+            }
+          }
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "required": [],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Absolute path to a text file.",
+                "default": "${workspaceRoot}/name.asm"
+              },
+              "stopOnEntry": {
+                "type": "boolean",
+                "description": "Automatically stop after launch.",
+                "default": true
+              },
+              "trace": {
+                "type": "boolean",
+                "description": "Enable logging of the Debug Adapter Protocol.",
+                "default": true
+              }
+            }
+          }
+        },
+        "initialConfigurations": "extension.vscode-dasm.provideInitialConfigurations"
+      }
+    ],
     "configuration": {
       "type": "object",
       "title": "VSCode-dasm configuration",
