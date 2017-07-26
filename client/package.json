@@ -51,6 +51,7 @@
         "languages": [
           "dasm"
         ],
+        "startSessionCommand": "extension.vscode-dasm.openPlayerWindow",
         "configurationSnippets": [
           {
             "label": "dasm Debug: Launch",
