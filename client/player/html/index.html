@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta property="dasm:port" content="<%= htmlWebpackPlugin.options.dasmPort %>">
+	<base href="<%= htmlWebpackPlugin.options.assetRoot %>">
+<% for (var css in htmlWebpackPlugin.files.css) { %>	<link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[css] %>">
+<% } %>	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<body>
+	<div id="player-root">
+		<div id="player-content"></div>
+		<div id="player-log"></div>
+	</div>
+<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>	<script defer type="text/javascript" src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+<% } %></body>
+</html>

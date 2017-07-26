@@ -1,9 +1,11 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "noImplicitAny": true,
-        "noUnusedLocals": true,
-		"strict": true,
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"noImplicitAny": true,
+		"downlevelIteration": true,
+        "importHelpers": true,
+        "strict": false,
         "target": "es6",
         "outDir": "out",
         "allowJs": true,
@@ -11,9 +13,11 @@
 			"es6",
 			"dom"
         ],
-        "sourceMap": true,
-        "rootDir": "."
-    },
+		"sourceMap": true
+	},
+	"files": [
+		"./src/player/tab/Player.ts"
+	],
     "exclude": [
         "node_modules",
         ".vscode-test",
