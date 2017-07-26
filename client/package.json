@@ -151,6 +151,7 @@
   "devDependencies": {
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.17",
+    "@types/ws": "^3.0.2",
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.23.1",
     "babel-loader": "^7.1.1",
@@ -182,12 +183,14 @@
     "webpack-dev-server": "^2.4.1"
   },
   "dependencies": {
+    "core-js": "^2.4.1",
     "dasm": "^5.0.1",
     "path": "^0.12.7",
+    "simplesignal": "^3.1.0",
     "vscode": "^1.1.4",
     "vscode-debugadapter": "^1.22.0",
     "vscode-debugprotocol": "^1.22.0",
     "vscode-languageclient": "^3.2.2",
-    "core-js": "^2.4.1"
+    "ws": "^3.1.0"
   }
 }
