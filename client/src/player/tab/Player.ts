@@ -1,34 +1,51 @@
 import "babel-polyfill";
 
+import * as DasmTabProtocol from "../../network/DasmTabProtocol";
+import TabClient from "./../../network/TabClient";
+
 class Player {
 
 	private static readonly ASPECT_RATIO = 4 / 3;
 
 	private _width: number;
 	private _height: number;
+	private _hasResizeScheduled: boolean;
 
 	private _container: HTMLElement;
 	private _canvas: HTMLCanvasElement;
 	private _logContainer: HTMLElement | null;
 
-	private _hasResizeScheduled: boolean;
+	private _tabClient: TabClient<DasmTabProtocol.IMessage>;
 
 	constructor(element: HTMLElement | null, logContainer: HTMLElement | null) {
 		if (element) {
+			// Setup UI
 			this._container = element;
 			this._logContainer = logContainer;
-
 			this._canvas = document.createElement("canvas");
 			this._container.appendChild(this._canvas);
-
 			window.addEventListener("resize", this.scheduleUpdateSize.bind(this), false);
 			this.scheduleUpdateSize();
 
+			// Setup tab client
+			const port = Number.parseInt(this.getMetaProperty("dasm:port", "8080"));
+			this._tabClient = new TabClient<DasmTabProtocol.IMessage>(port, 2000);
+			this._tabClient.onMessage.add((message) => {
+				this.log("Received client message of type " + message.kind + " = " + JSON.stringify(message));
+			});
+			this._tabClient.onConnect.add(() => {
+				this.log("Connected to server");
+			});
+			this._tabClient.onDisconnect.add(() => {
+				this.log("Disconnected from server");
+			});
+			this._tabClient.onError.add(() => {
+				this.log("Error from server");
+			});
+
+			// End
 			this.log("Player initialized");
-
-			const port = this.getMetaProperty("dasm:port", "8080");
-
-			this.log("Will listen on port " + port);
+			this.log("Connecting on port " + port);
 		}
 	}
 
