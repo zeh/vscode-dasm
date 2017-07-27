@@ -20,6 +20,9 @@ import {
 } from "vscode-debugadapter";
 
 import { DebugProtocol } from "vscode-debugprotocol";
+import DasmConstants from "./DasmConstants";
+import * as DasmTabProtocol from "./network/DasmTabProtocol";
+import TabServer from "./network/TabServer";
 
 /**
  * This interface should always match the schema found in the mock-debug extension manifest.
@@ -34,6 +37,8 @@ class DasmDebugSession extends LoggingDebugSession {
 
 	// we don't support multiple threads, so we can use a hardcoded ID for the default thread
 	private static THREAD_ID = 1;
+
+	private _server: TabServer<DasmTabProtocol.IMessage>; // Server that communicates with the player tab
 
 	// since we want to send breakpoint events, we will assign an id to every event
 	// so that the frontend can match events with breakpoints.
@@ -67,9 +72,20 @@ class DasmDebugSession extends LoggingDebugSession {
 	public constructor() {
 		super("mock-debug.txt");
 
-		// this debugger uses zero-based lines and columns
+		// Basic options
 		this.setDebuggerLinesStartAt1(false);
 		this.setDebuggerColumnsStartAt1(false);
+
+		this._server = new TabServer<DasmTabProtocol.IMessage>(DasmConstants.PLAYER_COMMUNICATION_PORT);
+		this._server.onMessage.add((message) => {
+			console.log("[DEBUGGER] Received server message of type ", message.kind, message);
+		});
+		this._server.onClientConnect.add((id) => {
+			console.log("[DEBUGGER] Connected to client", id);
+		});
+		this._server.onClientDisconnect.add((id) => {
+			console.log("[DEBUGGER] Disconnected from client", id);
+		});
 	}
 
 	/**
@@ -77,6 +93,8 @@ class DasmDebugSession extends LoggingDebugSession {
 	 * to interrogate the features the debug adapter provides.
 	 */
 	protected initializeRequest(response:DebugProtocol.InitializeResponse, args:DebugProtocol.InitializeRequestArguments): void {
+
+		console.log("initialize!", args);
 
 		// since this debug adapter can accept configuration requests like 'setBreakpoint' at any time,
 		// we request them early by sending an 'initializeRequest' to the frontend.
@@ -101,6 +119,8 @@ class DasmDebugSession extends LoggingDebugSession {
 
 		// make sure to 'Stop' the buffered logging if 'trace' is not set
 		logger.setup(args.trace ? Logger.LogLevel.Verbose : Logger.LogLevel.Stop, false);
+
+		console.log("[DEBUGGER] Launched", args);
 
 		this._sourceFile = args.program;
 		this._sourceLines = readFileSync(this._sourceFile).toString().split("\n");
@@ -304,6 +324,13 @@ class DasmDebugSession extends LoggingDebugSession {
 			result: `evaluate(context: '${args.context}', '${args.expression}')`,
 			variablesReference: 0,
 		};
+		this.sendResponse(response);
+	}
+
+	protected disconnectRequest(response: DebugProtocol.DisconnectResponse, args: DebugProtocol.DisconnectArguments): void {
+		console.log("[DEBUGGER] Disconnecting", args);
+
+		this._server.dispose();
 		this.sendResponse(response);
 	}
 
