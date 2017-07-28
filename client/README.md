@@ -73,6 +73,7 @@ This extension uses the original [dasm macro assembler](http://dasm-dillon.sourc
 Due to scattered documentation and the many different contexts that need to be taken into consideration when building a Visual Studio Code extension (Language Server protocol, the editor API, etc), this extension wouldn't be possible without the inspiration and reference provided by other extensions that have their source code available on GitHub. These include:
 
 * [pythonVSCode](https://github.com/DonJayamanne/pythonVSCode) for reference code on how to launch the debugger and still run a custom command
+* [LaTeX preview](https://github.com/ajshort/vscode-latex-preview) on reference concept and code on how to solve the extension-preview tab communication problem
 
 And finally, this extension was heavily inspired by the [8bitworkshop](http://8bitworkshop.com/?platform=vcs&file=examples%2Fhello) web-based Atari development IDE (but shares no code with it). One could say this extension is an attempt to create a similar Atari development experience, but within a dedicated standalone desktop application. [Buy their book](https://www.amazon.com/gp/product/1541021304/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=pzp-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B01N4DSRIZ&linkId=04d39e274c06e6c93b93d20a9a977111) to show your support.
 
