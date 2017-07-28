@@ -70,7 +70,9 @@ Bug reports, fixes, and other changes are welcomed. Our repository is [on GitHub
 
 This extension uses the original [dasm macro assembler](http://dasm-dillon.sourceforge.net/) via [dasmjs](https://github.com/zeh/dasmjs), an [emscripten](https://github.com/kripken/emscripten)-compiled version of the original C code. This is ran on the background, as a language server tracked as [a separate part of this repository](/server/README.md).
 
-Due to scattered documentation and the many different contexts that need to be taken into consideration when building a Visual Studio Code extension (Language Server protocol, the editor API, etc), this extension wouldn't be possible without the inspiration and reference provided by other extensions that have their source code available on GitHub. These include:
+For Atari emulation and debugging, we're using [6502.ts](https://github.com/6502ts/6502.ts) by Christian Speckner ([DirtyHairy](https://github.com/DirtyHairy)). This is what shows in the "preview" window once a dasm program is ran.
+
+It's important to note that due to scattered documentation and the many different contexts that need to be taken into consideration when building a Visual Studio Code extension (Language Server protocol, the editor API, etc), this extension wouldn't be possible without the inspiration and reference provided by other extensions that have their source code available on GitHub. These include:
 
 * [pythonVSCode](https://github.com/DonJayamanne/pythonVSCode) for reference code on how to launch the debugger and still run a custom command
 * [LaTeX preview](https://github.com/ajshort/vscode-latex-preview) on reference concept and code on how to solve the extension-preview tab communication problem
