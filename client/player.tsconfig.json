@@ -16,7 +16,8 @@
 		"sourceMap": true
 	},
 	"files": [
-		"./src/player/tab/Player.ts"
+		"./src/player/tab/Player.ts",
+		"./src/player/tab/6502ts/modules.d.ts"
 	],
     "exclude": [
         "node_modules",

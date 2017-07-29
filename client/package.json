@@ -15,6 +15,9 @@
     "color": "#293134",
     "theme": "dark"
   },
+  "browser": {
+    "fs": false
+  },
   "homepage": "https://github.com/zeh/vscode-dasm/tree/master/client",
   "bugs": {
     "url": "https://github.com/zeh/vscode-dasm/issues"
@@ -152,6 +155,8 @@
   "devDependencies": {
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.17",
+    "@types/screenfull": "^3.2.0",
+    "@types/seedrandom": "^2.4.27",
     "@types/ws": "^3.0.2",
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.23.1",
@@ -186,7 +191,11 @@
   "dependencies": {
     "core-js": "^2.4.1",
     "dasm": "^5.0.1",
+    "microevent.ts": "^0.1.0",
     "path": "^0.12.7",
+    "screenfull": "^3.3.1",
+    "seedrandom": "^2.4.3",
+    "setimmediate2": "^3.0.0",
     "simplesignal": "^3.1.0",
     "vscode": "^1.1.4",
     "vscode-debugadapter": "^1.22.0",
