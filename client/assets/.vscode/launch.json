@@ -1,0 +1,15 @@
+// Use IntelliSense to learn about possible Mock debug attributes.
+// Hover to view descriptions of existing attributes.
+{
+	"version": "0.0.0",
+	"configurations": [
+		{
+			"type": "atari",
+			"request": "launch",
+			"name": "dasm Debug",
+			"program": "${workspaceRoot}/_test_single.asm",
+			"stopOnEntry": true,
+			"debugServer": 4711
+		}
+	]
+}
