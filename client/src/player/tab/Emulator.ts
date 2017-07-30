@@ -275,3 +275,43 @@ export default class Emulator {
 		}
 	}
 }
+
+/*
+
+DirtyHairy:
+
+# Debugger
+
+* The debugger resides in src/machine/Debugger.ts and is attached to the Board once it has been initialized.
+* While it supports all basic operations (breaking, stepping and tracing) it always returns human-readable strings.
+* Good idea to change it to proper data structures that could be merged upstream
+* Had started to work on advanced stuff like read / write traps and watches but shelved. A possibility if they would be of benefit for you.
+
+* Once you have initialized the board
+  * You need to configure the various "drivers" that connect the emulated hardware to the DOM and browser APIs.
+    * There are drivers for video, audio and I/O.
+    * You can find the relevant code for the CLI in src/web/stellaCLI.ts.
+    * The drivers are first initialized and then bound to their respective counterpart on the board.
+
+* After board and drivers are set up you are ready to run the emulation.
+* The board exposes a "timer" interface that is used to start and stop the scheduler if you want to run the emulation continiously.
+* Stepping is handled by the debugger (which in turn uses the timer to control the board clock).
+
+* Traps, exceptions and other things are handled by events. The event system is a separate github project (microevent)
+
+--
+
+# More debugger
+
+* You could also consider writing your own debugger modelled after Debugger.ts.
+* There is not much magic involved; all it does is attach to the board using a set of defined interfaces and
+monitor and drive execution.
+* State inspection is in place for bus and CPU
+* The work I that I have put on hold consists of adding a DSL for writing watch and break expressions,
+together with a state tree that can be used to get a deep view of the hardware state (TIA and RIOT in particular),
+which I guess is much more than you'll need to get started.
+* State snapshots are something that is not implemented yet. In the past, the internal state of the TIA was mostly
+in flux, and I didn't want to bother with keeping snapshotting code in sync. At this point, things are stable
+enough and, again, adding it is on my agenda, so we can add it when you need it.
+
+*/
