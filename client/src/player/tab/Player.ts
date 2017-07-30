@@ -2,6 +2,7 @@ import "babel-polyfill";
 
 import * as DasmTabProtocol from "../../network/DasmTabProtocol";
 import TabClient from "./../../network/TabClient";
+import Emulator from "./Emulator";
 
 class Player {
 
@@ -16,6 +17,7 @@ class Player {
 	private _logContainer: HTMLElement | null;
 
 	private _tabClient: TabClient<DasmTabProtocol.IMessage>;
+	private _emulator: Emulator;
 
 	constructor(element: HTMLElement | null, logContainer: HTMLElement | null) {
 		if (element) {
@@ -30,9 +32,7 @@ class Player {
 			// Setup tab client
 			const port = Number.parseInt(this.getMetaProperty("dasm:port", "8080"));
 			this._tabClient = new TabClient<DasmTabProtocol.IMessage>(port, 2000);
-			this._tabClient.onMessage.add((message) => {
-				this.log("Received client message of type " + message.kind + " = " + JSON.stringify(message));
-			});
+			this._tabClient.onMessage.add(this.onMessage.bind(this));
 			this._tabClient.onConnect.add(() => {
 				this.log("Connected to server");
 			});
@@ -43,6 +43,9 @@ class Player {
 				this.log("Error from server");
 			});
 
+			// Setup emulator
+			this._emulator = new Emulator(this._canvas);
+
 			// End
 			this.log("Player initialized");
 			this.log("Connecting on port " + port);
@@ -50,13 +53,21 @@ class Player {
 	}
 
 	private render() {
-		this._canvas.width = this._width;
-		this._canvas.height = this._height;
+		this._emulator.resize(this._width, this._height);
 	}
 
 	private getMetaProperty(name: string, defaultValue?: string) {
 		const element = document.querySelector("meta[property='dasm:port']");
 		return element ? (element as any).content : defaultValue;
+	}
+
+	private onMessage(message: any) {
+		this.log("Received client message of type " + message.kind);
+		if (message.kind === DasmTabProtocol.Kinds.Server.Rom.Load) {
+			const b = (message as any).data.buffer;
+			this.log("...loading ROM with size size " + b.length);
+			this._emulator.loadROM(new Uint8Array((message as any).data.buffer));
+		}
 	}
 
 	private scheduleUpdateSize() {
