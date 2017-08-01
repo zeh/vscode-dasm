@@ -275,14 +275,16 @@ export default class ProjectFiles {
 			while (result) {
 				const fileName = StringUtils.removeWrappingQuotes(result[1]);
 				const uri = this.findPossibleFileLocations(baseFolder, includeFolders, fileName);
-				if (fileName && uri) files.push({
-					parentRelativeUri: fileName,
-					uri,
-					range: Range.create(
-						Position.create(lineIndex, result.index + result[0].indexOf(result[1])),
-						Position.create(lineIndex, result.index + result[0].length),
-					),
-				});
+				if (fileName && uri) {
+					files.push({
+						parentRelativeUri: fileName,
+						uri,
+						range: Range.create(
+							Position.create(lineIndex, result.index + result[0].indexOf(result[1])),
+							Position.create(lineIndex, result.index + result[0].length),
+						),
+					});
+				}
 				result = includeFind.exec(line);
 			}
 		});
@@ -393,8 +395,8 @@ export default class ProjectFiles {
 		const includes:{[key:string]:string} = {};
 		file.dependencies.forEach((dependency) => {
 			// Includes the file itself
-			const includeUri = previousRelativeUri ? path.join(previousRelativeUri, dependency.parentRelativeUri) : dependency.parentRelativeUri;
 			if (dependency.file && dependency.file.contents) {
+				const includeUri = previousRelativeUri ? path.join(previousRelativeUri, dependency.parentRelativeUri) : dependency.parentRelativeUri;
 				includes[includeUri] = dependency.file.contents;
 				// Includes its own dependencies
 				Object.assign(includes, this.buildIncludesForAssembly(dependency.file, includeUri));
