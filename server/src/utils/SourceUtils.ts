@@ -1,9 +1,9 @@
+import { ISymbol } from "dasm";
 import {
 	Position,
 	Range,
 } from "vscode-languageserver";
 
-import { ISymbol } from "../providers/Assembler";
 import LineUtils from "../utils/LineUtils";
 
 export interface ISymbolOccurrenceInfo {

@@ -12,8 +12,6 @@ import {
 
 import * as path from "path";
 
-// import RomAssembler from "./assembler/RomAssembler";
-
 // https://code.visualstudio.com/docs/extensions/overview
 // https://code.visualstudio.com/docs/extensionAPI/overview
 

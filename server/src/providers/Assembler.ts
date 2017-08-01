@@ -1,50 +1,22 @@
 import dasm from "dasm";
+import { IDasmResult } from "dasm";
 
-export interface ISymbol {
-	name: string;
-	isLabel: boolean;
-	isConstant: boolean;
-	value: number;
-	wasReferenced: boolean;
-	wasPseudoOpCreated: boolean;
-	definitionFilename?: string;
-	definitionLineNumber: number;
-	definitionColumnStart: number;
-	definitionColumnEnd: number;
-}
-
-export interface ILine {
-	number: number;
-	filename?: string;
-	address: number;
-	bytes?: Uint8Array;
-	raw: string;
-	errorMessage?: string;
-	comment?: string;
-	command?: string;
-}
-
-export interface IAssemblerResult {
-	data: Uint8Array;
-	output: string[];
-	list: ILine[] | undefined;
-	listRaw?: string;
-	symbols: ISymbol[] | undefined;
-	symbolsRaw?: string;
-	exitStatus: number;
-	success: boolean;
-}
-
-export class Assembler {
-
-	public assemble(src:string, includes?:{[key:string]: string}):IAssemblerResult {
-		console.time("[assembler] Compile");
-		const result = dasm(src, { format: 3, includes });
-		console.timeEnd("[assembler] Compile");
-		console.log("[assembler] ROM length is ", result.data.length);
-
-		return result;
+function assemble(src: string, includes?: { [key: string]: string }): IDasmResult {
+	console.time("[assembler] Compile");
+	const result = dasm(src, { format: 3, includes });
+	if (includes) {
+		const includeList = Object.keys(includes).map((key) => {
+			return {
+				[key]: includes[key] ? includes[key].length + " chars" : undefined,
+			};
+		});
+		console.log("[assembler] includes:", includeList);
 	}
+	console.timeEnd("[assembler] Compile");
+	console.log("[assembler] ROM length is", result.data.length);
+	return result;
 }
 
-export default Assembler;
+export default {
+	assemble,
+};

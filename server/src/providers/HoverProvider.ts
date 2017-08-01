@@ -1,3 +1,4 @@
+import { IDasmResult } from "dasm";
 import {
 	Hover,
 	IConnection,
@@ -8,7 +9,6 @@ import {
 import LanguageDefinition from "../definitions/LanguageDefinition";
 import LineUtils from "../utils/LineUtils";
 import NumberUtils from "../utils/NumberUtils";
-import { IAssemblerResult } from "./Assembler";
 import { IProjectInfoProvider, Provider } from "./Provider";
 
 export default class HoverProvider extends Provider {
@@ -95,7 +95,7 @@ export default class HoverProvider extends Provider {
 		}
 	}
 
-	private getSymbolOrLabelHover(results:IAssemblerResult, target:string):string[]|undefined {
+	private getSymbolOrLabelHover(results:IDasmResult, target:string):string[]|undefined {
 		if (results.symbols) {
 			const symbolOrLabel = results.symbols.find((symbol) => symbol.name === target);
 			if (symbolOrLabel) {

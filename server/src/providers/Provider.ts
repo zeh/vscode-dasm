@@ -1,12 +1,12 @@
+import { IDasmResult } from "dasm";
 import { IConnection } from "vscode-languageserver";
 
 import Project from "../project/Project";
 import { IProjectFile } from "./../project/ProjectFiles";
-import { IAssemblerResult } from "./Assembler";
 import { ISettings } from "./SettingsProvider";
 
 export interface IPostAssemblyProvider {
-	process(files:IProjectFile[], results?:IAssemblerResult):void;
+	process(files:IProjectFile[], results?:IDasmResult):void;
 }
 
 export interface IProjectInfoProvider {

@@ -5,8 +5,9 @@ import {
 	TextDocumentPositionParams,
 } from "vscode-languageserver";
 
+import { ISymbol } from "dasm";
+
 import LanguageDefinition, { IInstruction, IPseudoOp } from "../definitions/LanguageDefinition";
-import { ISymbol } from "./Assembler";
 import { IProjectInfoProvider, Provider } from "./Provider";
 
 enum LanguageCompletionTypes {

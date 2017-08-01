@@ -2,22 +2,21 @@ import {
 	TextDocument,
 } from "vscode-languageserver";
 
+import { IDasmResult } from "dasm";
 import SimpleSignal from "simplesignal";
 
-import { Assembler, IAssemblerResult } from "./../providers/Assembler";
+import Assembler from "./../providers/Assembler";
 import ProjectFiles from "./ProjectFiles";
 import { IProjectFile } from "./ProjectFiles";
 
 export default class Project {
 
 	private _files:ProjectFiles;
-	private _results?:IAssemblerResult;
-	private _assembler:Assembler;
+	private _results?:IDasmResult;
 	private _onAssembled:SimpleSignal<(project:Project) => void>;
 	private _onChangedFiles:SimpleSignal<(project:Project) => void>;
 
 	constructor() {
-		this._assembler = new Assembler();
 		this._onAssembled = new SimpleSignal<(project:Project) => void>();
 		this._onChangedFiles = new SimpleSignal<(project:Project) => void>();
 
@@ -56,7 +55,7 @@ export default class Project {
 		return this._files.has(uri);
 	}
 
-	public getAssemblerResults():IAssemblerResult|undefined {
+	public getAssemblerResults():IDasmResult|undefined {
 		return this._results;
 	}
 
@@ -97,7 +96,7 @@ export default class Project {
 		const includes = this._files.getIncludes();
 		if (source && includes) {
 			console.time("[project] Assembling");
-			this._results = this._assembler.assemble(source, includes);
+			this._results = Assembler.assemble(source, includes);
 			this._onAssembled.dispatch(this);
 			console.timeEnd("[project] Assembling");
 		} else {

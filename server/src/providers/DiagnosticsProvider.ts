@@ -1,3 +1,4 @@
+import { IDasmResult } from "dasm";
 import {
 	Diagnostic,
 	DiagnosticSeverity,
@@ -5,7 +6,6 @@ import {
 } from "vscode-languageserver";
 
 import { IProjectFile } from "../project/ProjectFiles";
-import { IAssemblerResult } from "./Assembler";
 import { IPostAssemblyProvider, IProjectInfoProvider, Provider } from "./Provider";
 
 export default class DiagnosticsProvider extends Provider implements IPostAssemblyProvider {
@@ -17,7 +17,7 @@ export default class DiagnosticsProvider extends Provider implements IPostAssemb
 	/**
 	 * Assembles a source and returns diagnostics errors
 	 */
-	public process(files:IProjectFile[], results?:IAssemblerResult):void {
+	public process(files:IProjectFile[], results?:IDasmResult):void {
 		for (const file of files) {
 			const uri = file.uri;
 			const sourceLines = file ? file.contentsLines : undefined;
