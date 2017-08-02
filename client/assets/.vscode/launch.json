@@ -7,7 +7,7 @@
 			"type": "atari",
 			"request": "launch",
 			"name": "dasm Debug",
-			"program": "${workspaceRoot}/_test_single.asm",
+			"program": "${workspaceRoot}/riverraid.asm",
 			"stopOnEntry": true,
 			"debugServer": 4711
 		}
