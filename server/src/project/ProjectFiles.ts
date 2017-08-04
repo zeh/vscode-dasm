@@ -47,6 +47,7 @@ export default class ProjectFiles {
 	private _entryFile?:IProjectFile;
 	private _onChanged:SimpleSignal<(files:ProjectFiles) => void>;
 	private _onAdded:SimpleSignal<(files:ProjectFiles) => void>;
+	private _debounceTime:number;
 
 	private _queuedFileUpdate?:IFileUpdateEvent;
 	private _queuedUpdateProcessId?:NodeJS.Timer;
@@ -56,6 +57,7 @@ export default class ProjectFiles {
 		this._entryFile = undefined;
 		this._onChanged = new SimpleSignal<(files:ProjectFiles) => void>();
 		this._onAdded = new SimpleSignal<(files:ProjectFiles) => void>();
+		this._debounceTime = ProjectFiles.FILE_UPDATE_DEBOUNCE_MS;
 	}
 
 	public addFromDocument(document:TextDocument) {
@@ -206,6 +208,14 @@ export default class ProjectFiles {
 		return this._onChanged;
 	}
 
+	public get debounceTime() {
+		return this._debounceTime;
+	}
+
+	public set debounceTime(value: number) {
+		this._debounceTime = value;
+	}
+
 	/**
 	 * Creates a list of all includes, with the entry-relative uri as the key and the contents as the value
 	 */
@@ -247,10 +257,15 @@ export default class ProjectFiles {
 		};
 
 		// And queue it to execute next
-		this._queuedUpdateProcessId = setTimeout(() => {
+		if (this._debounceTime > 0) {
+			this._queuedUpdateProcessId = setTimeout(() => {
+				process();
+				this._queuedUpdateProcessId = undefined;
+			}, this._debounceTime);
+		} else {
 			process();
 			this._queuedUpdateProcessId = undefined;
-		}, ProjectFiles.FILE_UPDATE_DEBOUNCE_MS);
+		}
 	}
 
 	private clearQueuedFileUpdate() {
