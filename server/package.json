@@ -17,13 +17,36 @@
     "vscode-languageserver": "^3.2.2"
   },
   "devDependencies": {
+    "@types/jest": "^20.0.6",
     "@types/node": "^7.0.22",
+    "jest": "^20.0.4",
     "tslint": "^5.5.0",
     "typescript": "^2.3.3"
   },
   "scripts": {
     "compile": "installServerIntoExtension ../client/out ./package.json ./tsconfig.json && tsc -p .",
     "watch": "installServerIntoExtension ../client/out ./package.json ./tsconfig.json && tsc --watch -p .",
-    "lint": "tslint ./src/**/*.ts ./src/**/*.tsx -t stylish --project tsconfig.json --type-check"
+    "lint": "tslint ./src/**/*.ts -t stylish --project tsconfig.json --type-check",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watchAll"
+  },
+  "jest": {
+    "globals": {
+      "NODE_ENV": "test"
+    },
+    "verbose": true,
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json"
+    ],
+    "testRegex": "/test/.*-test\\.(ts|js)$",
+    "transform": {
+      ".ts$": "<rootDir>/test/preprocess.js"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/*.ts"
+    ]
   }
 }
