@@ -4,9 +4,11 @@ import {
 	TextDocument,
 } from "vscode-languageserver";
 
+import { resolveIncludes } from "dasm";
 import * as fs from "fs";
 import * as path from "path";
 import SimpleSignal from "simplesignal";
+import * as url from "url";
 
 import PathUtils from "../utils/PathUtils";
 import StringUtils from "../utils/StringUtils";
@@ -16,12 +18,6 @@ export interface IProjectFileDependency {
 	uri: string;
 	range: Range;
 	file?: IProjectFile;
-}
-
-export interface IDependencyLink {
-	parentRelativeUri: string;
-	uri: string;
-	range: Range;
 }
 
 export interface IProjectFile {
@@ -63,6 +59,12 @@ export default class ProjectFiles {
 	public addFromDocument(document:TextDocument) {
 		this.addByUri(document.uri);
 		this.updateFromDocument(document);
+	}
+
+	public addFromDiskPath(filePath:string) {
+		const uri = "file://" + url.parse(filePath).href;
+		this.addByUri(uri);
+		this.updateFromFileSystem(uri);
 	}
 
 	public addByUri(uri:string) {
@@ -107,6 +109,7 @@ export default class ProjectFiles {
 	}
 
 	public updateFromDocument(document:TextDocument) {
+		console.log("[files] Updating from document", document.uri);
 		const fileInfo = this.get(document.uri);
 		if (fileInfo && fileInfo.version !== document.version) {
 			this.queueFileUpdate(document.uri, () => {
@@ -136,7 +139,7 @@ export default class ProjectFiles {
 					fileInfo.isDirty = false;
 				} catch (e) {
 					fileInfo.contents = undefined;
-					console.error("[ProjectFiles] Could not open file at ", uri);
+					console.warn("[PF] Could not open file at", PathUtils.uriToPlatformPath(uri));
 					fileInfo.isDirty = true;
 				}
 				fileInfo.version = -1;
@@ -243,28 +246,27 @@ export default class ProjectFiles {
 	 */
 	private queueFileUpdate(uri:string, process:() => void) {
 		// Cancel existing update event if existing
-		this.clearQueuedFileUpdate();
 
 		// If an event exists and it's a different file, process it immediately
 		if (this._queuedFileUpdate && this._queuedFileUpdate.uri !== uri) {
 			this._queuedFileUpdate.process();
+			this.clearQueuedFileUpdate();
 		}
 
-		// Finally, add the new one as the next one
-		this._queuedFileUpdate = {
-			uri,
-			process,
-		};
-
-		// And queue it to execute next
+		// Finally, add the new one as the next one and queue it to execute next
 		if (this._debounceTime > 0) {
+			// Needs to be queued
+			this._queuedFileUpdate = {
+				uri,
+				process,
+			};
 			this._queuedUpdateProcessId = setTimeout(() => {
 				process();
-				this._queuedUpdateProcessId = undefined;
+				this.clearQueuedFileUpdate();
 			}, this._debounceTime);
 		} else {
+			// Can execute immediately
 			process();
-			this._queuedUpdateProcessId = undefined;
 		}
 	}
 
@@ -272,53 +274,45 @@ export default class ProjectFiles {
 		if (this._queuedUpdateProcessId) {
 			clearTimeout(this._queuedUpdateProcessId);
 			this._queuedUpdateProcessId = undefined;
+			this._queuedFileUpdate = undefined;
 		}
 	}
 
-	/**
-	 * Return a list of all files included within a source, with their include filename and range
-	 */
-	private getIncludedFileLinks(parentUri:string, lines:string[]):IDependencyLink[] {
-		const baseFolder = PathUtils.uriToPlatformPath(path.dirname(parentUri));
-		const includeFolders = this.getIncludeDirs(lines);
-
-		const includeFind = /^[^;"\n]+include\s+([^ ;\n]*)/gmi;
-		const files:IDependencyLink[] = [];
-
-		lines.forEach((line, lineIndex) => {
-			let result = includeFind.exec(line);
-			while (result) {
-				const fileName = StringUtils.removeWrappingQuotes(result[1]);
-				const uri = this.findPossibleFileLocations(baseFolder, includeFolders, fileName);
-				if (fileName && uri) {
-					files.push({
-						parentRelativeUri: fileName,
-						uri,
-						range: Range.create(
-							Position.create(lineIndex, result.index + result[0].indexOf(result[1])),
-							Position.create(lineIndex, result.index + result[0].length),
-						),
-					});
-				}
-				result = includeFind.exec(line);
-			}
-		});
-		return files;
+	private bufferToArray(b:Buffer) {
+		const arr = new Uint8Array(b.length);
+		return arr.map((v, i) => b[i]);
 	}
 
-	// Return all the base folders a file can have for included files
-	private getIncludeDirs(lines:string[]) {
-		const folders:string[] = [ "." ];
-		const includeDirFind = /^[^;"\n]+incdir\s+([^ ;\n]*)/gmi;
-		lines.forEach((line, lineIndex) => {
-			let result = includeDirFind.exec(line);
-			while (result) {
-				const folder = StringUtils.removeWrappingQuotes(result[1]);
-				if (!folders.includes(folder)) folders.push(folder);
-				result = includeDirFind.exec(line);
+	private getFileFrom(parentLocation:string) {
+		return (sourceEntryRelativeUri:string, isBinary:boolean): string|Uint8Array|undefined => {
+			const projectRoot = path.posix.join(this.getProjectRoot(), parentLocation);
+			const fullUri = path.resolve(path.join(projectRoot, sourceEntryRelativeUri));
+			const localPath = PathUtils.uriToPlatformPath(fullUri);
+			const file = this.get(fullUri);
+			console.log("[PF] [get] At", projectRoot);
+			console.log("[PF] [get] ...Looking for", sourceEntryRelativeUri);
+			console.log("[PF] [get] ...Is", fullUri);
+			if (file && file.contents) {
+				console.log("[PF] [get] ... ...exists in project as", fullUri);
+				// Is already read, use it
+				return file.contents;
+			} else if (fs.existsSync(localPath)) {
+				// Not read yet, get from disk
+				console.log("[PF] [get] ... ...exists in folder as", localPath);
+				if (isBinary) {
+					return this.bufferToArray(fs.readFileSync(localPath));
+				} else {
+					return fs.readFileSync(localPath, "utf8");
+				}
+			} else {
+				console.log("[PF] [get] ... ...does not exist");
 			}
-		});
-		return folders;
+		};
+	}
+
+	private getProjectRoot(): string {
+		const root = this._entryFile ? url.parse(this._entryFile.uri).pathname : undefined;
+		return root ? path.posix.dirname(root) : ".";
 	}
 
 	/**
@@ -326,10 +320,16 @@ export default class ProjectFiles {
 	 * the ones that are not there and adding the new ones
 	 */
 	private updateDependencies(file:IProjectFile) {
-		if (file.contentsLines) {
+		console.log("[PF] Updating dependencies for file", file.uri);
+		if (file.contents) {
 			// Parse all dependencies in a file's source
-			const newFileDependencyLinks = this.getIncludedFileLinks(file.uri, file.contentsLines);
-			const newFileDependencyUris = newFileDependencyLinks.map((dependencyLink) => dependencyLink.uri);
+			const parentLocation = path.posix.dirname(url.parse(file.uri).pathname || ".");
+			console.log("[PF] ...parent location is", parentLocation);
+			const newFileDependencyLinks = resolveIncludes(file.contents, this.getFileFrom(parentLocation), undefined, false);
+			const newFileDependencyUris = newFileDependencyLinks.map((dependencyLink) => {
+				console.log("[PF] ... ...dependency is at", path.resolve(parentLocation, dependencyLink.parentRelativeUri));
+				return path.resolve(parentLocation, dependencyLink.parentRelativeUri);
+			});
 			const currentFileDependenciesUris = file.dependencies.map((dependency) => dependency.uri);
 
 			// Remove dependencies that are not featured anymore
@@ -338,17 +338,20 @@ export default class ProjectFiles {
 			});
 
 			// Filter down to new dependency links only
-			const fileDependencyLinksToAdd = newFileDependencyLinks.filter((dependencyLink) => {
-				return !currentFileDependenciesUris.includes(dependencyLink.uri);
+			const fileDependencyLinksToAdd = newFileDependencyLinks.filter((dependencyLink, index) => {
+				return !currentFileDependenciesUris.includes(newFileDependencyUris[index]);
 			});
 
 			// Create the new dependency entries
 			// TODO: check if this uri to get a real URI works universally
-			const fileDependenciesToAdd = fileDependencyLinksToAdd.map((dependencyLink) => {
+			const fileDependenciesToAdd = fileDependencyLinksToAdd.map((dependencyLink, index) => {
 				return {
-					uri: dependencyLink.uri,
+					uri: newFileDependencyUris[index],
 					parentRelativeUri: dependencyLink.parentRelativeUri,
-					range: dependencyLink.range,
+					range: Range.create(
+						Position.create(dependencyLink.line, dependencyLink.column),
+						Position.create(dependencyLink.line, dependencyLink.column + dependencyLink.entryRelativeUri.length),
+					),
 				};
 			});
 			file.dependencies = file.dependencies.concat(fileDependenciesToAdd);
@@ -368,17 +371,6 @@ export default class ProjectFiles {
 
 			this.cleanProjectFiles();
 		}
-	}
-
-	/**
-	 * Based on all possible file locations (as added by INCDIR), find a dependency location if it exists
-	 */
-	private findPossibleFileLocations(baseFolder:string, includeFolders:string[], fileName:string) {
-		for (const includeFolder of includeFolders) {
-			const uri = path.join(baseFolder, includeFolder, fileName);
-			if (fs.existsSync(uri)) return PathUtils.platformPathToUri(uri);
-		}
-		return undefined;
 	}
 
 	/**
@@ -406,17 +398,21 @@ export default class ProjectFiles {
 		for (const rFile of filesToRemove) this.remove(rFile.uri);
 	}
 
+	/**
+	 * Creates a list of all current dependencies for the assembly process to include
+	 */
 	private buildIncludesForAssembly(file:IProjectFile, previousRelativeUri?:string) {
 		const includes:{[key:string]:string} = {};
 		file.dependencies.forEach((dependency) => {
 			// Includes the file itself
 			if (dependency.file && dependency.file.contents) {
-				const includeUri = previousRelativeUri ? path.join(previousRelativeUri, dependency.parentRelativeUri) : dependency.parentRelativeUri;
+				let includeUri = dependency.parentRelativeUri;
+				if (previousRelativeUri) includeUri = path.posix.join(previousRelativeUri, includeUri);
 				includes[includeUri] = dependency.file.contents;
 				// Includes its own dependencies
 				Object.assign(includes, this.buildIncludesForAssembly(dependency.file, includeUri));
 			} else {
-				console.error(`Error! Trying to include "${previousRelativeUri}" as a file dependency without contents!`);
+				console.warn(`Error! Trying to include "${previousRelativeUri}" as a assembly file dependency without contents!`);
 			}
 		});
 		return includes;
