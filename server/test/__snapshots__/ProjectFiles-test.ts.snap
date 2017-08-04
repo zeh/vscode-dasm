@@ -1,0 +1,192 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test adding with includes no-include project 1`] = `
+Array [
+  Object {
+    "contents": "Redacted (was 20856 chars in 499 lines)",
+    "contentsLines": Array [
+      "Redacted (was 20856 chars in 499 lines)",
+    ],
+    "dependencies": Array [],
+    "document": undefined,
+    "isDirty": false,
+    "uri": "<test-path>/sources/_test_single.asm",
+    "version": -1,
+  },
+]
+`;
+
+exports[`test adding with includes no-include project 2`] = `Object {}`;
+
+exports[`test adding with includes single-include project 1`] = `
+Array [
+  Object {
+    "contents": "Redacted (was 11683 chars in 300 lines)",
+    "contentsLines": Array [
+      "Redacted (was 11683 chars in 300 lines)",
+    ],
+    "dependencies": Array [
+      Object {
+        "file": Object {
+          "contents": "Redacted (was 9189 chars in 201 lines)",
+          "contentsLines": Array [
+            "Redacted (was 9189 chars in 201 lines)",
+          ],
+          "dependencies": Array [],
+          "document": undefined,
+          "isDirty": false,
+          "uri": "<test-path>/sources/vcs.h",
+          "version": -1,
+        },
+        "parentRelativeUri": "vcs.h",
+        "range": Object {
+          "end": Object {
+            "character": 15,
+            "line": 18,
+          },
+          "start": Object {
+            "character": 10,
+            "line": 18,
+          },
+        },
+        "uri": "<test-path>/sources/vcs.h",
+      },
+    ],
+    "document": undefined,
+    "isDirty": false,
+    "uri": "<test-path>/sources/_test_include.asm",
+    "version": -1,
+  },
+  Object {
+    "contents": "Redacted (was 9189 chars in 201 lines)",
+    "contentsLines": Array [
+      "Redacted (was 9189 chars in 201 lines)",
+    ],
+    "dependencies": Array [],
+    "document": undefined,
+    "isDirty": false,
+    "uri": "<test-path>/sources/vcs.h",
+    "version": -1,
+  },
+]
+`;
+
+exports[`test adding with includes single-include project 2`] = `
+Object {
+  "vcs.h": "Redacted (was 9189 chars in 201 lines)",
+}
+`;
+
+exports[`test adding with includes single-include project with incdir 1`] = `
+Array [
+  Object {
+    "contents": "Redacted (was 11759 chars in 303 lines)",
+    "contentsLines": Array [
+      "Redacted (was 11759 chars in 303 lines)",
+    ],
+    "dependencies": Array [
+      Object {
+        "file": Object {
+          "contents": "Redacted (was 9189 chars in 201 lines)",
+          "contentsLines": Array [
+            "Redacted (was 9189 chars in 201 lines)",
+          ],
+          "dependencies": Array [],
+          "document": undefined,
+          "isDirty": false,
+          "uri": "<test-path>/sources/includes/includes_vcs.h",
+          "version": -1,
+        },
+        "parentRelativeUri": "includes/includes_vcs.h",
+        "range": Object {
+          "end": Object {
+            "character": 24,
+            "line": 21,
+          },
+          "start": Object {
+            "character": 10,
+            "line": 21,
+          },
+        },
+        "uri": "<test-path>/sources/includes/includes_vcs.h",
+      },
+    ],
+    "document": undefined,
+    "isDirty": false,
+    "uri": "<test-path>/sources/_test_include_incdir.asm",
+    "version": -1,
+  },
+  Object {
+    "contents": "Redacted (was 9189 chars in 201 lines)",
+    "contentsLines": Array [
+      "Redacted (was 9189 chars in 201 lines)",
+    ],
+    "dependencies": Array [],
+    "document": undefined,
+    "isDirty": false,
+    "uri": "<test-path>/sources/includes/includes_vcs.h",
+    "version": -1,
+  },
+]
+`;
+
+exports[`test adding with includes single-include project with incdir 2`] = `
+Object {
+  "includes/includes_vcs.h": "Redacted (was 9189 chars in 201 lines)",
+}
+`;
+
+exports[`test adding with includes single-include project with missing include 1`] = `
+Array [
+  Object {
+    "contents": "Redacted (was 3670 chars in 188 lines)",
+    "contentsLines": Array [
+      "Redacted (was 3670 chars in 188 lines)",
+    ],
+    "dependencies": Array [
+      Object {
+        "file": Object {
+          "contents": "Redacted (was undefined)",
+          "contentsLines": Array [
+            "Redacted (was undefined)",
+          ],
+          "dependencies": Array [],
+          "document": undefined,
+          "isDirty": true,
+          "uri": "<test-path>/sources/a/vcs_wrong.h",
+          "version": -1,
+        },
+        "parentRelativeUri": "a/vcs_wrong.h",
+        "range": Object {
+          "end": Object {
+            "character": 23,
+            "line": 28,
+          },
+          "start": Object {
+            "character": 10,
+            "line": 28,
+          },
+        },
+        "uri": "<test-path>/sources/a/vcs_wrong.h",
+      },
+    ],
+    "document": undefined,
+    "isDirty": false,
+    "uri": "<test-path>/sources/_test_broken.asm",
+    "version": -1,
+  },
+  Object {
+    "contents": "Redacted (was undefined)",
+    "contentsLines": Array [
+      "Redacted (was undefined)",
+    ],
+    "dependencies": Array [],
+    "document": undefined,
+    "isDirty": true,
+    "uri": "<test-path>/sources/a/vcs_wrong.h",
+    "version": -1,
+  },
+]
+`;
+
+exports[`test adding with includes single-include project with missing include 2`] = `Object {}`;
