@@ -55,7 +55,6 @@ export default class CompletionProvider extends Provider {
 		const instructionUppercase = allUppercase || settings.preferUppercase.indexOf("instructions") >= 0;
 		const pseudoOpsUppercase = allUppercase || settings.preferUppercase.indexOf("pseudoops") >= 0;
 		const registerUppercase = allUppercase || settings.preferUppercase.indexOf("registers") >= 0;
-		// const registersUppercase = allUppercase || settings.preferUppercase.indexOf("registers") >= 0;
 
 		// Instructions
 		for (const instruction of LanguageDefinition.Instructions) {
