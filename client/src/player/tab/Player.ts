@@ -25,6 +25,7 @@ class Player {
 			this._container = element;
 			this._logContainer = logContainer;
 			this._canvas = document.createElement("canvas");
+			this._canvas.tabIndex = 1;
 			this._container.appendChild(this._canvas);
 			window.addEventListener("resize", this.scheduleUpdateSize.bind(this), false);
 			this.scheduleUpdateSize();
