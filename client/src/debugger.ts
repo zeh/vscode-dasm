@@ -1,3 +1,4 @@
+import dasm from "dasm";
 import { readFileSync } from "fs";
 import { basename } from "path";
 
@@ -19,7 +20,9 @@ import {
 	Thread,
 } from "vscode-debugadapter";
 
+import { IDasmResult } from "dasm";
 import { DebugProtocol } from "vscode-debugprotocol";
+import Assembler from "./assembling/Assembler";
 import DasmConstants from "./DasmConstants";
 import * as DasmTabProtocol from "./network/DasmTabProtocol";
 import TabServer from "./network/TabServer";
@@ -38,6 +41,7 @@ class DasmDebugSession extends LoggingDebugSession {
 	private static readonly THREAD_ID = 1;					// Hardcoded thread id because there's only one thread
 
 	private _server: TabServer<DasmTabProtocol.IMessage>;	// Server that communicates with the player tab
+	private _results: IDasmResult;							// Current assembly results
 
 	private _breakpointIndex: number = 1000;
 	private _currentAddress: number = 0;
@@ -61,6 +65,7 @@ class DasmDebugSession extends LoggingDebugSession {
 		this._server.onClientConnect.add((id) => {
 			console.log("[DEBUGGER] Connected to client", id);
 			// TODO: also update running state
+			this.sendRomToClients();
 		});
 		this._server.onClientDisconnect.add((id) => {
 			console.log("[DEBUGGER] Disconnected from client", id);
@@ -128,6 +133,10 @@ class DasmDebugSession extends LoggingDebugSession {
 
 		this._sourceFile = args.program;
 		const source = readFileSync(this._sourceFile).toString();
+
+		// Actually assemble the source
+		this._results = Assembler.assemble(source);
+		console.log("[DEBUGGER] Rom assembled, size is", this._results.data.length);
 
 		if (args.stopOnEntry) {
 			this.currentAddress = 0;
@@ -404,6 +413,12 @@ class DasmDebugSession extends LoggingDebugSession {
 	private set currentAddress(line: number) {
 		this._currentAddress = line;
 		this.log("line", line);
+	}
+
+	private sendRomToClients() {
+		if (this._results.success) {
+			this._server.send(DasmTabProtocol.createMessage(DasmTabProtocol.Kinds.Server.Rom.Load, Array.from(this._results.data)));
+		}
 	}
 
 	// ---- some helpers
