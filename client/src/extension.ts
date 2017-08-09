@@ -26,7 +26,7 @@ export function activate(context:ExtensionContext) {
 	// Only executed the first time an activationEvent command is triggered
 
 	// The server is implemented in node
-	const serverModule = context.asAbsolutePath(path.join("out", "server", "server.js"));
+	const serverModule = context.asAbsolutePath(path.join("out", "server", "src", "server.js"));
 	// The debug options for the server
 	const debugOptions = { execArgv: ["--nolazy", "--debug=6004"] };
 
