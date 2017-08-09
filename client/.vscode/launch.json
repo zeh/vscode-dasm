@@ -31,7 +31,7 @@
 			"program": "${workspaceRoot}/src/debugger.ts",
 			"args": [ "--server=4711" ],
 			"sourceMaps": true,
-			"outFiles": [ "${workspaceRoot}/out/**/*.js" ]
+			"outFiles": [ "${workspaceRoot}/out/src/**/*.js" ]
 		}
 	],
 	"compounds": [
