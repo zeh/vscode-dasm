@@ -407,6 +407,7 @@ class DasmDebugSession extends LoggingDebugSession {
 
 		// TODO: close player tab
 
+		// Dispose of everything
 		this._server.dispose();
 		this.sendResponse(response);
 	}
