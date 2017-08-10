@@ -3,7 +3,7 @@ export const Kinds = {
 
 	// Client-to-server
 	Client: {
-		State: "state",
+		State: "state",									// TODO
 	},
 
 	// Server-to-client
@@ -12,17 +12,17 @@ export const Kinds = {
 			Load: "rom_load",
 		},
 		Debug: {
-			Seek: "debug_seek",
-			Pause: "debug_pause",
-			Play: "debug_play",
-			StepForward: "step",
-			StepOut: "step_out",
-			StepBack: "step_back",
-			SetBreakpoint: "set_breakpoint",
-			ClearBreakpoint: "clear_breakpoint",
+			Seek: "debug_seek",							// TODO
+			Pause: "debug_pause",						// TODO
+			Play: "debug_play",							// TODO
+			StepForward: "step",						// TODO
+			StepOut: "step_out",						// TODO
+			StepBack: "step_back",						// TODO
+			SetBreakpoint: "set_breakpoint",			// TODO
+			ClearBreakpoint: "clear_breakpoint",		// TODO
 		},
 		Screen: {
-			SaveScreenshot: "save_screenshot",
+			SaveScreenshot: "save_screenshot",			// TODO
 		},
 	},
 };
