@@ -261,8 +261,8 @@ export default class ProjectFiles {
 				process,
 			};
 			this._queuedUpdateProcessId = setTimeout(() => {
-				process();
 				this.clearQueuedFileUpdate();
+				process();
 			}, this._debounceTime);
 		} else {
 			// Can execute immediately
@@ -289,7 +289,7 @@ export default class ProjectFiles {
 			const fullUri = path.resolve(path.join(projectRoot, sourceEntryRelativeUri));
 			const localPath = PathUtils.uriToPlatformPath(fullUri);
 			const file = this.get(fullUri);
-			console.log("[PF] [get] At", projectRoot);
+			console.log("[PF] [get] At root", projectRoot);
 			console.log("[PF] [get] ...Looking for", sourceEntryRelativeUri);
 			console.log("[PF] [get] ...Is", fullUri);
 			if (file && file.contents) {
