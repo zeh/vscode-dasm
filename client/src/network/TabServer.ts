@@ -67,6 +67,10 @@ export default class TabServer<T> {
 		return this._onClientDisconnect;
 	}
 
+	get clients() {
+		return this._clients.keys;
+	}
+
 	private onClientOpen(client: ws) {
 		console.log("[TAB SERVER] CLIENT OPEN");
 	}
@@ -98,7 +102,7 @@ export default class TabServer<T> {
 	}
 
 	private getIdByClient(client: ws) {
-		for (const key in this._clients) {
+		for (const key of this._clients.keys()) {
 			if (this._clients.get(key) === client) return key;
 		}
 		return undefined;
