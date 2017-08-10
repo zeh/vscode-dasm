@@ -405,7 +405,8 @@ class DasmDebugSession extends LoggingDebugSession {
 	protected disconnectRequest(response: DebugProtocol.DisconnectResponse, args: DebugProtocol.DisconnectArguments): void {
 		console.log("[DEBUGGER] Disconnecting", args);
 
-		// TODO: close player tab
+		// TODO: Ask remaining client tabs to close
+		this._server.send(DasmTabProtocol.createMessage(DasmTabProtocol.Kinds.Server.Session.Terminate));
 
 		// Dispose of everything
 		this._server.dispose();

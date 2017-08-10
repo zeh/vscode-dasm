@@ -11,6 +11,9 @@ export const Kinds = {
 		Rom: {
 			Load: "rom_load",
 		},
+		Session: {
+			Terminate: "terminate",
+		},
 		Debug: {
 			Seek: "debug_seek",							// TODO
 			Pause: "debug_pause",						// TODO
@@ -49,6 +52,7 @@ export type IMessage = IMessageEmpty | IMessageClientState;
 
 export function createMessage(kind: typeof Kinds.Client.State, value: string): IMessageClientState;
 export function createMessage(kind: typeof Kinds.Server.Rom.Load, buffer: number[]): IMessageClientState;
+export function createMessage(kind: typeof Kinds.Server.Session.Terminate): IMessageClientState;
 export function createMessage(kind: string, payload?: any): IMessage {
 	if (kind === Kinds.Client.State) {
 		return {
@@ -59,6 +63,10 @@ export function createMessage(kind: string, payload?: any): IMessage {
 		return {
 			kind,
 			data: { buffer: payload },
+		};
+	} else if (kind === Kinds.Server.Session.Terminate) {
+		return {
+			kind,
 		};
 	} else {
 		return {

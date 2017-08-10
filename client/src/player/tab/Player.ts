@@ -68,6 +68,9 @@ class Player {
 			const b = (message as any).data.buffer;
 			this.log("...loading ROM with size size " + b.length);
 			this._emulator.loadROM(new Uint8Array((message as any).data.buffer));
+		} else if (message.kind === DasmTabProtocol.Kinds.Server.Session.Terminate) {
+			this.log("...closing window");
+			window.close();
 		} else {
 			this.log("...message not understood (unknown kind)");
 		}
