@@ -69,6 +69,11 @@ class DasmDebugSession extends LoggingDebugSession {
 		});
 		this._server.onClientDisconnect.add((id) => {
 			console.log("[DEBUGGER] Disconnected from client", id);
+			if (this._server.clients.length === 0) {
+				console.log("[DEBUGGER] Last client disconnected");
+				// No more clients connected, terminate the debugger
+				this.sendEvent(new TerminatedEvent());
+			}
 		});
 	}
 
