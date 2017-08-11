@@ -24,7 +24,7 @@ import PlayerTabProvider from "./player/PlayerTabProvider";
 // https://code.visualstudio.com/docs/extensions/example-language-server
 // https://github.com/Microsoft/vscode-languageserver-node
 
-export function activate(context:ExtensionContext) {
+export function activate(context: ExtensionContext) {
 	// Only executed the first time an activationEvent command is triggered
 
 	// The server is implemented in node
