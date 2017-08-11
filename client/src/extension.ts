@@ -89,7 +89,7 @@ function getInitialConfigurations() {
 		version: "0.0.0",
 		configurations: [
 			{
-				type: "atari",
+				type: "dasm",
 				request: "launch",
 				name: "dasm Debug",
 				program: entryUri ? ("${workspaceRoot}/" + entryUri) : "${workspaceRoot}/entry.asm",
