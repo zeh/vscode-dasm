@@ -73,7 +73,7 @@
         ],
         "configurationAttributes": {
           "launch": {
-            "required": [],
+			"required": [ "program" ],
             "properties": {
               "program": {
                 "type": "string",
