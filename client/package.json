@@ -46,7 +46,7 @@
     ],
     "debuggers": [
       {
-        "type": "atari",
+        "type": "dasm",
         "label": "dasm Debug",
         "program": "./out/src/debugger.js",
         "runtime": "node",
@@ -60,7 +60,7 @@
             "label": "dasm Debug: Launch",
             "description": "A new configuration for launching a dasm debug program",
             "body": {
-              "type": "atari",
+              "type": "dasm",
               "request": "launch",
               "name": "${2:Launch Program}",
               "program": "^\"\\${workspaceRoot}/${1:Program}\""
