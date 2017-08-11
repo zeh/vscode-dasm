@@ -79,7 +79,7 @@
               "stopOnEntry": {
                 "type": "boolean",
                 "description": "Automatically stop after launch.",
-                "default": true
+                "default": false
               },
               "trace": {
                 "type": "boolean",
