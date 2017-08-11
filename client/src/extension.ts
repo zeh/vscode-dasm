@@ -60,17 +60,14 @@ export function activate(context:ExtensionContext) {
 		return [
 			"// Use IntelliSense to learn about possible dasm debug attributes.",
 			"// Hover to view descriptions of existing attributes.",
+			"// On 'program', use '${command:GetCurrentProgramName}' to use the current window as the source,",
+			"// or '${workspaceRoot}' as the root, e.g. '${workspaceRoot}/entry.asm'",
 			JSON.stringify(getInitialConfigurations(), null, "\t"),
 		].join("\n");
 	}));
 
 	context.subscriptions.push(commands.registerCommand("extension.vscode-dasm.getCurrentProgramName", () => {
-		const workspaceUri = workspace.rootPath;
-		const currentFile = getCurrentFile();
-		if (workspaceUri && currentFile) {
-			return currentFile.fsPath;
-		}
-		return "?";
+		return getCurrentFileUri(true);
 	}));
 
 	// Register tab provider so we can open a preview tab when we start debugging
@@ -82,26 +79,27 @@ export function activate(context:ExtensionContext) {
 	console.log("vscode-dasm is now active.");
 }
 
-function getCurrentFile() {
-	return window.activeTextEditor ? window.activeTextEditor.document.uri : null;
+function getCurrentFileUri(absolute: boolean) {
+	const currentFile = window.activeTextEditor ? window.activeTextEditor.document.uri : null;
+	if (currentFile) {
+		if (absolute) {
+			return currentFile.fsPath;
+		} else {
+			const workspacePath = workspace.rootPath;
+			if (workspacePath) return path.posix.relative(workspacePath, currentFile.fsPath);
+		}
+	}
+	return "?";
 }
 
 function getInitialConfigurations() {
-	const workspaceUri = workspace.rootPath;
-	const currentFile = getCurrentFile();
-	let entryUri;
-	if (workspaceUri && currentFile) {
-		entryUri = path.relative(workspaceUri, currentFile.fsPath);
-	}
-
 	return {
-		version: "0.0.0",
+		version: "0.0.1",
 		configurations: [
 			{
 				type: "dasm",
 				request: "launch",
 				name: "dasm Debug",
-				// program: entryUri ? ("${workspaceRoot}/" + entryUri) : "${workspaceRoot}/entry.asm",
 				program: "${command:GetCurrentProgramName}",
 				stopOnEntry: true,
 			},
