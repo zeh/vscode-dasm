@@ -35,7 +35,9 @@
   ],
   "activationEvents": [
     "onLanguage:dasm",
-    "onCommand:extension.vscode-dasm.provideInitialConfigurations"
+	"onCommand:extension.vscode-dasm.provideInitialConfigurations",
+	"onCommand:extension.vscode-dasm.getCurrentProgramName",
+	"onCommand:extension.vscode-dasm.openPlayerWindow"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -50,7 +52,9 @@
         "label": "dasm Debug",
         "program": "./out/src/debugger.js",
         "runtime": "node",
-        "variables": {},
+        "variables": {
+			"GetCurrentProgramName": "extension.vscode-dasm.getCurrentProgramName"
+		},
         "languages": [
           "dasm"
         ],
@@ -74,7 +78,7 @@
               "program": {
                 "type": "string",
                 "description": "Absolute path to a text file.",
-                "default": "${workspaceRoot}/name.asm"
+                "default": "${command:GetCurrentProgramName}"
               },
               "stopOnEntry": {
                 "type": "boolean",
