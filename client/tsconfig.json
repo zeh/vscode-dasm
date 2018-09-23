@@ -2,7 +2,8 @@
     "compilerOptions": {
         "module": "commonjs",
         "noImplicitAny": true,
-        "strictNullChecks": true,
+        "noUnusedLocals": true,
+		"strict": true,
         "target": "es6",
         "outDir": "out",
         "allowJs": true,
