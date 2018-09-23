@@ -101,7 +101,7 @@
     "typescript": "^2.3.3"
   },
   "dependencies": {
-    "dasm": "^4.3.0",
+    "dasm": "^5.0.1",
     "path": "^0.12.7",
     "vscode": "^1.1.4",
     "vscode-languageclient": "^3.2.2"
