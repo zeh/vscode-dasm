@@ -14,13 +14,13 @@
   "dependencies": {
     "dasm": "^5.0.1",
     "simplesignal": "^3.1.0",
-    "vscode-languageserver": "^3.2.2"
+    "vscode-languageserver": "^3.5.1"
   },
   "devDependencies": {
     "@types/jest": "^20.0.6",
     "@types/node": "^7.0.22",
     "jest": "^20.0.4",
-    "tslint": "^5.5.0",
+    "tslint": "^5.11.0",
     "typescript": "^2.3.3"
   },
   "scripts": {
