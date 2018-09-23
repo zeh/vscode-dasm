@@ -139,7 +139,7 @@ export default class ProjectFiles {
 					fileInfo.isDirty = false;
 				} catch (e) {
 					fileInfo.contents = undefined;
-					console.warn("[PF] Could not open file at", PathUtils.uriToPlatformPath(uri));
+					console.warn("[PF] Could not open file at", PathUtils.uriToPlatformPath(uri), "with original URI", uri);
 					fileInfo.isDirty = true;
 				}
 				fileInfo.version = -1;
@@ -286,7 +286,7 @@ export default class ProjectFiles {
 	private getFileFrom(parentLocation:string) {
 		return (sourceEntryRelativeUri:string, isBinary:boolean): string|Uint8Array|undefined => {
 			const projectRoot = path.posix.join(this.getProjectRoot(), parentLocation);
-			const fullUri = path.resolve(path.join(projectRoot, sourceEntryRelativeUri));
+			const fullUri = path.resolve(path.posix.join(projectRoot, sourceEntryRelativeUri));
 			const localPath = PathUtils.uriToPlatformPath(fullUri);
 			const file = this.get(fullUri);
 			console.log("[PF] [get] At root", projectRoot);
@@ -323,12 +323,15 @@ export default class ProjectFiles {
 		console.log("[PF] Updating dependencies for file", file.uri);
 		if (file.contents) {
 			// Parse all dependencies in a file's source
-			const parentLocation = path.posix.dirname(url.parse(file.uri).pathname || ".");
+			const projectRoot = this.getProjectRoot();
+			const filePath = url.parse(file.uri).pathname;
+			const parentLocation = filePath ? path.posix.relative(projectRoot, path.posix.dirname(filePath)) : "";
 			console.log("[PF] ...parent location is", parentLocation);
 			const newFileDependencyLinks = resolveIncludes(file.contents, this.getFileFrom(parentLocation), undefined, false);
 			const newFileDependencyUris = newFileDependencyLinks.map((dependencyLink) => {
-				console.log("[PF] ... ...dependency is at", path.resolve(parentLocation, dependencyLink.parentRelativeUri));
-				return path.resolve(parentLocation, dependencyLink.parentRelativeUri);
+				const newFileUri = PathUtils.platformPathToUri(path.posix.resolve(projectRoot, parentLocation, dependencyLink.parentRelativeUri));
+				console.log("[PF] ... ...dependency is at", newFileUri);
+				return newFileUri;
 			});
 			const currentFileDependenciesUris = file.dependencies.map((dependency) => dependency.uri);
 
