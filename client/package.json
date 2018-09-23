@@ -24,14 +24,14 @@
     "url": "https://github.com/zeh/vscode-dasm.git"
   },
   "categories": [
-    "Languages",
+    "Programming Languages",
     "Snippets",
     "Linters",
     "Debuggers",
     "Formatters"
   ],
   "activationEvents": [
-    "onLanguage:dasm",
+    "onLanguage:dasm"
   ],
   "main": "./out/src/extension",
   "contributes": {
