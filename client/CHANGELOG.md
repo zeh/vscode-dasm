@@ -4,6 +4,17 @@ All notable changes to the vscode-dasm extension are listed here. For a more com
 
 ## [Unreleased]
 
+## 4.0.0 - 2018-09-23
+
+### Fixed
+
+* Include file resolving should work again on OSX
+
+### Housekeeping
+
+* Updated dasm-js to latest version
+* Brought many changes that were unreleased and only applied to the separate "debugger" branch
+
 ## 3.2.0 - 2017-07-23
 
 ### Added
