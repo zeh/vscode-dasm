@@ -19,7 +19,7 @@
   "devDependencies": {
     "@types/jest": "^20.0.8",
     "@types/node": "^7.0.22",
-    "jest": "^23.6.0",
+    "jest": "^29.3.1",
     "tslint": "^5.11.0",
     "typescript": "^2.3.3"
   },
